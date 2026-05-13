@@ -2048,14 +2048,14 @@
 
     /* compteur */
     (function() {
-      const k = '_v';
       const peek = new URLSearchParams(location.search).has('m');
-      let n = parseInt(localStorage.getItem(k) || '0', 10);
-      if (!peek) { n += 1; localStorage.setItem(k, n); }
       const el = document.createElement('span');
-      el.textContent = n;
       el.style.cssText = 'position:fixed;bottom:14px;right:18px;font-size:10px;color:rgba(124,116,108,1);font-family:monospace;letter-spacing:.05em;pointer-events:none;user-select:none;z-index:9999;';
       document.body.appendChild(el);
+      const url = peek
+        ? 'https://api.counterapi.dev/v1/melvinpasse-cv/views'
+        : 'https://api.counterapi.dev/v1/melvinpasse-cv/views/up';
+      fetch(url).then(r => r.json()).then(d => { el.textContent = d.count ?? ''; }).catch(() => {});
     })();
   </script>
 
