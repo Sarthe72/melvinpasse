@@ -319,9 +319,9 @@
       display: flex; flex-direction: column; gap: .7rem;
       box-shadow: var(--shadow);
       transition: transform .25s, box-shadow .25s, border-color .25s;
-      opacity: 0; transform: translateY(18px);
+      opacity: 0; transform: perspective(700px) rotateX(-14deg) translateY(18px);
     }
-    .perso-card.visible { opacity: 1; transform: translateY(0); }
+    .perso-card.visible { opacity: 1; transform: perspective(700px) rotateX(0deg) translateY(0); }
     .perso-card:hover {
       transform: translateY(-4px);
       box-shadow: var(--shadow-lg);
@@ -375,9 +375,9 @@
     }
     .exp-item {
       padding-left: 2.5rem; padding-bottom: 3.5rem; position: relative;
-      opacity: 0; transform: translateY(24px); transition: opacity .6s, transform .6s;
+      opacity: 0; transform: perspective(700px) rotateX(-12deg) translateY(24px); transition: opacity .6s, transform .6s cubic-bezier(.22,.61,.36,1);
     }
-    .exp-item.visible { opacity: 1; transform: translateY(0); }
+    .exp-item.visible { opacity: 1; transform: perspective(700px) rotateX(0deg) translateY(0); }
     .exp-dot {
       position: absolute; left: -5px; top: 5px;
       width: 12px; height: 12px; border-radius: 50%;
@@ -433,7 +433,7 @@
       background: var(--surface); border: 1px solid var(--border);
       border-radius: 22px; overflow: hidden;
       box-shadow: var(--shadow-lg);
-      opacity: 0; transform: translateY(24px); transition: opacity .7s, transform .7s;
+      opacity: 0; transform: perspective(700px) rotateX(-14deg) translateY(24px); transition: opacity .7s, transform .7s cubic-bezier(.22,.61,.36,1);
     }
     .projet-gallery {
       display: grid;
@@ -728,10 +728,10 @@
       border-radius: 18px; padding: 1.5rem 1.6rem;
       box-shadow: var(--shadow);
       display: flex; flex-direction: column; gap: .9rem;
-      opacity: 0; transform: translateY(20px);
-      transition: opacity .6s, transform .6s;
+      opacity: 0; transform: perspective(700px) rotateX(-12deg) translateY(20px);
+      transition: opacity .6s, transform .6s cubic-bezier(.22,.61,.36,1);
     }
-    .reco-card.visible { opacity: 1; transform: translateY(0); }
+    .reco-card.visible { opacity: 1; transform: perspective(700px) rotateX(0deg) translateY(0); }
     .reco-card.reco-hidden { display: none; }
     .reco-voir-plus {
       display: block; margin: 1.5rem auto 0;
@@ -783,10 +783,10 @@
 
     /* ─── SCROLL FADE ─────────────────────────────────────────────── */
     .fade-in {
-      opacity: 0; transform: translateY(22px);
-      transition: opacity .7s ease, transform .7s ease;
+      opacity: 0; transform: perspective(700px) rotateX(-14deg) translateY(22px);
+      transition: opacity .7s ease, transform .7s cubic-bezier(.22,.61,.36,1);
     }
-    .fade-in.visible { opacity: 1; transform: translateY(0); }
+    .fade-in.visible { opacity: 1; transform: perspective(700px) rotateX(0deg) translateY(0); }
 
     /* ─── CANVAS BG ──────────────────────────────────────────────── */
     #hero-canvas {
@@ -1812,13 +1812,13 @@
     drawCanvas();
 
     // ─── Card 3D tilt ────────────────────────────────────────────────
-    document.querySelectorAll('.metric-card, .formation-card, .phase-card').forEach(card => {
+    document.querySelectorAll('.metric-card, .formation-card, .phase-card, .perso-card, .reco-card').forEach(card => {
       card.addEventListener('mousemove', e => {
         const r = card.getBoundingClientRect();
-        const x = ((e.clientX - r.left) / r.width  - .5) * 14;
-        const y = ((e.clientY - r.top)  / r.height - .5) * 14;
+        const x = ((e.clientX - r.left) / r.width  - .5) * 12;
+        const y = ((e.clientY - r.top)  / r.height - .5) * 12;
         card.style.transform = `perspective(700px) rotateY(${x}deg) rotateX(${-y}deg) translateY(-5px) scale(1.02)`;
-        card.style.boxShadow = `${-x*.5}px ${y*.5}px 32px rgba(232,97,74,.18)`;
+        card.style.boxShadow = `${-x*.5}px ${y*.5}px 32px rgba(122,158,135,.22)`;
       });
       card.addEventListener('mouseleave', () => {
         card.style.transform = '';
