@@ -788,6 +788,33 @@
     }
     .fade-in.visible { opacity: 1; transform: perspective(700px) rotateX(0deg) translateY(0); }
 
+    /* ─── POPUP CONFIRMATION ────────────────────────────────────── */
+    .popup-overlay {
+      position: fixed; inset: 0; z-index: 2000;
+      background: rgba(44,42,39,.45); backdrop-filter: blur(6px);
+      display: flex; align-items: center; justify-content: center;
+      opacity: 0; pointer-events: none;
+      transition: opacity .3s ease;
+    }
+    .popup-overlay.open { opacity: 1; pointer-events: all; }
+    .popup-box {
+      background: var(--surface); border-radius: 24px;
+      padding: 2.5rem 2.8rem; max-width: 420px; width: 90%;
+      text-align: center; box-shadow: 0 20px 60px rgba(44,42,39,.18);
+      transform: scale(.9) translateY(20px);
+      transition: transform .35s cubic-bezier(.22,.61,.36,1);
+    }
+    .popup-overlay.open .popup-box { transform: scale(1) translateY(0); }
+    .popup-icon { font-size: 3rem; margin-bottom: 1rem; }
+    .popup-title { font-family: 'Space Grotesk', sans-serif; font-size: 1.4rem; font-weight: 700; color: var(--text); margin-bottom: .6rem; }
+    .popup-text { color: var(--muted); font-size: .95rem; line-height: 1.6; margin-bottom: 1.8rem; }
+    .popup-close {
+      background: var(--accent); color: #fff; border: none; border-radius: 50px;
+      padding: .7rem 2rem; font-size: .95rem; font-weight: 600; cursor: pointer;
+      transition: background .2s, transform .2s;
+    }
+    .popup-close:hover { background: var(--accent2); transform: translateY(-2px); }
+
     /* ─── CANVAS BG ──────────────────────────────────────────────── */
     #hero-canvas {
       position: absolute; inset: 0; z-index: 0;
@@ -1696,6 +1723,15 @@
   </footer>
 
   <!-- Lightbox -->
+  <div class="popup-overlay" id="success-popup">
+    <div class="popup-box">
+      <div class="popup-icon">✉️</div>
+      <p class="popup-title">Message envoyé !</p>
+      <p class="popup-text">Merci pour votre message. Je reviens vers vous dans les plus brefs délais.</p>
+      <button class="popup-close" onclick="document.getElementById('success-popup').classList.remove('open')">Fermer</button>
+    </div>
+  </div>
+
   <div id="lightbox">
     <button id="lightbox-close">×</button>
     <img id="lightbox-img" src="" alt="">
@@ -1883,14 +1919,10 @@
         headers: { 'Accept': 'application/json' }
       }).then(r => {
         if (r.ok) {
-          btn.textContent = '✓ Message envoyé !';
-          btn.style.background = 'var(--green)';
           e.target.reset();
-          setTimeout(() => {
-            btn.textContent = 'Envoyer le message →';
-            btn.style.background = '';
-            btn.disabled = false;
-          }, 3000);
+          btn.textContent = 'Envoyer le message →';
+          btn.disabled = false;
+          document.getElementById('success-popup').classList.add('open');
         } else {
           btn.textContent = 'Erreur — réessayez';
           btn.style.background = '#c0392b';
