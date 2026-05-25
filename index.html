@@ -2133,14 +2133,14 @@
       el.style.cssText = 'position:fixed;bottom:14px;right:18px;font-size:10px;color:rgba(124,116,108,1);font-family:monospace;letter-spacing:.05em;pointer-events:none;user-select:none;z-index:9999;';
       document.body.appendChild(el);
 
-      const k = '_v2';
+      const k = '_v3';
       let local = parseInt(localStorage.getItem(k) || '0', 10);
       if (!peek) { local++; localStorage.setItem(k, local); }
       el.textContent = local;
 
       const url = peek
-        ? 'https://api.countapi.xyz/get/melvinpasse/cv2'
-        : 'https://api.countapi.xyz/hit/melvinpasse/cv2';
+        ? 'https://api.countapi.xyz/get/melvinpasse/cv3'
+        : 'https://api.countapi.xyz/hit/melvinpasse/cv3';
       fetch(url).then(r => r.json()).then(d => {
         if (d.value != null) el.textContent = d.value;
       }).catch(() => {});
