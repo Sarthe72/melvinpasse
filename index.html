@@ -2129,14 +2129,14 @@
 
     /* compteur GoatCounter */
     (function() {
-      const peek = new URLSearchParams(location.search).has('m');
       const el = document.createElement('span');
-      el.style.cssText = 'position:fixed;bottom:14px;right:18px;font-size:10px;color:rgba(124,116,108,1);font-family:monospace;letter-spacing:.05em;pointer-events:none;user-select:none;z-index:9999;';
+      el.style.cssText = 'position:fixed;bottom:70px;right:18px;font-size:10px;color:rgba(124,116,108,1);font-family:monospace;letter-spacing:.05em;pointer-events:none;user-select:none;z-index:9999;';
+      el.textContent = '·';
       document.body.appendChild(el);
       fetch('https://melvinpasse.goatcounter.com/counter//.json')
         .then(r => r.json())
-        .then(d => { if (d.count != null) el.textContent = d.count; })
-        .catch(() => {});
+        .then(d => { el.textContent = d.count ?? '0'; })
+        .catch(() => { el.textContent = '0'; });
     })();
   </script>
   <script data-goatcounter="https://melvinpasse.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
