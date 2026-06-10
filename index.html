@@ -2133,13 +2133,20 @@
       el.style.cssText = 'position:fixed;bottom:70px;right:18px;font-size:10px;color:rgba(124,116,108,1);font-family:monospace;letter-spacing:.05em;pointer-events:none;user-select:none;z-index:9999;';
       el.textContent = '·';
       document.body.appendChild(el);
-      fetch('https://melvinpasse.goatcounter.com/counter//.json')
+      fetch('https://melvinpasse.goatcounter.com/counter/%2Fmelvinpasse.json')
         .then(r => r.json())
         .then(d => { el.textContent = d.count ?? '0'; })
         .catch(() => { el.textContent = '0'; });
     })();
   </script>
-  <script data-goatcounter="https://melvinpasse.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+  <script>
+    if (!new URLSearchParams(location.search).has('m')) {
+      var s = document.createElement('script');
+      s.dataset.goatcounter = 'https://melvinpasse.goatcounter.com/count';
+      s.async = true; s.src = '//gc.zgo.at/count.js';
+      document.head.appendChild(s);
+    }
+  </script>
 
 </body>
 </html>
