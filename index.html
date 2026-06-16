@@ -2138,15 +2138,19 @@
     (function() {
       const peek = new URLSearchParams(location.search).has('m');
       const el = document.createElement('span');
-      el.id = 'goatcounter-count';
       el.style.cssText = 'position:fixed;bottom:70px;right:18px;font-size:10px;color:rgba(124,116,108,1);font-family:monospace;letter-spacing:.05em;pointer-events:none;user-select:none;z-index:9999;';
       el.textContent = '·';
       document.body.appendChild(el);
-      if (peek) window.goatcounter = { no_onload: true };
-      var s = document.createElement('script');
-      s.dataset.goatcounter = 'https://melvinpasse.goatcounter.com/count';
-      s.async = true; s.src = '//gc.zgo.at/count.js';
-      document.head.appendChild(s);
+      fetch('https://melvinpasse.goatcounter.com/counter/%2Fmelvinpasse.json')
+        .then(r => r.json())
+        .then(d => { el.textContent = d.count || '·'; })
+        .catch(() => {});
+      if (!peek) {
+        var s = document.createElement('script');
+        s.dataset.goatcounter = 'https://melvinpasse.goatcounter.com/count';
+        s.async = true; s.src = '//gc.zgo.at/count.js';
+        document.head.appendChild(s);
+      }
     })();
   </script>
 
