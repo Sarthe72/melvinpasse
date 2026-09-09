@@ -22,6 +22,7 @@ def test_mobile_browser_journey(tmp_path):
             page.goto(f"http://127.0.0.1:{server.server_port}/v2/web/", wait_until="networkidle")
             assert "Vos candidatures, du premier regard" not in page.locator("body").inner_text()
             assert page.locator("#quick-link-form").is_visible()
+            assert page.locator("#sync-account").is_visible()
             assert page.evaluate(
                 "getComputedStyle(document.documentElement).getPropertyValue('--brand').trim()"
             ) == "#7A9E87"
