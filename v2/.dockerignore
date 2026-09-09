@@ -1,0 +1,8 @@
+.git
+.venv
+instance
+tmp
+.pytest_cache
+.pytest-tmp
+references
+output

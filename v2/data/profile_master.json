@@ -1,0 +1,109 @@
+{
+  "identity": {
+    "name": "Melvin PASSE",
+    "email": "passe.melvin@gmail.com",
+    "phone": "06.82.14.91.59",
+    "target_positioning": ["Directeur de site", "Direction des opérations", "Pilotage de centre de profit"],
+    "location": "Sarthe (72)",
+    "driving_licenses": ["A", "B"],
+    "linkedin": "linkedin.com/in/melvin-passe"
+  },
+  "summary": "Dirigeant opérationnel avec 16 ans dans la même structure, du terrain à la direction : management pluridisciplinaire, pilotage de la performance, coordination de projets complexes et développement d'activité.",
+  "signature": "Structurer, fédérer les équipes et produire des résultats mesurables sur le terrain comme dans les chiffres.",
+  "experience": [
+    {
+      "role": "Directeur de Site",
+      "company": "SAS ASD",
+      "location": "Maresché (72)",
+      "start": "2022-09",
+      "end": "2026-07",
+      "team": "20 CDI permanents, jusqu'à 40 collaborateurs en période de pic",
+      "facts": [
+        "Pilotage global du centre de profit : CA, marges, organisation et reporting stratégique",
+        "Définition et suivi des indicateurs clés : rendement, charges, taux de service",
+        "Budget prévisionnel : arbitrage des priorités et optimisation continue",
+        "Présence terrain permanente aux côtés des équipes",
+        "Structuration et formalisation des process et méthodes de travail",
+        "Mise en place et évolution des outils internes (CRM, suivi opérationnel)",
+        "Management pluridisciplinaire : plannings, montée en compétences, recrutement, intégration, fidélisation, feedback et gestion des conflits",
+        "Pilotage d'une plateforme logistique de 1 200 m² : réception, stockage, préparation, expédition",
+        "Gestion des stocks multi-références et coordination des flux avec transporteurs, prestataires et plateformes clients",
+        "Pilotage de la relation clients grands comptes : Amazon, Cdiscount, Fnac, La Redoute",
+        "Renégociation de contrats fournisseurs : environ 270 k€ d'économies annuelles, soit -40%",
+        "Croissance de l'activité de 250 k€ à 36 M€ de CA sur la trajectoire professionnelle"
+      ]
+    },
+    {
+      "role": "Directeur de Site Adjoint",
+      "company": "SARL ASDiscount",
+      "start": "2016-06",
+      "end": "2022-09",
+      "facts": [
+        "Bras droit du dirigeant : co-pilotage des opérations et des projets de structuration",
+        "Déclinaison opérationnelle de la stratégie et arbitrage des priorités au quotidien",
+        "Participation active aux décisions d'investissement, de recrutement et d'organisation"
+      ]
+    },
+    {
+      "role": "Responsable Service Clients, Retours & Achats",
+      "company": "SARL ASDiscount",
+      "start": "2012-07",
+      "end": "2022-09",
+      "facts": [
+        "Création et structuration de zéro d'un service complet : recrutements, process, outils, organisation",
+        "3 collaborateurs et 250 k€ de CA vers 23 collaborateurs et 36 M€ de CA en 10 ans",
+        "Pilotage de la relation clients grands comptes",
+        "Négociation achats fournisseurs, référencement et conditions tarifaires"
+      ]
+    },
+    {
+      "role": "Préparateur de commandes / Gestionnaire Achats",
+      "company": "SARL ASDiscount",
+      "start": "2010-09",
+      "end": "2012-06",
+      "facts": ["Point de départ d'une trajectoire de 16 ans dans la même structure, du terrain à la direction"]
+    }
+  ],
+  "evidence": [
+    {
+      "id": "move-2024",
+      "title": "Déménagement de site 2024",
+      "tags": ["projet", "transformation", "capex", "coordination", "immobilier", "continuité activité"],
+      "facts": ["Pilotage complet de février à septembre 2024", "Nouveau bâtiment de 1 200 m², environ x2,4 vs l'existant", "Négociation du bail et travaux/aménagement", "Budget maîtrisé à -47% vs prévision initiale", "Zéro interruption d'activité"]
+    },
+    {
+      "id": "peak-2x8",
+      "title": "Organisation 2x8 en pic",
+      "tags": ["management", "organisation", "performance", "recrutement", "terrain"],
+      "facts": ["Passage de 20 à 40 collaborateurs mobilisés sur 3 semaines en 2023", "Record absolu depuis la création de la société en 2005", "Performance reconduite en 2024 et 2025"]
+    },
+    {
+      "id": "supplier-savings",
+      "title": "Renégociation fournisseurs",
+      "tags": ["achats", "négociation", "performance", "finance", "charges"],
+      "facts": ["Environ 270 k€ d'économies annuelles", "Réduction d'environ 40%"]
+    },
+    {
+      "id": "growth",
+      "title": "Croissance et structuration",
+      "tags": ["croissance", "centre de profit", "management", "structuration"],
+      "facts": ["Trajectoire de 250 k€ à 36 M€ de CA", "Service passé de 3 à 23 collaborateurs en 10 ans"]
+    }
+  ],
+  "skills": ["Pilotage de centre de profit", "Management opérationnel", "Gestion de la performance", "Budget et maîtrise des charges", "Amélioration continue", "Gestion de projet", "Structuration des process", "Logistique et flux", "Gestion des stocks", "Relation clients grands comptes", "Négociation fournisseurs", "Recrutement et développement des équipes"],
+  "soft_skills": ["Leadership de proximité", "Décision", "Résolution de problèmes", "Communication directe", "Orientation résultats", "Adaptabilité", "Esprit d'équipe"],
+  "digital": ["Excel avancé", "Power BI", "Sage", "CRM", "WMS", "Google Workspace", "Outils IA"],
+  "education": [
+    {"year": 2010, "label": "BTS Management des Unités Commerciales"},
+    {"year": 2018, "label": "Expert Activ — AEC Disc"},
+    {"period": "2020-2026", "label": "CJD Le Mans"}
+  ],
+  "engagement": ["Parrain Initiative Sarthe", "Football"],
+  "preferences": {
+    "important": ["Autonomie réelle", "Latitude pour structurer et transformer", "Management d'équipes", "Responsabilité opérationnelle", "Projet avec impact mesurable"],
+    "avoid": ["Samedi régulier", "Rôle principalement exécutant avec faible autonomie"],
+    "compensation": {"historical_reference_eur_gross_annual": 85000, "target": "À évaluer selon périmètre, autonomie, variable et avantages"}
+  },
+  "source_priority": ["CV PDF récents", "Données validées dans l'application", "CV digital public"],
+  "notes": ["Ne pas déduire ou inventer de données absentes.", "Les coordonnées personnelles complètes peuvent être importées depuis les CV de référence lors de l'implémentation locale."]
+}

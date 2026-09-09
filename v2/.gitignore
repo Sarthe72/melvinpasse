@@ -1,0 +1,12 @@
+.venv/
+__pycache__/
+.pytest_cache/
+.pytest-tmp/
+.ruff_cache/
+.env
+instance/
+*.pyc
+*.egg-info/
+.DS_Store
+playwright/.cache/
+tmp/
