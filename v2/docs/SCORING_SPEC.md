@@ -21,3 +21,9 @@ Afficher séparément `confidence` selon la quantité de données explicites dan
 - contrainte géographique incompatible explicitement établie.
 
 Chaque score doit afficher les éléments qui l'expliquent. Pas de pourcentage décoratif sorti d'un chapeau algorithmique.
+
+## Repères de rémunération validés
+- Package cible : 85 k€ brut annuel, primes incluses.
+- Fixe visé : 65 k€ brut annuel, hors prime.
+- Une rémunération strictement supérieure à 55 k€ peut rester intéressante selon le périmètre, l'autonomie, le variable et les avantages.
+- Les montants égaux ou inférieurs à 55 k€ sont signalés comme incompatibles avec le seuil d'intérêt actuel.

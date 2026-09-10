@@ -102,7 +102,13 @@
   "preferences": {
     "important": ["Autonomie réelle", "Latitude pour structurer et transformer", "Management d'équipes", "Responsabilité opérationnelle", "Projet avec impact mesurable"],
     "avoid": ["Samedi régulier", "Rôle principalement exécutant avec faible autonomie"],
-    "compensation": {"historical_reference_eur_gross_annual": 85000, "target": "À évaluer selon périmètre, autonomie, variable et avantages"}
+    "compensation": {
+      "package_target_eur_gross_annual": 85000,
+      "package_target_includes_bonus": true,
+      "fixed_target_eur_gross_annual": 65000,
+      "interest_threshold_eur_gross_annual_exclusive": 55000,
+      "target": "85 k€ brut annuel primes incluses ; 65 k€ brut annuel hors prime ; au-delà de 55 k€ peut rester intéressant selon le périmètre, l’autonomie, le variable et les avantages"
+    }
   },
   "source_priority": ["CV PDF récents", "Données validées dans l'application", "CV digital public"],
   "notes": ["Ne pas déduire ou inventer de données absentes.", "Les coordonnées personnelles complètes peuvent être importées depuis les CV de référence lors de l'implémentation locale."]

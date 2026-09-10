@@ -7,6 +7,10 @@
 - Tests navigateur couvrant l'extraction réussie et le repli sur source protégée.
 - Analyse détaillée : justification du verdict, attentes de l'employeur, correspondances sourcées dans le profil et informations à clarifier.
 - Correction de la rémunération : un volume comme « 14 000 logements » ne peut plus être interprété comme un salaire.
+- Repères de rémunération validés : package cible de 85 k€ primes incluses, fixe visé de 65 k€ et intérêt possible au-delà de 55 k€.
+- Téléchargement A4 du CV et de la lettre de motivation directement depuis le kit de candidature.
+- Suivi remplacé par un tableau avec verdict, score, date et statut modifiable sur chaque ligne.
+- Suppression du bouton d'export technique de la fiche candidature.
 
 ## 1.0.0 — MVP complet
 - Application Flask locale, base SQLite et profil maître importé de façon idempotente.

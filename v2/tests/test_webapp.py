@@ -5,6 +5,7 @@ from threading import Thread
 
 from PIL import Image
 from playwright.sync_api import sync_playwright
+from pypdf import PdfReader
 
 
 LMM_URL = (
@@ -37,6 +38,12 @@ def test_mobile_browser_journey(tmp_path):
             )
             assert housing_analysis["salary"] is None
             assert not any("14 000" in flag for flag in housing_analysis["redFlags"])
+            interesting_salary = page.evaluate(
+                "analyze('CDI. Salaire 60 k€ brut annuel. Direction avec autonomie, management, budget, performance et transformation.')"
+            )
+            assert interesting_salary["salary"] == 60000
+            assert not any("Rémunération" in flag for flag in interesting_salary["redFlags"])
+            assert any("seuil d’intérêt" in value for value in interesting_salary["strengths"])
             page.fill(
                 '#quick-link-form input[name="url"]',
                 f"http://127.0.0.1:{server.server_port}/v2/web/index.html",
@@ -57,6 +64,7 @@ def test_mobile_browser_journey(tmp_path):
             page.click('#new-form button')
             page.wait_for_selector(".verdict")
             assert page.locator(".verdict b").inner_text() == "À ÉTUDIER"
+            assert not page.locator("#export").is_visible()
             assert page.locator("#candidate-now").inner_text() == "Candidater malgré les points à vérifier"
             assert page.get_by_role("heading", name="Pourquoi cette recommandation ?").is_visible()
             assert page.get_by_role("heading", name="Ce que l’employeur recherche").is_visible()
@@ -68,6 +76,15 @@ def test_mobile_browser_journey(tmp_path):
             page.click('a[href^="#cv/"]')
             page.wait_for_selector(".cv-page")
             assert page.locator(".cv-ident h2").inner_text() == "DIRECTEUR DES OPÉRATIONS"
+            first_id = page.evaluate("apps()[0].id")
+            cv_pdf = tmp_path / "cv-personnalise.pdf"
+            page.pdf(path=str(cv_pdf), format="A4", print_background=True, prefer_css_page_size=True)
+            assert len(PdfReader(cv_pdf).pages) == 1
+            page.goto(f"http://127.0.0.1:{server.server_port}/v2/web/#letter/{first_id}")
+            page.wait_for_selector(".letter-page")
+            letter_pdf = tmp_path / "lettre-motivation.pdf"
+            page.pdf(path=str(letter_pdf), format="A4", print_background=True, prefer_css_page_size=True)
+            assert len(PdfReader(letter_pdf).pages) == 1
             page.goto(f"http://127.0.0.1:{server.server_port}/v2/web/#dashboard")
             page.goto(f"http://127.0.0.1:{server.server_port}/v2/web/#new")
             page.fill('input[name="url"]', f"http://127.0.0.1:{server.server_port}/v2/web/index.html")
@@ -80,6 +97,14 @@ def test_mobile_browser_journey(tmp_path):
             page.click('#new-form button')
             page.wait_for_selector("#candidate-anyway")
             assert "NO GO recommandé" in page.locator(".analysis-gate").inner_text()
+            current_id = page.evaluate("apps()[0].id")
+            page.goto(f"http://127.0.0.1:{server.server_port}/v2/web/#kit/{current_id}")
+            assert page.locator("#pdf-cv").is_visible()
+            assert page.locator("#pdf-letter").is_visible()
+            page.goto(f"http://127.0.0.1:{server.server_port}/v2/web/#pipeline")
+            assert page.locator(".tracking-table tbody tr").count() == 2
+            page.locator('.table-status[data-id="%s"]' % current_id).select_option("ENTRETIEN")
+            assert page.evaluate("apps()[0].status") == "ENTRETIEN"
             browser.close()
     finally:
         server.shutdown()
