@@ -2,7 +2,7 @@
 
 ## ADN fixe observé dans les références
 - Une seule page A4.
-- Photo ronde en haut à gauche.
+- Photo rectangulaire en haut à gauche, en chevauchement entre l'en-tête et la colonne latérale.
 - Bandeau supérieur : nom, titre cible, sous-titre/positionnement, logo entreprise à droite pour une candidature personnalisée.
 - Colonne latérale colorée : contact, compétences, savoir-être, digital, formation, engagement local.
 - Corps blanc : profil, expériences, réalisations clés.
@@ -28,7 +28,7 @@
 - Sens des réalisations.
 
 ## Références
-Le générique définit l'identité de base. SPIE démontre l'adaptation au rouge et au poste « Responsable d'activité ». Alliance Healthcare démontre une adaptation plus sectorielle vers logistique/flux/grands comptes et direction d'établissement.
+La référence SPIE définit la structure visuelle principale de la V2 : en-tête blanc compact, nom bleu nuit avec accent coloré, grande photo rectangulaire, colonne latérale bleu nuit, rubans de dates, expériences regroupées en deux colonnes et réalisations chiffrées mises en avant. Cette structure reste fixe tandis que la couleur d'accent et le logo s'adaptent à l'entreprise. Alliance Healthcare démontre une adaptation plus sectorielle vers logistique/flux/grands comptes et direction d'établissement.
 
 ## ATS
 Le PDF graphique doit conserver du vrai texte sélectionnable, ordre de lecture raisonnable, titres explicites, pas de texte converti en image. Prévoir plus tard un export ATS sobre à partir des mêmes données.

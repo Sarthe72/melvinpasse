@@ -74,8 +74,10 @@ def test_mobile_browser_journey(tmp_path):
                 "document.documentElement.scrollWidth > document.documentElement.clientWidth"
             )
             page.click('a[href^="#cv/"]')
-            page.wait_for_selector(".cv-page")
-            assert page.locator(".cv-ident h2").inner_text() == "DIRECTEUR DES OPÉRATIONS"
+            page.wait_for_selector(".cv-spie-page")
+            assert page.locator(".spie-name h2").inner_text() == "DIRECTEUR DES OPÉRATIONS"
+            assert page.locator(".spie-side").is_visible()
+            assert page.locator(".spie-groups > div").count() == 5
             first_id = page.evaluate("apps()[0].id")
             cv_pdf = tmp_path / "cv-personnalise.pdf"
             page.pdf(path=str(cv_pdf), format="A4", print_background=True, prefer_css_page_size=True)
@@ -105,6 +107,13 @@ def test_mobile_browser_journey(tmp_path):
             assert page.locator(".tracking-table tbody tr").count() == 2
             page.locator('.table-status[data-id="%s"]' % current_id).select_option("ENTRETIEN")
             assert page.evaluate("apps()[0].status") == "ENTRETIEN"
+            page.goto(f"http://127.0.0.1:{server.server_port}/v2/web/#dashboard")
+            assert page.locator(".kpi-link").count() == 4
+            page.locator(".kpi-link").nth(2).click()
+            page.wait_for_selector(".active-filter")
+            assert page.locator(".active-filter").inner_text().startswith("Filtre : Entretien")
+            assert page.locator(".tracking-table tbody tr").count() == 1
+            assert page.locator(".tracking-table tbody tr").inner_text().find("Entreprise NO GO") >= 0
             browser.close()
     finally:
         server.shutdown()

@@ -10,16 +10,35 @@ const statusLabels={
   ABANDONNE:"Abandonnée"
 };
 
+const renderDashboard=dashboard;
+dashboard=function(){
+  renderDashboard();
+  const targets=["","A_CANDIDATER","ENTRETIEN","OFFRE"];
+  document.querySelectorAll(".kpis article").forEach((card,index)=>{
+    const filter=targets[index]||"";
+    card.classList.add("kpi-link");
+    card.setAttribute("role","link");
+    card.setAttribute("tabindex","0");
+    card.setAttribute("aria-label",filter?`Ouvrir les candidatures : ${statusLabels[filter]}`:"Ouvrir toutes les analyses");
+    const open=()=>{location.hash=filter?`pipeline/${filter}`:"pipeline"};
+    card.onclick=open;
+    card.onkeydown=event=>{if(event.key==="Enter"||event.key===" "){event.preventDefault();open()}};
+  });
+};
+
 pipeline=function(){
-  const list=apps();
+  const all=apps();
   let refreshed=false;
-  list.forEach(item=>{
+  all.forEach(item=>{
     if(item.analysis?.compensationVersion!==1){
       item.analysis=analyze(item.offer);
       refreshed=true;
     }
   });
-  if(refreshed)save(list);
+  if(refreshed)save(all);
+  const requestedFilter=decodeURIComponent(location.hash.slice(1).split("/")[1]||"");
+  const filter=STATUSES.includes(requestedFilter)?requestedFilter:"";
+  const list=filter?all.filter(item=>item.status===filter):all;
   const rows=list.map(item=>`<tr>
     <td><div class="company-cell"><img src="${item.logo}" alt=""><strong>${esc(item.company)}</strong></div></td>
     <td>${esc(item.title)}</td>
@@ -29,8 +48,10 @@ pipeline=function(){
     <td>${new Date(item.events[0]?.date||item.createdAt).toLocaleDateString("fr-FR")}</td>
     <td><a class="row-link" href="#application/${item.id}">Ouvrir</a></td>
   </tr>`).join("");
-  const content=list.length?`<div class="tracking-table-wrap"><table class="tracking-table"><thead><tr><th>Entreprise</th><th>Poste</th><th>Analyse</th><th>Score</th><th>Statut</th><th>Dernière mise à jour</th><th></th></tr></thead><tbody>${rows}</tbody></table></div>`:`<div class="empty"><p>Aucune candidature suivie pour le moment.</p><a class="button" href="#dashboard">Analyser une annonce</a></div>`;
-  layout("Suivi des candidatures","Tableau de bord",`<section class="panel tracking-panel">${content}</section>`,`<a class="button" href="#dashboard">Analyser une annonce</a>`);
+  const emptyLabel=filter?`Aucune candidature avec le statut « ${statusLabels[filter]} ».`:"Aucune candidature suivie pour le moment.";
+  const content=list.length?`<div class="tracking-table-wrap"><table class="tracking-table"><thead><tr><th>Entreprise</th><th>Poste</th><th>Analyse</th><th>Score</th><th>Statut</th><th>Dernière mise à jour</th><th></th></tr></thead><tbody>${rows}</tbody></table></div>`:`<div class="empty"><p>${esc(emptyLabel)}</p>${filter?`<a class="button secondary" href="#pipeline">Voir toutes les candidatures</a>`:`<a class="button" href="#dashboard">Analyser une annonce</a>`}</div>`;
+  const filterNotice=filter?`<div class="active-filter"><span>Filtre : <b>${esc(statusLabels[filter])}</b></span><a href="#pipeline">Afficher tout</a></div>`:"";
+  layout(filter?statusLabels[filter]:"Suivi des candidatures","Tableau de bord",`${filterNotice}<section class="panel tracking-panel">${content}</section>`,`<a class="button" href="#dashboard">Analyser une annonce</a>`);
   document.querySelectorAll(".table-status").forEach(select=>select.onchange=event=>{
     const records=apps(),item=records.find(entry=>entry.id===event.currentTarget.dataset.id);
     if(!item)return;

@@ -1,5 +1,5 @@
-const CACHE="cv-melvin-v5";
-const FILES=["./","index.html","styles.css","app.js","pdf.js","enhancements.js","manifest.webmanifest","../data/profile_master.json","../app/static/assets/portrait-melvin.jpg"];
+const CACHE="cv-melvin-v6";
+const FILES=["./","index.html","styles.css","app.js","cv-spie.js","pdf.js","enhancements.js","manifest.webmanifest","../data/profile_master.json","../app/static/assets/portrait-melvin.jpg"];
 self.addEventListener("install",event=>event.waitUntil(caches.open(CACHE).then(cache=>cache.addAll(FILES))));
 self.addEventListener("activate",event=>event.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(key=>key!==CACHE).map(key=>caches.delete(key))))));
 self.addEventListener("fetch",event=>event.respondWith(fetch(event.request).then(response=>{const copy=response.clone();if(new URL(event.request.url).origin===location.origin)caches.open(CACHE).then(cache=>cache.put(event.request,copy));return response}).catch(()=>caches.match(event.request))));

@@ -11,6 +11,8 @@
 - Téléchargement A4 du CV et de la lettre de motivation directement depuis le kit de candidature.
 - Suivi remplacé par un tableau avec verdict, score, date et statut modifiable sur chaque ligne.
 - Suppression du bouton d'export technique de la fiche candidature.
+- Compteurs du tableau de bord cliquables, avec ouverture directe de la liste filtrée correspondante.
+- CV dynamique reconstruit sur la structure visuelle de la référence SPIE, toujours en une page A4.
 
 ## 1.0.0 — MVP complet
 - Application Flask locale, base SQLite et profil maître importé de façon idempotente.
