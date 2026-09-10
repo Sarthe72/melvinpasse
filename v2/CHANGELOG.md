@@ -13,6 +13,9 @@
 - Suppression du bouton d'export technique de la fiche candidature.
 - Compteurs du tableau de bord cliquables, avec ouverture directe de la liste filtrée correspondante.
 - CV dynamique reconstruit sur la structure visuelle de la référence SPIE, toujours en une page A4.
+- En-tête du CV corrigé sans chevauchement et palette harmonisée automatiquement à partir du logo de l'entreprise.
+- Colonne colorée sécurisée dans le PDF, y compris lorsque le navigateur désactive l'impression des arrière-plans.
+- Nouvelle photo professionnelle `1K0A5053.jpg` utilisée pour tous les CV générés.
 
 ## 1.0.0 — MVP complet
 - Application Flask locale, base SQLite et profil maître importé de façon idempotente.

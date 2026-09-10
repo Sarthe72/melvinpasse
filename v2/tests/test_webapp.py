@@ -21,7 +21,7 @@ def test_mobile_browser_journey(tmp_path):
     thread = Thread(target=server.serve_forever, daemon=True)
     thread.start()
     logo = tmp_path / "logo.png"
-    Image.new("RGB", (120, 60), "#1d4ed8").save(logo)
+    Image.new("RGB", (120, 60), "#e73137").save(logo)
     try:
         with sync_playwright() as playwright:
             browser = playwright.chromium.launch(headless=True)
@@ -78,10 +78,28 @@ def test_mobile_browser_journey(tmp_path):
             assert page.locator(".spie-name h2").inner_text() == "DIRECTEUR DES OPÉRATIONS"
             assert page.locator(".spie-side").is_visible()
             assert page.locator(".spie-groups > div").count() == 5
+            header_boxes = page.evaluate("""() => {
+              const box = selector => document.querySelector(selector).getBoundingClientRect();
+              const name = box('.spie-name');
+              const logo = box('.spie-company-logo');
+              const contact = box('.spie-contact');
+              return {nameRight:name.right,logoLeft:logo.left,logoRight:logo.right,contactLeft:contact.left};
+            }""")
+            assert header_boxes["nameRight"] <= header_boxes["logoLeft"]
+            assert header_boxes["logoRight"] <= header_boxes["contactLeft"]
+            assert page.locator(".spie-side-bg").count() == 1
             first_id = page.evaluate("apps()[0].id")
             cv_pdf = tmp_path / "cv-personnalise.pdf"
             page.pdf(path=str(cv_pdf), format="A4", print_background=True, prefer_css_page_size=True)
             assert len(PdfReader(cv_pdf).pages) == 1
+            cv_pdf_without_backgrounds = tmp_path / "cv-sans-arriere-plans.pdf"
+            page.pdf(
+                path=str(cv_pdf_without_backgrounds),
+                format="A4",
+                print_background=False,
+                prefer_css_page_size=True,
+            )
+            assert len(PdfReader(cv_pdf_without_backgrounds).pages) == 1
             page.goto(f"http://127.0.0.1:{server.server_port}/v2/web/#letter/{first_id}")
             page.wait_for_selector(".letter-page")
             letter_pdf = tmp_path / "lettre-motivation.pdf"
