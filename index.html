@@ -12,6 +12,8 @@
   <meta property="og:type" content="website" />
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:image" content="https://sarthe72.github.io/melvinpasse/og-image.png" />
+  <meta name="theme-color" content="#F8F4EE" />
+  <link rel="canonical" href="https://sarthe72.github.io/melvinpasse/" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet" />
   <style>
@@ -36,6 +38,11 @@
     }
 
     html { scroll-behavior: smooth; }
+
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
+    }
 
     body {
       background: var(--bg);
@@ -253,6 +260,15 @@
       overflow: hidden;
     }
     .avatar img { width: 100%; height: 100%; object-fit: cover; object-position: center 20%; border-radius: 50%; }
+
+    /* ─── PHOTOS PROFESSIONNELLES ─────────────────────────────────── */
+    #situation { padding: 4.5rem 2rem; background: var(--surface); }
+    .situation-grid { max-width: 1100px; margin: 0 auto; display: grid; grid-template-columns: 1.25fr .9fr .9fr; gap: 1rem; }
+    .situation-card { position: relative; min-height: 260px; overflow: hidden; border-radius: var(--radius); background: var(--surface2); box-shadow: var(--shadow); border: 1px solid var(--border); }
+    .situation-card img { width: 100%; height: 100%; min-height: 260px; display: block; object-fit: cover; transition: transform .5s ease; }
+    .situation-card:first-child img { object-position: center 35%; }
+    .situation-card:hover img { transform: scale(1.04); }
+    .situation-caption { position: absolute; left: 0; right: 0; bottom: 0; padding: 2.4rem 1.2rem 1rem; color: #fff; font-size: .86rem; font-weight: 700; background: linear-gradient(transparent, rgba(27,25,23,.82)); }
 
     /* ─── GLOBALS SECTIONS ────────────────────────────────────────── */
     .section-wrap { max-width: 1100px; margin: 0 auto; }
@@ -913,7 +929,7 @@
     /* ── Tablette ≤900px ── */
     @media (max-width: 900px) {
       .hero-inner { grid-template-columns: 1fr; text-align: center; }
-      .hero-visual { display: none; }
+      .hero-visual { display: flex; margin-top: 1.5rem; }
       .hero-desc { margin: 0 auto 2rem; }
       .hero-ctas { justify-content: center; }
       .metrics-grid { grid-template-columns: repeat(2, 1fr); }
@@ -928,6 +944,10 @@
     @media (max-width: 700px) {
       section { padding: 3.5rem 1.25rem; }
       #hero   { padding: 5.5rem 1.25rem 3.5rem; }
+      #situation { padding: 3.5rem 1.25rem; }
+      .situation-grid { grid-template-columns: 1fr 1fr; }
+      .situation-card:first-child { grid-column: 1 / -1; }
+      .situation-card, .situation-card img { min-height: 190px; }
 
       .avatar-wrap { width: 210px; height: 210px; }
       .avatar-deco-ring { inset: -10px; }
@@ -966,6 +986,8 @@
       .avatar-deco-ring::before, .avatar-deco-ring::after { width: 7px; height: 7px; }
 
       .metrics-grid { grid-template-columns: 1fr 1fr; }
+      .situation-grid { grid-template-columns: 1fr; }
+      .situation-card:first-child { grid-column: auto; }
       .perso-cards  { grid-template-columns: 1fr; }
       .reco-grid    { grid-template-columns: 1fr; }
 
@@ -1036,6 +1058,7 @@
     </a>
     <ul class="nav-links">
       <li><a href="#profil">Profil</a></li>
+      <li><a href="#situation">En situation</a></li>
       <li><a href="#impact">Impact</a></li>
       <li><a href="#experiences">Parcours</a></li>
       <li><a href="#projet">Projets phares</a></li>
@@ -1058,7 +1081,8 @@
         <p class="hero-sub"><strong><span id="age-hero"></span> ans</strong> · Sarthe (72)</p>
         <div class="hero-typewriter" id="tw-container">Je <span class="tw-word" id="tw-target">structure.</span></div>
         <p class="hero-desc">
-          Pilotage stratégique & humain — j'interviens sur la structuration et la transformation d'activités en environnement exigeant, avec une approche alliant performance opérationnelle et management humain.
+          <strong>Dirigeant opérationnel, capable de structurer, transformer et manager humainement.</strong><br>
+          J'interviens sur la structuration et la transformation d'activités en environnement exigeant, avec une approche alliant performance opérationnelle et management humain.
         </p>
         <div class="hero-ctas">
           <a href="#contact" class="btn-primary">Me contacter</a>
@@ -1183,6 +1207,27 @@
     </div>
   </section>
 
+  <!-- PHOTOS EN SITUATION -->
+  <section id="situation">
+    <p class="section-label">Au-delà du titre</p>
+    <h2 class="section-title fade-in">Une direction au contact du terrain</h2>
+    <p class="section-sub fade-in">Écouter, décider, faire avancer les équipes : une posture de dirigeant présente dans l'action.</p>
+    <div class="situation-grid">
+      <figure class="situation-card fade-in">
+        <img src="photos/cv-management.jpg" alt="Melvin PASSE en échange professionnel" loading="lazy" decoding="async">
+        <figcaption class="situation-caption">Management de proximité & écoute</figcaption>
+      </figure>
+      <figure class="situation-card fade-in">
+        <img src="photos/cv-pilotage.jpg" alt="Melvin PASSE en situation de pilotage" loading="lazy" decoding="async">
+        <figcaption class="situation-caption">Pilotage opérationnel & outils</figcaption>
+      </figure>
+      <figure class="situation-card fade-in">
+        <img src="photos/cv-entretien.jpg" alt="Melvin PASSE lors d'un entretien professionnel" loading="lazy" decoding="async">
+        <figcaption class="situation-caption">Échange & prise de décision</figcaption>
+      </figure>
+    </div>
+  </section>
+
   <!-- IMPACT METRICS -->
   <section id="impact">
     <p class="section-label">Impact mesurable</p>
@@ -1194,7 +1239,7 @@
         <div class="metric-value">
           <span class="counter" data-target="36">0</span><span class="unit">&nbsp;M€</span>
         </div>
-        <p class="metric-label">de CA piloté (vs 250 k€ au départ)</p>
+        <p class="metric-label">de CA piloté en 2021 (vs 250 k€ au départ)</p>
       </div>
       <div class="metric-card fade-in">
         <span class="metric-icon">🚀</span>
@@ -1328,7 +1373,7 @@
       <!-- EXP 3 -->
       <div class="exp-item">
         <div class="exp-dot" style="background:var(--green); box-shadow: 0 0 12px var(--green);"></div>
-        <p class="exp-period" style="color:var(--green);">2012 → 2022 · 10 ans</p>
+        <p class="exp-period" style="color:var(--green);">2012 → 2016 · 4 ans</p>
         <h3 class="exp-role">Responsable Service Clients, Retours & Achats</h3>
         <p class="exp-company">SARL ASDiscount · CDI · Maresché (72)</p>
         <div class="exp-card">
@@ -1384,13 +1429,13 @@
       </div>
       <div class="projet-gallery">
         <div class="projet-gallery-main" data-src="projet batiment 1.jpg">
-          <img src="projet batiment 1.jpg" alt="Bâtiment ASD — vue principale">
+          <img src="projet batiment 1.jpg" alt="Bâtiment ASD — vue principale" loading="lazy" decoding="async">
         </div>
         <div class="projet-gallery-thumb" data-src="projet batiment 2.jpg">
-          <img src="projet batiment 2.jpg" alt="Bâtiment ASD — vue 2">
+          <img src="projet batiment 2.jpg" alt="Bâtiment ASD — vue 2" loading="lazy" decoding="async">
         </div>
         <div class="projet-gallery-thumb" data-src="projet batiment 3.jpg">
-          <img src="projet batiment 3.jpg" alt="Bâtiment ASD — vue 3">
+          <img src="projet batiment 3.jpg" alt="Bâtiment ASD — vue 3" loading="lazy" decoding="async">
         </div>
       </div>
       <div class="projet-body">
@@ -1716,10 +1761,10 @@
         <input type="hidden" name="_subject" value="Nouvelle recommandation — CV Melvin">
         <input type="hidden" name="type" value="recommandation">
         <div class="reco-form-row">
-          <input class="form-field" type="text" name="nom" placeholder="Votre nom" required>
-          <input class="form-field" type="text" name="role" placeholder="Votre rôle / entreprise" required>
+          <input class="form-field" type="text" name="nom" placeholder="Votre nom" aria-label="Votre nom" autocomplete="name" required>
+          <input class="form-field" type="text" name="role" placeholder="Votre rôle / entreprise" aria-label="Votre rôle ou entreprise" required>
         </div>
-        <textarea class="form-field" name="temoignage" placeholder="Votre témoignage…" style="min-height:100px;" required></textarea>
+        <textarea class="form-field" name="temoignage" placeholder="Votre témoignage…" aria-label="Votre témoignage" style="min-height:100px;" required></textarea>
         <button type="submit" class="btn-send">Envoyer ma recommandation →</button>
       </form>
     </div>
@@ -1729,7 +1774,7 @@
   <section id="contact">
     <p class="section-label">Contact</p>
     <h2 class="section-title fade-in">Travaillons ensemble</h2>
-    <p class="section-sub fade-in">Je suis ouvert à toute opportunité de Directeur ou de bras droit d'un Directeur.</p>
+    <p class="section-sub fade-in">Je suis ouvert à une opportunité de direction opérationnelle ou de bras droit de dirigeant.</p>
     <br>
     <div class="contact-inner">
       <div class="contact-info fade-in">
@@ -1774,10 +1819,10 @@
             <span class="form-guide-arrow">↓</span>
             Dites-moi ce que vous cherchez — je réponds sous 24h
           </div>
-          <input class="form-field" type="text" name="nom" placeholder="Votre nom" required />
-          <input class="form-field" type="email" name="email" placeholder="Votre email" required />
-          <input class="form-field" type="text" name="objet" placeholder="Objet" />
-          <textarea class="form-field" name="message" placeholder="Votre message…" required></textarea>
+          <input class="form-field" type="text" name="nom" placeholder="Votre nom" aria-label="Votre nom" autocomplete="name" required />
+          <input class="form-field" type="email" name="email" placeholder="Votre email" aria-label="Votre adresse email" autocomplete="email" required />
+          <input class="form-field" type="text" name="objet" placeholder="Objet" aria-label="Objet du message" />
+          <textarea class="form-field" name="message" placeholder="Votre message…" aria-label="Votre message" required></textarea>
           <button type="submit" class="btn-send">Envoyer le message →</button>
         </form>
       </div>
@@ -1815,6 +1860,7 @@
     // ─── Nav logo photo (copie depuis l'avatar principal) ───────────────
     const navAvatar = document.querySelector('.nav-logo-avatar');
     const heroAvatar = document.querySelector('.avatar img');
+    if (heroAvatar) heroAvatar.src = 'photos/cv-portrait-principal.jpg';
     if (navAvatar && heroAvatar) navAvatar.src = heroAvatar.src;
 
     // ─── Typewriter ──────────────────────────────────────────────────
