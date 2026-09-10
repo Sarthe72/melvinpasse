@@ -32,6 +32,11 @@ def test_mobile_browser_journey(tmp_path):
             assert page.evaluate(
                 "getComputedStyle(document.documentElement).getPropertyValue('--brand').trim()"
             ) == "#7A9E87"
+            housing_analysis = page.evaluate(
+                "analyze('Organisme gérant 14 000 logements. CDI. Direction, management, budget, performance et transformation.')"
+            )
+            assert housing_analysis["salary"] is None
+            assert not any("14 000" in flag for flag in housing_analysis["redFlags"])
             page.fill(
                 '#quick-link-form input[name="url"]',
                 f"http://127.0.0.1:{server.server_port}/v2/web/index.html",
@@ -51,8 +56,12 @@ def test_mobile_browser_journey(tmp_path):
             page.set_input_files('input[name="logo"]', logo)
             page.click('#new-form button')
             page.wait_for_selector(".verdict")
-            assert page.locator(".verdict b").inner_text() == "GO"
-            assert page.locator("#candidate-now").inner_text() == "Marquer comme à candidater"
+            assert page.locator(".verdict b").inner_text() == "À ÉTUDIER"
+            assert page.locator("#candidate-now").inner_text() == "Candidater malgré les points à vérifier"
+            assert page.get_by_role("heading", name="Pourquoi cette recommandation ?").is_visible()
+            assert page.get_by_role("heading", name="Ce que l’employeur recherche").is_visible()
+            assert page.get_by_role("heading", name="Correspondances expliquées").is_visible()
+            assert page.locator(".match-details article").count() >= 4
             assert not page.evaluate(
                 "document.documentElement.scrollWidth > document.documentElement.clientWidth"
             )

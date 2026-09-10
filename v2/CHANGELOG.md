@@ -5,6 +5,8 @@
 - Lecture des données structurées disponibles sur LinkedIn et Indeed, sans confondre une page anti-robot avec une annonce.
 - Repli explicite pour les sources protégées comme Glassdoor : lien et titre conservés, texte à coller manuellement.
 - Tests navigateur couvrant l'extraction réussie et le repli sur source protégée.
+- Analyse détaillée : justification du verdict, attentes de l'employeur, correspondances sourcées dans le profil et informations à clarifier.
+- Correction de la rémunération : un volume comme « 14 000 logements » ne peut plus être interprété comme un salaire.
 
 ## 1.0.0 — MVP complet
 - Application Flask locale, base SQLite et profil maître importé de façon idempotente.
