@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.1.0 — Lecture des annonces en ligne
+- Extraction automatique des offres publiques via une fonction sécurisée, avec prise en charge du lien LMM Habitat.
+- Lecture des données structurées disponibles sur LinkedIn et Indeed, sans confondre une page anti-robot avec une annonce.
+- Repli explicite pour les sources protégées comme Glassdoor : lien et titre conservés, texte à coller manuellement.
+- Tests navigateur couvrant l'extraction réussie et le repli sur source protégée.
+
 ## 1.0.0 — MVP complet
 - Application Flask locale, base SQLite et profil maître importé de façon idempotente.
 - Parcours offre + logo, stockage sécurisé et pipeline historisé.
