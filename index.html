@@ -527,18 +527,19 @@
       background: linear-gradient(135deg, #F4EEE4 0%, #EDE5D8 100%);
       border-bottom: 1px solid var(--border);
       padding: 2rem 2.5rem;
-      display: flex; align-items: flex-start; justify-content: space-between;
+      display: flex; align-items: center; justify-content: center;
       flex-wrap: wrap; gap: 1rem;
     }
+    .projet-header-left { display: flex; flex-direction: column; align-items: center; width: 100%; }
     .projet-badge-period {
       display: inline-flex; align-items: center; gap: .5rem;
       background: rgba(201,106,69,.1); border: 1px solid rgba(201,106,69,.25);
       color: var(--accent); padding: .35rem .9rem; border-radius: 99px;
       font-size: .74rem; font-weight: 700; letter-spacing: .08em;
-      text-transform: uppercase; margin-bottom: 1rem;
+      text-transform: uppercase; margin: 0 auto 1rem;
     }
     .projet-title { font-size: 1.6rem; font-weight: 800; margin-bottom: .5rem; }
-    .projet-subtitle { color: var(--muted); font-size: .95rem; max-width: 560px; line-height: 1.6; }
+    .projet-subtitle { color: var(--muted); font-size: .95rem; max-width: 760px; line-height: 1.6; margin: 0 auto; text-align: center; }
     .projet-badge-company {
       background: rgba(61,59,88,.07); border: 1px solid rgba(61,59,88,.15);
       color: var(--accent2); padding: .4rem 1rem; border-radius: 99px;
