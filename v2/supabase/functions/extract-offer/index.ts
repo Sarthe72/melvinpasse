@@ -91,6 +91,69 @@ function companyFromHost(url: URL) {
   return host.split(".")[0].replace(/[-_]+/g, " ").replace(/\b\w/g, (letter) => letter.toUpperCase());
 }
 
+function apecOfferNumber(url: URL) {
+  if (!/(?:^|\.)apec\.fr$/i.test(url.hostname)) return "";
+  return url.pathname.match(/detail-offre\/(\d+[A-Z]?)/i)?.[1] || "";
+}
+
+function firstNestedString(value: unknown, keys: string[]): string {
+  if (!value || typeof value !== "object") return "";
+  const record = value as Record<string, unknown>;
+  for (const key of keys) {
+    const direct = record[key];
+    if (typeof direct === "string" && direct.trim()) return direct.trim();
+  }
+  for (const child of Object.values(record)) {
+    const found = firstNestedString(child, keys);
+    if (found) return found;
+  }
+  return "";
+}
+
+function collectApecText(value: unknown, parts: string[] = [], seen = new Set<unknown>()) {
+  if (!value || typeof value !== "object" || seen.has(value)) return parts;
+  seen.add(value);
+  const record = value as Record<string, unknown>;
+  for (const [key, child] of Object.entries(record)) {
+    if (typeof child === "string" && /(texte|description|descriptif|profil|mission|competence|salaire|lieu|contrat)/i.test(key)) {
+      const text = plainText(child);
+      if (text.length >= 3 && !parts.includes(text)) parts.push(text);
+    } else if (child && typeof child === "object") {
+      collectApecText(child, parts, seen);
+    }
+  }
+  return parts;
+}
+
+async function fetchApecOffer(url: URL) {
+  const offerNumber = apecOfferNumber(url);
+  if (!offerNumber) return null;
+  const endpoint = new URL("https://www.apec.fr/cms/webservices/offre/public");
+  endpoint.searchParams.set("numeroOffre", offerNumber);
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), 12_000);
+  try {
+    const response = await fetch(endpoint, {
+      signal: controller.signal,
+      headers: {
+        "Accept": "application/json, text/plain, */*",
+        "Accept-Language": "fr-FR,fr;q=0.9",
+        "Referer": url.toString(),
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/140 Safari/537.36",
+      },
+    });
+    if (!response.ok) throw new Error(`APEC HTTP ${response.status}`);
+    const payload = await response.json();
+    const title = firstNestedString(payload, ["intitule", "title", "intituleOffre"]);
+    const company = firstNestedString(payload, ["nomCommercial", "nomEntreprise", "raisonSociale", "company"]);
+    const text = collectApecText(payload).join("\n").slice(0, 120_000);
+    if (!title || text.length < 250 || protectedPage.test(text.slice(0, 2500))) throw new Error("APEC contenu protégé");
+    return { title, company: company || "Entreprise confidentielle", text, source: "apec-api", reference: offerNumber };
+  } finally {
+    clearTimeout(timer);
+  }
+}
+
 function titleMatches(text: string, title: string) {
   const words = title.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "")
     .split(/[^a-z0-9]+/).filter((word) => word.length >= 4);
@@ -133,6 +196,14 @@ Deno.serve(async (request) => {
     const requestedTitle = titleFromUrl(url);
     const fetchUrl = new URL(url.toString());
     fetchUrl.hash = "";
+    if (apecOfferNumber(url)) {
+      try {
+        const offer = await fetchApecOffer(url);
+        if (offer) return new Response(JSON.stringify(offer), { headers: cors });
+      } catch {
+        // APEC may temporarily challenge server traffic; retain the generic fallbacks below.
+      }
+    }
     let html = "";
     let source = "direct";
     try {
@@ -150,7 +221,7 @@ Deno.serve(async (request) => {
       : plainText(html);
     const text = structuredText.length >= 200 ? structuredText : rawText;
     const signalCount = new Set((text.match(jobSignals) || []).map((item) => item.toLowerCase())).size;
-    const guardedProvider = /(?:^|\.)(?:linkedin|indeed|glassdoor)\./i.test(url.hostname);
+    const guardedProvider = /(?:^|\.)(?:linkedin|indeed|glassdoor|apec)\./i.test(url.hostname);
     const unverifiedListing = guardedProvider && !structured && (!requestedTitle || !titleMatches(text, requestedTitle));
     if (protectedPage.test(text.slice(0, 2500)) || text.length < 250 || signalCount < 3 || unverifiedListing) {
       return new Response(JSON.stringify({ error: "SOURCE_PROTECTED", provider: url.hostname }), { status: 422, headers: cors });

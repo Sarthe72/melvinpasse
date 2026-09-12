@@ -12,6 +12,7 @@ LMM_URL = (
     "https://www.lmmhabitat.com/espace-recrutement"
     "#Directeur%20de%20la%20Proximit%C3%A9%20CDI%20/%20Directeur%20de%20la%20Proximit%C3%A9"
 )
+APEC_URL = "https://www.apec.fr/candidat/recherche-emploi.html/emploi/detail-offre/179398592W"
 
 
 def test_mobile_browser_journey(tmp_path):
@@ -156,6 +157,19 @@ def test_job_link_extraction_and_protected_source_fallback():
                         content_type="application/json",
                         body='{"error":"SOURCE_PROTECTED","provider":"glassdoor.fr"}',
                     )
+                elif "apec.fr" in request.post_data:
+                    route.fulfill(
+                        status=200,
+                        content_type="application/json",
+                        body=(
+                            '{"title":"Directeur de site F/H","company":"PARTNAIRE",'
+                            '"text":"CDI au Mans. Salaire 70 k€ brut annuel. Direction de site logistique. '
+                            'Missions et responsabilités du poste. Profil recherché avec expérience et compétences en '
+                            'Pilotage des activités opérationnelles, humaines et financières. Management des équipes, '
+                            'budget, indicateurs de performance, gestion des flux, optimisation des stocks, sécurité, '
+                            'amélioration continue, projets logistiques, normes QHSE, WMS, ERP et Lean Management."}'
+                        ),
+                    )
                 else:
                     route.fulfill(
                         status=200,
@@ -178,6 +192,16 @@ def test_job_link_extraction_and_protected_source_fallback():
             page.wait_for_selector('#new-form:not(.hidden)')
             assert page.input_value('input[name="company"]') == "Le Mans Métropole Habitat"
             assert page.input_value('input[name="title"]') == "Directeur de la Proximité"
+            assert "Annonce chargée" in page.locator("#link-help").inner_text()
+
+            page.goto(f"http://127.0.0.1:{server.server_port}/v2/web/#dashboard")
+            page.goto(f"http://127.0.0.1:{server.server_port}/v2/web/#new")
+            page.fill('input[name="url"]', APEC_URL)
+            page.click('#link-form button')
+            page.wait_for_selector('#new-form:not(.hidden)')
+            assert page.input_value('input[name="company"]') == "PARTNAIRE"
+            assert page.input_value('input[name="title"]') == "Directeur de site F/H"
+            assert "70 k€" in page.input_value('textarea[name="offer"]')
             assert "Annonce chargée" in page.locator("#link-help").inner_text()
 
             page.goto(f"http://127.0.0.1:{server.server_port}/v2/web/#dashboard")

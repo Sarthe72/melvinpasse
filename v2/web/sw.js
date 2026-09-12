@@ -1,4 +1,4 @@
-const CACHE="cv-melvin-v8";
+const CACHE="cv-melvin-v9";
 const FILES=["./","index.html","styles.css","app.js","cv-spie.js","pdf.js","enhancements.js","manifest.webmanifest","../data/profile_master.json","../app/static/assets/portrait-melvin-2026.jpg"];
 self.addEventListener("install",event=>event.waitUntil(caches.open(CACHE).then(cache=>cache.addAll(FILES))));
 self.addEventListener("activate",event=>event.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(key=>key!==CACHE).map(key=>caches.delete(key))))));
