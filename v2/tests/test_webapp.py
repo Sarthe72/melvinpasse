@@ -108,13 +108,16 @@ def test_mobile_browser_journey(tmp_path):
             header_boxes = page.evaluate("""() => {
               const box = selector => document.querySelector(selector).getBoundingClientRect();
               const name = box('.spie-name');
-              const logo = box('.spie-company-logo');
+              const logo = box('.spie-company-badge');
               const contact = box('.spie-contact');
-              return {nameRight:name.right,logoLeft:logo.left,logoRight:logo.right,contactLeft:contact.left};
+              return {nameLeft:name.left,logoRight:logo.right,nameRight:name.right,contactLeft:contact.left};
             }""")
-            assert header_boxes["nameRight"] <= header_boxes["logoLeft"]
-            assert header_boxes["logoRight"] <= header_boxes["contactLeft"]
+            assert header_boxes["logoRight"] <= header_boxes["nameLeft"] + 24
+            assert header_boxes["nameRight"] <= header_boxes["contactLeft"]
             assert page.locator(".spie-side-bg").count() == 1
+            assert page.locator(".spie-company-watermark").count() == 1
+            assert page.evaluate("document.querySelector('.spie-main').scrollHeight <= document.querySelector('.spie-main').clientHeight")
+            assert page.evaluate("document.querySelector('.spie-side').scrollHeight <= document.querySelector('.spie-side').clientHeight")
             first_id = page.evaluate("apps()[0].id")
             cv_pdf = tmp_path / "cv-personnalise.pdf"
             page.pdf(path=str(cv_pdf), format="A4", print_background=True, prefer_css_page_size=True)
@@ -129,6 +132,7 @@ def test_mobile_browser_journey(tmp_path):
             assert len(PdfReader(cv_pdf_without_backgrounds).pages) == 1
             page.goto(f"http://127.0.0.1:{server.server_port}/v2/web/#letter/{first_id}")
             page.wait_for_selector(".letter-page")
+            assert page.locator(".letter-watermark").count() == 1
             letter_pdf = tmp_path / "lettre-motivation.pdf"
             page.pdf(path=str(letter_pdf), format="A4", print_background=True, prefer_css_page_size=True)
             assert len(PdfReader(letter_pdf).pages) == 1
