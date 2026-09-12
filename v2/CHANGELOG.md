@@ -1,7 +1,7 @@
 # Changelog
 
 ## 1.1.0 — Lecture des annonces en ligne
-- Lecture dédiée des offres APEC via leur référence publique, avant le repli sur la page protégée.
+- Lecture dédiée des offres APEC via leur référence publique, avec repli sur la recherche APEC lorsque le détail est protégé.
 - Extraction automatique des offres publiques via une fonction sécurisée, avec prise en charge du lien LMM Habitat.
 - Lecture des données structurées disponibles sur LinkedIn et Indeed, sans confondre une page anti-robot avec une annonce.
 - Repli explicite pour les sources protégées comme Glassdoor : lien et titre conservés, texte à coller manuellement.

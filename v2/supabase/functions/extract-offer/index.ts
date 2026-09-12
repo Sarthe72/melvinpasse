@@ -154,6 +154,52 @@ async function fetchApecOffer(url: URL) {
   }
 }
 
+async function fetchApecSearchCard(url: URL) {
+  const offerNumber = apecOfferNumber(url);
+  if (!offerNumber) return null;
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), 12_000);
+  try {
+    const response = await fetch("https://www.apec.fr/cms/webservices/rechercheOffre", {
+      method: "POST",
+      signal: controller.signal,
+      headers: {
+        "Accept": "application/json",
+        "Content-Type": "application/json",
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/140 Safari/537.36",
+      },
+      body: JSON.stringify({
+        numeroOffre: offerNumber,
+        motsCles: "",
+        typeClient: "CADRE",
+        activeFiltre: true,
+        sorts: [{ type: "DATE", direction: "DESCENDING" }],
+        pagination: { range: 1, startIndex: 0 },
+      }),
+    });
+    if (!response.ok) throw new Error(`APEC recherche HTTP ${response.status}`);
+    const payload = await response.json();
+    const item = Array.isArray(payload?.resultats)
+      ? payload.resultats.find((candidate: Record<string, unknown>) => candidate?.numeroOffre === offerNumber)
+      : null;
+    if (!item) throw new Error("Offre APEC introuvable");
+    const title = String(item.intitule || "Annonce APEC").trim();
+    const company = String(item.nomCommercial || "Entreprise confidentielle").trim();
+    const text = [
+      `Poste : ${title}`,
+      `Entreprise : ${company}`,
+      item.lieuTexte ? `Lieu : ${item.lieuTexte}` : "",
+      item.salaireTexte ? `Salaire : ${item.salaireTexte}` : "",
+      item.texteOffre ? `Missions et description de l'offre : ${plainText(String(item.texteOffre))}` : "",
+      `Référence APEC : ${offerNumber}`,
+    ].filter(Boolean).join("\n");
+    if (text.length < 250) throw new Error("Résumé APEC incomplet");
+    return { title, company, text, source: "apec-search", reference: offerNumber };
+  } finally {
+    clearTimeout(timer);
+  }
+}
+
 function titleMatches(text: string, title: string) {
   const words = title.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "")
     .split(/[^a-z0-9]+/).filter((word) => word.length >= 4);
@@ -201,7 +247,13 @@ Deno.serve(async (request) => {
         const offer = await fetchApecOffer(url);
         if (offer) return new Response(JSON.stringify(offer), { headers: cors });
       } catch {
-        // APEC may temporarily challenge server traffic; retain the generic fallbacks below.
+        // The detail endpoint is protected by DataDome from some server networks.
+      }
+      try {
+        const offer = await fetchApecSearchCard(url);
+        if (offer) return new Response(JSON.stringify(offer), { headers: cors });
+      } catch {
+        // Retain the generic fallbacks below if APEC search is temporarily unavailable.
       }
     }
     let html = "";

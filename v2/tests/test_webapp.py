@@ -15,6 +15,19 @@ LMM_URL = (
 APEC_URL = "https://www.apec.fr/candidat/recherche-emploi.html/emploi/detail-offre/179398592W"
 
 
+def test_apec_edge_function_keeps_public_search_fallback():
+    source = (
+        Path(__file__).resolve().parents[1]
+        / "supabase"
+        / "functions"
+        / "extract-offer"
+        / "index.ts"
+    ).read_text(encoding="utf-8")
+    assert 'fetch("https://www.apec.fr/cms/webservices/rechercheOffre"' in source
+    assert "numeroOffre: offerNumber" in source
+    assert 'source: "apec-search"' in source
+
+
 def test_mobile_browser_journey(tmp_path):
     repository_root = Path(__file__).resolve().parents[2]
     handler = partial(SimpleHTTPRequestHandler, directory=repository_root)
