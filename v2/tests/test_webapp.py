@@ -28,6 +28,19 @@ def test_apec_edge_function_keeps_public_search_fallback():
     assert 'source: "apec-search"' in source
 
 
+def test_lmm_edge_function_isolates_selected_offer():
+    source = (
+        Path(__file__).resolve().parents[1]
+        / "supabase"
+        / "functions"
+        / "extract-offer"
+        / "index.ts"
+    ).read_text(encoding="utf-8")
+    assert "function selectedOfferText(" in source
+    assert '"lmmhabitat.com"' in source
+    assert "const focusedText =" in source
+
+
 def test_mobile_browser_journey(tmp_path):
     repository_root = Path(__file__).resolve().parents[2]
     handler = partial(SimpleHTTPRequestHandler, directory=repository_root)

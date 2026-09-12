@@ -84,6 +84,18 @@ function titleFromUrl(url: URL) {
   return linkedin?.replace(/-/g, " ") || "";
 }
 
+function selectedOfferText(html: string, url: URL, requestedTitle: string) {
+  if (url.hostname.replace(/^www\./, "") !== "lmmhabitat.com" || !requestedTitle) return "";
+  const normalizedTitle = requestedTitle.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+  const panels = html.split(/<div\s+class=["']panel panel-default["']>/i).slice(1);
+  const panel = panels.find((candidate) => plainText(candidate)
+    .toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+    .includes(normalizedTitle));
+  if (!panel) return "";
+  const offerOnly = panel.split(/<div\s+class=["']publications-links["']>/i)[0];
+  return plainText(offerOnly).replace(/\bTélécharger la fiche de poste\b[\s\S]*$/i, "").trim();
+}
+
 function companyFromHost(url: URL) {
   const host = url.hostname.replace(/^www\./, "");
   if (host === "lmmhabitat.com") return "Le Mans Métropole Habitat";
@@ -268,9 +280,10 @@ Deno.serve(async (request) => {
     const structured = jsonLdJob(html);
     const structuredCompany = structured?.hiringOrganization as Record<string, unknown> | undefined;
     const structuredText = structured ? plainText(String(structured.description || "")) : "";
-    const rawText = source === "reader"
+    const focusedText = source === "direct" ? selectedOfferText(html, url, requestedTitle) : "";
+    const rawText = focusedText || (source === "reader"
       ? html.replace(/^Title:.*?Markdown Content:\s*/s, "").trim()
-      : plainText(html);
+      : plainText(html));
     const text = structuredText.length >= 200 ? structuredText : rawText;
     const signalCount = new Set((text.match(jobSignals) || []).map((item) => item.toLowerCase())).size;
     const guardedProvider = /(?:^|\.)(?:linkedin|indeed|glassdoor|apec)\./i.test(url.hostname);
