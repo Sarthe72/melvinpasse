@@ -38,3 +38,13 @@
 
 @media(max-width:760px){.cv-spie-page{transform-origin:top left;transform:scale(calc((100vw - 38px)/794));margin-bottom:calc(-297mm + (297mm * (100vw - 38px)/794))}.letter-page{transform-origin:top left;transform:scale(calc((100vw - 38px)/794));margin-bottom:calc(-297mm + (297mm * (100vw - 38px)/794))}}
 @media print{.cv-spie-page{display:block!important}.spie-head{display:block!important}.letter-page{height:297mm}.letter-watermark{display:block!important}}
+
+/* Balanced A4 composition: measured vertical distribution, no decorative overlap. */
+.spie-side-content{height:242mm;display:flex;flex-direction:column;justify-content:space-between}.spie-side-content>section{margin:0}.spie-company-badge{display:none}
+.spie-main{padding-bottom:4.5mm}.spie-main-inner{height:100%;display:flex;flex-direction:column;justify-content:space-between}.spie-main-inner>section,.spie-main-inner>.spie-proofs,.spie-main-inner>.spie-tags{margin-top:0;margin-bottom:0}
+.spie-kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:2mm;margin-bottom:1mm}.spie-kpis div{min-height:13.5mm;padding:2mm 2.2mm;border-top:.75mm solid var(--company-accent);background:var(--company-light)}.spie-kpis b,.spie-kpis span{display:block}.spie-kpis b{color:var(--company-deep);font-size:10.5pt;line-height:1}.spie-kpis span{margin-top:1.1mm;color:#4f5360;font-size:5.45pt;line-height:1.2}
+
+/* Company mark: monochrome in a dark header, never laid over the portrait. */
+.spie-head{background:#282827}.spie-name h1{color:#fff}.spie-name h2{color:#fff}.spie-name p{color:#dedbd6}.spie-contact{top:22.5mm;color:#fff;font-size:5.2pt;line-height:1.12;gap:.65mm}
+.spie-company-watermark{display:none}.spie-logo-panel{position:absolute;z-index:2;top:2.7mm;right:5mm;width:38mm;height:17mm;display:grid;place-items:center;overflow:hidden}.spie-logo-panel .spie-company-logo{width:35mm;height:16mm;object-fit:contain;filter:brightness(0) invert(1);opacity:.95}
+.spie-logo-panel.is-lmm{width:36mm;height:18mm}.spie-logo-panel.is-lmm .spie-company-logo{position:absolute;top:-3mm;left:0;width:50mm;max-width:none;height:50mm;object-fit:contain;object-position:left top;filter:none;opacity:.95}

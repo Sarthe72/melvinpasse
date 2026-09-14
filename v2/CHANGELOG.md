@@ -1,5 +1,14 @@
 # Changelog
 
+## 1.2.0 — Modèle CV exécutif dynamique
+- Nouveau gabarit A4 pleine largeur issu de la maquette éditoriale validée, avec davantage d'espace blanc et sans barre latérale massive.
+- Palette harmonieuse calculée automatiquement depuis le logo fourni, avec teintes d'accent, sombres, neutres et claires contrôlées.
+- Logo du recruteur toujours conservé dans sa forme originale : aucun filtre, recadrage ou recoloriage.
+- Photo professionnelle et QR code du CV digital intégrés à tous les CV.
+- Poste cible, positionnement, compétences et ordre des réalisations adaptés à l'annonce sans invention.
+- Engagements précisés : Initiative Sarthe et 13 ans comme secrétaire d'un club de football amateur.
+- Tests navigateur mis à jour pour contrôler la page A4, la palette dynamique, l'intégrité du logo, le QR code et l'absence de débordement.
+
 ## 1.1.0 — Lecture des annonces en ligne
 - Lecture dédiée des offres APEC via leur référence publique, avec repli sur la recherche APEC lorsque le détail est protégé.
 - Les pages regroupant plusieurs offres, notamment LMM Habitat, sont maintenant limitées à l’annonce sélectionnée dans le lien.

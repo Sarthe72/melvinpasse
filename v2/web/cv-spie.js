@@ -1,67 +1,83 @@
-function cvHarmoniousColors(primary){
-  const rgb=(primary.match(/\d+/g)||[122,158,135]).slice(0,3).map(Number);
-  const [r,g,b]=rgb.map(value=>value/255),max=Math.max(r,g,b),min=Math.min(r,g,b);
-  let hue=0,saturation=0;
-  const lightness=(max+min)/2,delta=max-min;
+function rgbToHsl(rgb){
+  const [r,g,b]=rgb.map(value=>value/255),max=Math.max(r,g,b),min=Math.min(r,g,b),delta=max-min;
+  let hue=0;
   if(delta){
-    saturation=delta/(1-Math.abs(2*lightness-1));
     if(max===r)hue=60*(((g-b)/delta)%6);
     else if(max===g)hue=60*((b-r)/delta+2);
     else hue=60*((r-g)/delta+4);
   }
   if(hue<0)hue+=360;
-  const chroma=Math.max(38,Math.min(78,Math.round(saturation*100)));
+  return{hue,saturation:delta?delta/(1-Math.abs(max+min-1)):0,lightness:(max+min)/2};
+}
+
+function cvHarmoniousColors(primary){
+  const rgb=(primary.match(/\d+/g)||[44,93,73]).slice(0,3).map(Number);
+  const {hue,saturation,lightness}=rgbToHsl(rgb);
+  const h=Math.round(hue),s=Math.round(Math.max(42,Math.min(76,saturation*100)));
   return{
-    accent:`hsl(${Math.round(hue)} ${chroma}% ${Math.max(38,Math.min(52,Math.round(lightness*100)))}%)`,
-    deep:`hsl(${Math.round(hue)} ${Math.max(30,chroma-18)}% 22%)`,
-    side:`hsl(${Math.round(hue)} ${Math.max(28,chroma-24)}% 30%)`,
-    light:`hsl(${Math.round(hue)} 38% 93%)`
+    accent:`hsl(${h} ${s}% ${Math.round(Math.max(40,Math.min(51,lightness*100)))}%)`,
+    deep:`hsl(${h} ${Math.max(18,s-34)}% 17%)`,
+    muted:`hsl(${h} 7% 39%)`,
+    light:`hsl(${h} ${Math.min(38,s)}% 94%)`,
+    paper:`hsl(${h} 18% 98%)`
   };
 }
 
+function cvPaletteFromLogo(dataUrl){
+  return new Promise(resolve=>{
+    const image=new Image();
+    image.onload=()=>{
+      const canvas=document.createElement("canvas");canvas.width=72;canvas.height=72;
+      const context=canvas.getContext("2d",{willReadFrequently:true});context.clearRect(0,0,72,72);context.drawImage(image,0,0,72,72);
+      const pixels=context.getImageData(0,0,72,72).data,buckets=new Map();
+      for(let index=0;index<pixels.length;index+=16){
+        if(pixels[index+3]<120)continue;
+        const rgb=[pixels[index],pixels[index+1],pixels[index+2]],hsl=rgbToHsl(rgb);
+        if(hsl.lightness>.94||hsl.lightness<.08)continue;
+        const key=rgb.map(value=>Math.round(value/32)*32).join(",");
+        const entry=buckets.get(key)||{rgb,count:0,saturation:hsl.saturation,lightness:hsl.lightness};entry.count+=1;buckets.set(key,entry);
+      }
+      const candidates=[...buckets.values()],chromatic=candidates.filter(entry=>entry.saturation>.2),source=chromatic.length?chromatic:candidates;
+      source.sort((a,b)=>(b.count*(.45+b.saturation)*(1-Math.abs(b.lightness-.48)))-(a.count*(.45+a.saturation)*(1-Math.abs(a.lightness-.48))));
+      resolve(cvHarmoniousColors(`rgb(${(source[0]?.rgb||[44,93,73]).join(",")})`));
+    };
+    image.onerror=()=>resolve(cvHarmoniousColors("rgb(44,93,73)"));image.src=dataUrl;
+  });
+}
+
+function cvFact(main,fragment){return main.facts.find(value=>norm(value).includes(norm(fragment)))}
+function cvPeriod(value){
+  if(!value)return"";
+  const [year,month]=value.split("-"),names=["","Janv.","Févr.","Mars","Avr.","Mai","Juin","Juil.","Août","Sept.","Oct.","Nov.","Déc."];
+  return month?`${names[Number(month)]} ${year}`:year;
+}
+
 cv=async function(id){
-  const item=getItem(id);
-  if(!item)return dashboard();
-  const colors=await palette(item.logo);
-  const scheme=cvHarmoniousColors(colors.primary);
-  const skills=ranked(profile.skills,item.offer).slice(0,8);
-  const main=profile.experience[0];
+  const item=getItem(id);if(!item)return dashboard();
+  const scheme=await cvPaletteFromLogo(item.logo),skills=ranked(profile.skills,item.offer).slice(0,6),main=profile.experience[0];
   const groups=[
-    {title:"Pilotage opérationnel & performance",facts:main.facts.slice(0,4)},
-    {title:"Management & développement des équipes",facts:[`Management pluridisciplinaire : ${main.team}`,main.facts[6]]},
-    {title:"Process, qualité & amélioration continue",facts:main.facts.slice(4,6)},
-    {title:"Logistique, flux & coordination",facts:main.facts.slice(7,10)},
-    {title:"Résultats économiques",facts:main.facts.slice(10,12)}
-  ];
-  const proofs=item.analysis.evidence.slice(0,2);
-  while(proofs.length<2&&profile.evidence[proofs.length])proofs.push(profile.evidence[proofs.length]);
-  const otherExperiences=profile.experience.slice(1);
-  const positioning=item.analysis.matches.slice(0,2).join(" & ")||profile.identity.target_positioning.slice(0,2).join(" & ");
-  layout(item.title,"CV personnalisé · format de référence",`<div class="actions"><button class="button" id="print">Télécharger en PDF</button><a class="button secondary" href="#kit/${id}">Retour au kit</a></div><div class="cv-screen"><article class="cv-spie-page" style="--company-accent:${scheme.accent};--company-deep:${scheme.deep};--company-side:${scheme.side};--company-light:${scheme.light}">
-    <aside class="spie-side">
-      <svg class="spie-side-bg" aria-hidden="true" viewBox="0 0 47 297" preserveAspectRatio="none"><rect width="47" height="297"></rect></svg>
-      <div class="spie-side-spacer" aria-hidden="true"></div>
-      <section><h3>Compétences</h3>${skills.map(value=>`<span class="spie-pill">${esc(value)}</span>`).join("")}</section>
-      <section><h3>Savoir-être</h3>${profile.soft_skills.map(value=>`<span class="spie-pill">${esc(value)}</span>`).join("")}</section>
-      <section><h3>Digital</h3>${profile.digital.map(value=>`<span class="spie-pill">${esc(value)}</span>`).join("")}</section>
-      <section><h3>Profil</h3><ul><li>${esc(profile.identity.location)}</li><li>Permis ${esc(profile.identity.driving_licenses.join(" & "))}</li></ul></section>
-      <section><h3>Formation</h3>${profile.education.map(value=>`<div class="spie-education"><b>${esc(value.year||value.period)}</b><strong>${esc(value.label)}</strong></div>`).join("")}</section>
-      <section><h3>Engagement local</h3><ul>${profile.engagement.map(value=>`<li>${esc(value)}</li>`).join("")}</ul></section>
-    </aside>
-    <header class="spie-head">
-      <img class="spie-photo" src="../app/static/assets/portrait-melvin-2026.jpg" alt="Portrait de Melvin Passe">
-      <img class="spie-company-watermark" src="${item.logo}" alt="">
-      <div class="spie-name"><h1>MELVIN <span>PASSE</span></h1><h2>${esc(item.title)}</h2><p>${esc(positioning)}</p><p>${esc(profile.signature)}</p></div>
-      <div class="spie-contact"><b>${esc(profile.identity.email)}</b><b>${esc(profile.identity.phone)}</b><span>${esc(profile.identity.location)} · Permis ${esc(profile.identity.driving_licenses.join(" & "))}</span><span>${esc(profile.identity.linkedin)}</span></div>
-    </header>
-    <div class="spie-company-badge"><img class="spie-company-logo" src="${item.logo}" alt="Logo ${esc(item.company)}"></div>
-    <main class="spie-main">
-      <section class="spie-profile"><h3>Profil</h3><p>${esc(profile.summary)}</p><p>${esc(profile.signature)}</p></section>
-      <section><h3>Expériences professionnelles</h3><div class="spie-role"><h4>${esc(main.role)}</h4><span>${esc(main.start)} → ${esc(main.end)}</span></div><b class="spie-meta">${esc(main.company)} · ${esc(main.location)} · ${esc(main.team)}</b><div class="spie-groups">${groups.map(group=>`<div><h5>${esc(group.title)}</h5><ul>${group.facts.map(fact=>`<li>${esc(fact)}</li>`).join("")}</ul></div>`).join("")}</div></section>
-      <div class="spie-proofs">${proofs.map(proof=>`<article><b>${esc(proof.title)}</b><p>${proof.facts.map(esc).join(" · ")}</p></article>`).join("")}</div>
-      <div class="spie-tags">${skills.map(value=>`<span>${esc(value)}</span>`).join("")}</div>
-      ${otherExperiences.map(experience=>`<section class="spie-past"><div class="spie-role"><h4>${esc(experience.role)}</h4><span>${esc(experience.start)} → ${esc(experience.end)}</span></div><b class="spie-meta">${esc(experience.company)}${experience.location?` · ${esc(experience.location)}`:""}</b><ul>${experience.facts.map(fact=>`<li>${esc(fact)}</li>`).join("")}</ul></section>`).join("")}
-    </main>
+    {title:"Pilotage et performance",facts:[cvFact(main,"pilotage global"),cvFact(main,"indicateurs clés"),cvFact(main,"budget prévisionnel"),cvFact(main,"présence terrain")]},
+    {title:"Management et qualité de service",facts:[cvFact(main,"management pluridisciplinaire"),cvFact(main,"recrutement, intégration"),cvFact(main,"animation terrain"),cvFact(main,"standards de qualité")]},
+    {title:"Transformation de site",facts:[cvFact(main,"maître d'œuvre"),cvFact(main,"nouveau site"),cvFact(main,"coordination multi-intervenants"),cvFact(main,"zéro interruption")]},
+    {title:"Résultats marquants",facts:[cvFact(main,"270 k€"),cvFact(main,"250 k€ à 36 M€"),"Organisation 2x8 mobilisant 40 collaborateurs sur trois semaines, reconduite en 2024 et 2025."]}
+  ].map(group=>({...group,facts:ranked(group.facts.filter(Boolean),item.offer)}));
+  const expertise=skills.map(skill=>({label:skill,detail:{
+    "Pilotage de centre de profit":"Centre de profit, budget, indicateurs, reporting","Management opérationnel":"Organisation, recrutement, développement des équipes","Gestion de la performance":"Rendement, charges, taux de service","Budget et maîtrise des charges":"Budget, arbitrages, négociation fournisseurs","Amélioration continue":"Qualité, conformité, optimisation des organisations","Gestion de projet":"Projets complexes, coordination, conduite du changement","Structuration des process":"Méthodes de travail, outils et formalisation","Logistique et flux":"Plateforme, stocks, transporteurs, grands comptes","Gestion des stocks":"Stocks multi-références et coordination des flux","Relation clients grands comptes":"Amazon, Cdiscount, Fnac, La Redoute","Négociation fournisseurs":"Référencement, contrats et conditions tarifaires","Recrutement et développement des équipes":"Recrutement, intégration, compétences"
+  }[skill]||skill}));
+  const positioning=item.analysis.matches.slice(0,3).join("  |  ")||profile.identity.target_positioning.join("  |  ");
+  const summary="Dirigeant opérationnel issu du terrain, avec 16 ans au sein de la même structure et une progression jusqu'à la direction de site. Expérience du pilotage d'un centre de profit, du management de jusqu'à 40 collaborateurs, de la qualité de service et de transformations complexes.";
+  const engagement=["Parrain Initiative Sarthe - soutien à la création d'entreprise","Football - 13 ans secrétaire de club amateur"];
+  const previousSummaries=["Bras droit du dirigeant : co-pilotage des opérations, déclinaison de la stratégie, arbitrage des priorités et décisions d'investissement, de recrutement et d'organisation.","Création et structuration d'un service complet : de 3 collaborateurs et 250 k€ de CA à 23 collaborateurs et 36 M€ de CA. Clients grands comptes, achats fournisseurs et management.","Point de départ d'une progression du terrain à la direction."];
+  layout(item.title,"CV personnalisé · une page A4",`<div class="actions"><button class="button" id="print">Télécharger en PDF</button><a class="button secondary" href="#kit/${id}">Retour au kit</a></div><div class="cv-screen"><article class="cv-executive-page" style="--cv-accent:${scheme.accent};--cv-deep:${scheme.deep};--cv-muted:${scheme.muted};--cv-light:${scheme.light};--cv-paper:${scheme.paper}">
+    <header class="exec-header"><img class="exec-photo" src="../app/static/assets/portrait-melvin-2026.jpg" alt="Portrait de Melvin Passe"><div class="exec-identity"><h1>MELVIN PASSE</h1><h2>DIRECTEUR OPÉRATIONNEL</h2><h3>CANDIDAT AU POSTE DE ${esc(item.title)}</h3><p>${esc(positioning)}</p></div><div class="exec-brand"><img class="exec-company-logo" src="${item.logo}" alt="Logo ${esc(item.company)}"><a href="https://${esc(profile.identity.cv_url)}" aria-label="Ouvrir le CV digital"><img class="exec-qr" src="../../template/assets/qr-code.png" alt="QR code du CV digital"><small>CV DIGITAL</small></a></div></header>
+    <div class="exec-contact"><span>${esc(profile.identity.phone)} &nbsp; | &nbsp; ${esc(profile.identity.email)} &nbsp; | &nbsp; ${esc(profile.identity.location)} &nbsp; | &nbsp; Permis ${esc(profile.identity.driving_licenses.join(" & "))}</span><span>${esc(profile.identity.linkedin)} &nbsp; | &nbsp; ${esc(profile.identity.cv_url)}</span></div>
+    <main class="exec-main"><section><h3 class="exec-section-title"><span>Profil exécutif</span></h3><p class="exec-summary">${esc(summary)} Une approche structurée, factuelle et proche des équipes.</p></section>
+      <div class="exec-metrics"><div><b>36 M€</b><span>trajectoire de chiffre d'affaires</span></div><div><b>40</b><span>collaborateurs en période de pic</span></div><div><b>270 k€</b><span>économies annuelles négociées</span></div><div><b>-47 %</b><span>budget projet vs prévision</span></div></div>
+      <section class="exec-experience"><h3 class="exec-section-title"><span>Expérience professionnelle</span></h3><div class="exec-role"><h4>${esc(main.company)} &nbsp;|&nbsp; ${esc(main.role)}</h4><b>${cvPeriod(main.start)} - ${cvPeriod(main.end)}</b></div><p class="exec-meta">${esc(main.location)} &nbsp;|&nbsp; ${esc(main.team)}</p><div class="exec-groups">${groups.map(group=>`<div><h5>${esc(group.title)}</h5><ul>${group.facts.map(fact=>`<li>${esc(fact)}</li>`).join("")}</ul></div>`).join("")}</div></section>
+      <div class="exec-history">${profile.experience.slice(1).map((experience,index)=>`<section><div class="exec-role"><h4>${esc(experience.company)} &nbsp;|&nbsp; ${esc(experience.role)}</h4><b>${cvPeriod(experience.start)} - ${cvPeriod(experience.end)}</b></div><p class="exec-meta">${experience.contract?`${esc(experience.contract)} &nbsp;|&nbsp; `:""}${esc(experience.location||"")}</p><p>${esc(previousSummaries[index])}</p></section>`).join("")}</div>
+      <section class="exec-expertise"><h3 class="exec-section-title"><span>Domaines d'expertise</span></h3><div>${expertise.map(value=>`<article><b>${esc(value.label)}</b><span>${esc(value.detail)}</span></article>`).join("")}</div></section>
+      <div class="exec-footer-info"><p><b>FORMATION</b><span>${profile.education.map(value=>`${esc(value.label)} (${esc(value.year||value.period)})`).join(" &nbsp; | &nbsp; ")}</span></p><p><b>ENGAGEMENT</b><span>${engagement.map(esc).join(" &nbsp; | &nbsp; ")}</span></p></div></main>
+    <footer class="exec-footer"><span>Melvin PASSE &nbsp;|&nbsp; Candidature ${esc(item.title)}</span><span>${esc(item.company)}</span></footer>
   </article></div>`);
   document.querySelector("#print").onclick=()=>window.print();
 };

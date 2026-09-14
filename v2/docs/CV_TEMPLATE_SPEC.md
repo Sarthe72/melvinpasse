@@ -2,22 +2,21 @@
 
 ## ADN fixe observé dans les références
 - Une seule page A4.
-- Photo rectangulaire en haut à gauche, en chevauchement entre l'en-tête et la colonne latérale.
-- Bandeau supérieur : nom, titre cible, sous-titre/positionnement, logo entreprise à droite pour une candidature personnalisée.
-- Colonne latérale colorée : contact, compétences, savoir-être, digital, formation, engagement local.
-- Corps blanc : profil, expériences, réalisations clés.
+- Photo rectangulaire en haut à gauche, toujours présente.
+- En-tête éditorial : nom, positionnement, poste cible, logo officiel intact et QR code du CV digital.
+- Composition pleine largeur sans barre latérale massive.
+- Corps clair : profil exécutif, quatre indicateurs, expérience principale détaillée en deux colonnes, parcours antérieur et expertises.
 - Typographie sans-serif, hiérarchie nette, beaucoup d'air malgré une densité élevée.
-- Deux réalisations chiffrées fortes mises en évidence au milieu de la page.
+- Chiffres clés immédiatement visibles sans jauges ni pictogrammes décoratifs.
 
 ## Éléments dynamiques
-- Couleur primaire/secondaire dérivée du logo fourni, avec contrôle de contraste.
-- Logo entreprise et taille adaptée sans déformation.
+- Couleur d'accent extraite du logo fourni, puis palette sombre, claire et neutre dérivée avec contrôle de contraste.
+- Logo officiel affiché sans recadrage, recoloration, filtre ni déformation.
 - Intitulé du poste.
 - Sous-titre métier.
 - Accroche profil.
 - Ordre et sélection des compétences.
 - Tags de compétences.
-- Deux preuves/réalisations prioritaires.
 - Ordre des bullets de l'expérience principale.
 - Certaines formulations condensées selon l'offre.
 
@@ -28,7 +27,7 @@
 - Sens des réalisations.
 
 ## Références
-La référence SPIE définit la structure visuelle principale de la V2 : en-tête blanc compact, nom bleu nuit avec accent coloré, grande photo rectangulaire, colonne latérale bleu nuit, rubans de dates, expériences regroupées en deux colonnes et réalisations chiffrées mises en avant. Cette structure reste fixe tandis que la couleur d'accent et le logo s'adaptent à l'entreprise. Alliance Healthcare démontre une adaptation plus sectorielle vers logistique/flux/grands comptes et direction d'établissement.
+Les CV SPIE, Alliance Healthcare et la maquette éditoriale LMMH servent de références factuelles et visuelles. Le modèle V2 retient une structure exécutive pleine largeur, plus sobre et plus aérée. La grille reste fixe ; la couleur d'accent, le poste, le positionnement, l'ordre des expertises et des preuves s'adaptent à chaque annonce.
 
 ## ATS
 Le PDF graphique doit conserver du vrai texte sélectionnable, ordre de lecture raisonnable, titres explicites, pas de texte converti en image. Prévoir plus tard un export ATS sobre à partir des mêmes données.

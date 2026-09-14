@@ -7,7 +7,6 @@ from PIL import Image
 from playwright.sync_api import sync_playwright
 from pypdf import PdfReader
 
-
 LMM_URL = (
     "https://www.lmmhabitat.com/espace-recrutement"
     "#Directeur%20de%20la%20Proximit%C3%A9%20CDI%20/%20Directeur%20de%20la%20Proximit%C3%A9"
@@ -101,23 +100,25 @@ def test_mobile_browser_journey(tmp_path):
                 "document.documentElement.scrollWidth > document.documentElement.clientWidth"
             )
             page.click('a[href^="#cv/"]')
-            page.wait_for_selector(".cv-spie-page")
-            assert page.locator(".spie-name h2").inner_text() == "DIRECTEUR DES OPÉRATIONS"
-            assert page.locator(".spie-side").is_visible()
-            assert page.locator(".spie-groups > div").count() == 5
+            page.wait_for_selector(".cv-executive-page")
+            assert page.locator(".exec-identity h3").inner_text() == "CANDIDAT AU POSTE DE DIRECTEUR DES OPÉRATIONS"
+            assert page.locator(".exec-groups > div").count() == 4
+            assert page.locator(".exec-metrics > div").count() == 4
             header_boxes = page.evaluate("""() => {
               const box = selector => document.querySelector(selector).getBoundingClientRect();
-              const name = box('.spie-name');
-              const logo = box('.spie-company-badge');
-              const contact = box('.spie-contact');
-              return {nameLeft:name.left,logoRight:logo.right,nameRight:name.right,contactLeft:contact.left};
+              const identity = box('.exec-identity');
+              const brand = box('.exec-brand');
+              return {identityRight:identity.right,brandLeft:brand.left};
             }""")
-            assert header_boxes["logoRight"] <= header_boxes["nameLeft"] + 24
-            assert header_boxes["nameRight"] <= header_boxes["contactLeft"]
-            assert page.locator(".spie-side-bg").count() == 1
-            assert page.locator(".spie-company-watermark").count() == 1
-            assert page.evaluate("document.querySelector('.spie-main').scrollHeight <= document.querySelector('.spie-main').clientHeight")
-            assert page.evaluate("document.querySelector('.spie-side').scrollHeight <= document.querySelector('.spie-side').clientHeight")
+            assert header_boxes["identityRight"] <= header_boxes["brandLeft"]
+            assert page.locator(".exec-company-logo").get_attribute("src").startswith("data:image/")
+            assert page.locator(".exec-qr").count() == 1
+            assert "Garant des standards de qualité" in page.locator(".exec-main").inner_text()
+            assert "Zéro interruption d'activité" in page.locator(".exec-main").inner_text()
+            assert "13 ans secrétaire" in page.locator(".exec-main").inner_text()
+            assert page.evaluate("document.querySelector('.cv-executive-page').scrollHeight <= document.querySelector('.cv-executive-page').clientHeight")
+            accent = page.evaluate("getComputedStyle(document.querySelector('.cv-executive-page')).getPropertyValue('--cv-accent').trim()")
+            assert accent.startswith(("hsl(358", "hsl(359", "hsl(0 "))
             first_id = page.evaluate("apps()[0].id")
             cv_pdf = tmp_path / "cv-personnalise.pdf"
             page.pdf(path=str(cv_pdf), format="A4", print_background=True, prefer_css_page_size=True)
@@ -154,7 +155,7 @@ def test_mobile_browser_journey(tmp_path):
             assert page.locator("#pdf-letter").is_visible()
             page.goto(f"http://127.0.0.1:{server.server_port}/v2/web/#pipeline")
             assert page.locator(".tracking-table tbody tr").count() == 2
-            page.locator('.table-status[data-id="%s"]' % current_id).select_option("ENTRETIEN")
+            page.locator(f'.table-status[data-id="{current_id}"]').select_option("ENTRETIEN")
             assert page.evaluate("apps()[0].status") == "ENTRETIEN"
             page.goto(f"http://127.0.0.1:{server.server_port}/v2/web/#dashboard")
             assert page.locator(".kpi-link").count() == 4

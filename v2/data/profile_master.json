@@ -3,10 +3,12 @@
     "name": "Melvin PASSE",
     "email": "passe.melvin@gmail.com",
     "phone": "06.82.14.91.59",
+    "age": 36,
     "target_positioning": ["Directeur de site", "Direction des opérations", "Pilotage de centre de profit"],
     "location": "Sarthe (72)",
     "driving_licenses": ["A", "B"],
-    "linkedin": "linkedin.com/in/melvin-passe"
+    "linkedin": "linkedin.com/in/melvin-passe",
+    "cv_url": "sarthe72.github.io/melvinpasse"
   },
   "summary": "Dirigeant opérationnel avec 16 ans dans la même structure, du terrain à la direction : management pluridisciplinaire, pilotage de la performance, coordination de projets complexes et développement d'activité.",
   "signature": "Structurer, fédérer les équipes et produire des résultats mesurables sur le terrain comme dans les chiffres.",
@@ -25,10 +27,20 @@
         "Présence terrain permanente aux côtés des équipes",
         "Structuration et formalisation des process et méthodes de travail",
         "Mise en place et évolution des outils internes (CRM, suivi opérationnel)",
-        "Management pluridisciplinaire : plannings, montée en compétences, recrutement, intégration, fidélisation, feedback et gestion des conflits",
+        "Garant des standards de qualité à chaque étape",
+        "Traitement des non-conformités et amélioration continue des organisations",
+        "Management pluridisciplinaire (20 CDI et jusqu'à 40 en pic) : plannings et montée en compétences",
+        "Recrutement, intégration et fidélisation des collaborateurs",
+        "Animation terrain, feedback régulier et gestion des conflits",
+        "Garant d'un climat de travail sain et d'une équipe engagée",
+        "Maître d'œuvre du déménagement de site en 2024 : conception, organisation et exécution",
+        "Nouveau site de 1 200 m² opérationnel en 8 mois",
+        "Coordination multi-intervenants : prestataires, équipes et direction",
+        "Zéro interruption d'activité pendant le déménagement du site",
         "Pilotage d'une plateforme logistique de 1 200 m² : réception, stockage, préparation, expédition",
         "Gestion des stocks multi-références et coordination des flux avec transporteurs, prestataires et plateformes clients",
         "Pilotage de la relation clients grands comptes : Amazon, Cdiscount, Fnac, La Redoute",
+        "Garant de la satisfaction client : taux de service, délais et conformité des commandes",
         "Renégociation de contrats fournisseurs : environ 270 k€ d'économies annuelles, soit -40%",
         "Croissance de l'activité de 250 k€ à 36 M€ de CA sur la trajectoire professionnelle"
       ]
@@ -36,6 +48,8 @@
     {
       "role": "Directeur de Site Adjoint",
       "company": "SARL ASDiscount",
+      "contract": "CDI",
+      "location": "Maresché (72)",
       "start": "2016-06",
       "end": "2022-09",
       "facts": [
@@ -47,18 +61,22 @@
     {
       "role": "Responsable Service Clients, Retours & Achats",
       "company": "SARL ASDiscount",
+      "contract": "CDI",
+      "location": "Maresché (72)",
       "start": "2012-07",
       "end": "2022-09",
       "facts": [
         "Création et structuration de zéro d'un service complet : recrutements, process, outils, organisation",
         "3 collaborateurs et 250 k€ de CA vers 23 collaborateurs et 36 M€ de CA en 10 ans",
         "Pilotage de la relation clients grands comptes",
+        "Management des équipes : accompagnement terrain et montée en compétences",
         "Négociation achats fournisseurs, référencement et conditions tarifaires"
       ]
     },
     {
       "role": "Préparateur de commandes / Gestionnaire Achats",
       "company": "SARL ASDiscount",
+      "location": "Maresché (72)",
       "start": "2010-09",
       "end": "2012-06",
       "facts": ["Point de départ d'une trajectoire de 16 ans dans la même structure, du terrain à la direction"]
@@ -98,7 +116,7 @@
     {"year": 2018, "label": "Expert Activ — AEC Disc"},
     {"period": "2020-2026", "label": "CJD Le Mans"}
   ],
-  "engagement": ["Parrain Initiative Sarthe", "Football"],
+  "engagement": ["Parrain Initiative Sarthe - soutien à la création d'entreprise", "Football - 13 ans secrétaire de club amateur"],
   "preferences": {
     "important": ["Autonomie réelle", "Latitude pour structurer et transformer", "Management d'équipes", "Responsabilité opérationnelle", "Projet avec impact mesurable"],
     "avoid": ["Samedi régulier", "Rôle principalement exécutant avec faible autonomie"],
