@@ -1,6 +1,7 @@
 # Changelog
 
 ## 1.2.0 — Modèle CV exécutif dynamique
+- Extraction ARCHE/SNEXI nettoyée : suppression du bandeau cookies, des offres voisines et du pied de page ; conservation de la seule annonce sélectionnée et identification de l'employeur réel.
 - Notes employeur Le Mans Métropole Habitat corrigées et séparées par source : Glassdoor 2,8/5 (3 avis) et Indeed 2,1/5 (9 avis), avec date de vérification et liens directs.
 - Fiche recruteur ajoutée à chaque analyse : identité légale, ancienneté, taille, catégorie, siège, implantations, secteur, contexte et éventuelle note employeur sourcée.
 - Les informations entreprise proviennent de sources publiques explicites et sont conservées 30 jours ; une donnée ou une note absente n'est jamais estimée.

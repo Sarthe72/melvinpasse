@@ -13,6 +13,7 @@ LMM_URL = (
     "#Directeur%20de%20la%20Proximit%C3%A9%20CDI%20/%20Directeur%20de%20la%20Proximit%C3%A9"
 )
 APEC_URL = "https://www.apec.fr/candidat/recherche-emploi.html/emploi/detail-offre/179398592W"
+ARCHE_URL = "https://www.arche.fr/offres/MGGWXGGFWRMEED454"
 
 
 def test_pwa_icons_are_complete_and_valid():
@@ -271,7 +272,38 @@ def test_job_link_extraction_and_protected_source_fallback():
             page = browser.new_page()
 
             def extractor(route, request):
-                if "glassdoor" in request.post_data:
+                if "arche.fr" in request.post_data:
+                    route.fulfill(
+                        status=200,
+                        content_type="application/json",
+                        body=json.dumps(
+                            {
+                                "title": "MGGWXGGFWRMEED454",
+                                "company": "Arche",
+                                "source": "reader",
+                                "text": (
+                                    "Continuer sans accepter →\n\n## Le respect de votre vie privée est notre priorité\n"
+                                    "sas-arche.com utilise des cookies. Accepter & Fermer\n\n"
+                                    "# Directeur adjoint - ARCHE Immobilier & Services H/F – Tours\n\n"
+                                    "## Description\n\nSNEXI recherche un talent à fort potentiel pour accompagner "
+                                    "son Directeur général dans le développement et le pilotage de l’entreprise.\n\n"
+                                    "Acteur national de l’expertise immobilière, SNEXI intervient dans les états des lieux, "
+                                    "les diagnostics immobiliers et les services associés.\n\n"
+                                    "## Vos missions\n\n**Développement et projets – environ 80 %**\n\n"
+                                    "· concevoir et piloter des projets transverses jusqu’à leur déploiement ;\n"
+                                    "· analyser les performances commerciales et opérationnelles.\n\n"
+                                    "## Notre offre\n\n* **Type de contrat :** CDI\n"
+                                    "* **Adresse :** Tours, Indre-et-Loire, Centre-Val de Loire, France\n"
+                                    "* **Entreprise :** Arche Immobilier & Services\n\n"
+                                    "[Postuler ici](https://recrutement.sas-arche.com/postuler)\n\n"
+                                    "## Nos offres d'emplois\nNégociateur transaction H/F Laval CDI\n\n"
+                                    "## Pied de page\nÀ propos du groupe Arche"
+                                ),
+                            },
+                            ensure_ascii=False,
+                        ),
+                    )
+                elif "glassdoor" in request.post_data:
                     route.fulfill(
                         status=422,
                         content_type="application/json",
@@ -334,6 +366,21 @@ def test_job_link_extraction_and_protected_source_fallback():
             assert page.input_value('input[name="title"]') == "Directeur Des Operations"
             assert "protège le contenu" in page.locator("#link-help").inner_text()
             assert page.input_value('textarea[name="offer"]') == ""
+
+            page.goto(f"http://127.0.0.1:{server.server_port}/v2/web/#dashboard")
+            page.goto(f"http://127.0.0.1:{server.server_port}/v2/web/#new")
+            page.fill('input[name="url"]', ARCHE_URL)
+            page.click('#link-form button')
+            page.wait_for_selector('#new-form:not(.hidden)')
+            assert page.input_value('input[name="company"]') == "SNEXI"
+            assert page.input_value('input[name="title"]') == "Directeur adjoint - ARCHE Immobilier & Services H/F"
+            arche_offer = page.input_value('textarea[name="offer"]')
+            assert arche_offer.startswith("Directeur adjoint - ARCHE Immobilier & Services H/F – Tours")
+            assert "SNEXI recherche un talent" in arche_offer
+            assert "Type de contrat : CDI" in arche_offer
+            assert "cookies" not in arche_offer
+            assert "Négociateur transaction" not in arche_offer
+            assert "Pied de page" not in arche_offer
             browser.close()
     finally:
         server.shutdown()
