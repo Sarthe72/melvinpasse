@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="CV-Melvin">
+  <rect width="512" height="512" rx="104" fill="#315a44"/>
+  <path d="M126 68h196l68 68v308H126z" fill="#f8f4ee"/>
+  <path d="M322 68v68h68z" fill="#b8ccbe"/>
+  <path d="M173 344h166" fill="none" stroke="#7a9e87" stroke-linecap="round" stroke-width="20"/>
+  <text x="256" y="291" fill="#315a44" font-family="Arial, Helvetica, sans-serif" font-size="154" font-weight="800" text-anchor="middle">CV</text>
+</svg>

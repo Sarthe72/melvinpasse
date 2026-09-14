@@ -1,6 +1,7 @@
 # Changelog
 
 ## 1.2.0 — Modèle CV exécutif dynamique
+- Nouvelle identité d'application mobile : favicon, icône iPhone, icônes PWA Android et variante adaptative « maskable ».
 - Nouveau gabarit A4 pleine largeur issu de la maquette éditoriale validée, avec davantage d'espace blanc et sans barre latérale massive.
 - Palette harmonieuse calculée automatiquement depuis le logo fourni, avec teintes d'accent, sombres, neutres et claires contrôlées.
 - Logo du recruteur toujours conservé dans sa forme originale : aucun filtre, recadrage ou recoloriage.

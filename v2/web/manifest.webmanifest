@@ -1,1 +1,31 @@
-{"name":"CV-Melvin","short_name":"CV-Melvin","start_url":"./","display":"standalone","background_color":"#F8F4EE","theme_color":"#7A9E87","description":"Analyse d’offres et suivi des candidatures de Melvin PASSE"}
+{
+  "id": "./",
+  "name": "CV-Melvin",
+  "short_name": "CV-Melvin",
+  "description": "Analyse d’offres et suivi des candidatures de Melvin PASSE",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#F8F4EE",
+  "theme_color": "#315A44",
+  "icons": [
+    {
+      "src": "icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icons/icon-maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}

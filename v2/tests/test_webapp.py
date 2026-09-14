@@ -1,3 +1,4 @@
+import json
 from functools import partial
 from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
@@ -12,6 +13,34 @@ LMM_URL = (
     "#Directeur%20de%20la%20Proximit%C3%A9%20CDI%20/%20Directeur%20de%20la%20Proximit%C3%A9"
 )
 APEC_URL = "https://www.apec.fr/candidat/recherche-emploi.html/emploi/detail-offre/179398592W"
+
+
+def test_pwa_icons_are_complete_and_valid():
+    root = Path(__file__).resolve().parents[1]
+    manifest = json.loads((root / "web" / "manifest.webmanifest").read_text(encoding="utf-8"))
+    assert manifest["id"] == "./"
+    assert manifest["display"] == "standalone"
+    assert {icon["purpose"] for icon in manifest["icons"]} == {"any", "maskable"}
+
+    expected_sizes = {
+        "icons/icon-192.png": (192, 192),
+        "icons/icon-512.png": (512, 512),
+        "icons/icon-maskable-512.png": (512, 512),
+    }
+    for relative_path, expected_size in expected_sizes.items():
+        image_path = root / "web" / relative_path
+        assert image_path.exists()
+        with Image.open(image_path) as image:
+            assert image.size == expected_size
+            assert image.mode in {"RGB", "RGBA"}
+
+    apple_icon = root / "web" / "icons" / "apple-touch-icon.png"
+    with Image.open(apple_icon) as image:
+        assert image.size == (180, 180)
+
+    index = (root / "web" / "index.html").read_text(encoding="utf-8")
+    assert 'rel="apple-touch-icon"' in index
+    assert 'rel="icon" href="icons/favicon.svg"' in index
 
 
 def test_apec_edge_function_keeps_public_search_fallback():
