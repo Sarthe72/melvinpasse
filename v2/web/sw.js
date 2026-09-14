@@ -1,4 +1,4 @@
-const CACHE="cv-melvin-v16";
+const CACHE="cv-melvin-v17";
 const FILES=["./","index.html","styles.css","company-insights.css","cv-executive.css","app.js","company-insights.js","cv-spie.js","pdf.js","enhancements.js","manifest.webmanifest","icons/favicon.svg","icons/favicon.ico","icons/apple-touch-icon.png","icons/icon-192.png","icons/icon-512.png","icons/icon-maskable-512.png","../data/profile_master.json","../app/static/assets/portrait-melvin-2026.jpg","../../template/assets/qr-code.png"];
 self.addEventListener("install",event=>event.waitUntil(caches.open(CACHE).then(cache=>cache.addAll(FILES))));
 self.addEventListener("activate",event=>event.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(key=>key!==CACHE).map(key=>caches.delete(key))))));

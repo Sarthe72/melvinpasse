@@ -1,4 +1,11 @@
 const COMPANY_INSIGHT_MAX_AGE = 30 * 24 * 60 * 60 * 1000;
+const COMPANY_INSIGHT_VERSION = 2;
+const VERIFIED_EMPLOYER_RATINGS = {
+  "le mans metropole habitat": [
+    {source:"Glassdoor",value:2.8,best:5,count:3,checkedAt:"2026-09-14",sourceUrl:"https://www.glassdoor.fr/Avis/Le-Mans-M%C3%A9tropole-Habitat-Avis-E3095217.htm"},
+    {source:"Indeed",value:2.1,best:5,count:9,checkedAt:"2026-09-14",sourceUrl:"https://fr.indeed.com/cmp/Le-Mans-M%C3%A9tropole-Habitat-1/reviews"},
+  ],
+};
 
 function safeExternalUrl(value) {
   try {
@@ -34,6 +41,10 @@ function companyMatchScore(query, candidate) {
   if (right.includes(left) || left.includes(right)) return 1.4;
   const queryTokens = companyTokens(query), candidateTokens = new Set(companyTokens(candidate));
   return queryTokens.length ? queryTokens.filter(word => candidateTokens.has(word)).length / queryTokens.length : 0;
+}
+
+function verifiedEmployerRatings(company) {
+  return VERIFIED_EMPLOYER_RATINGS[normalizedCompany(company)] || [];
 }
 
 async function fetchPublicJson(url) {
@@ -128,8 +139,8 @@ function companyPanelHtml(insight, loading = false) {
   if (loading) return `<section class="panel company-insights loading" aria-live="polite"><p class="eyebrow">Aide à la décision</p><h2>L’entreprise en bref</h2><p class="muted">Recherche des informations publiques vérifiables…</p></section>`;
   const official = insight?.official;
   const summary = insight?.summary;
-  const rating = insight?.rating;
-  if (!official && !summary && !rating) {
+  const ratings = insight?.ratings || (insight?.rating ? [insight.rating] : []);
+  if (!official && !summary && !ratings.length) {
     return `<section class="panel company-insights ready"><p class="eyebrow">Aide à la décision</p><h2>L’entreprise en bref</h2><p>Pas assez d’informations publiques fiables pour établir une fiche. Cela ne constitue ni un signal positif ni un signal négatif.</p><p class="company-note">Aucune note employeur publique et correctement sourcée n’a été trouvée.</p></section>`;
   }
   const facts = official ? [
@@ -144,23 +155,26 @@ function companyPanelHtml(insight, loading = false) {
   const sourceLinks = [
     official?.sourceUrl ? `<a href="${esc(safeExternalUrl(official.sourceUrl))}" target="_blank" rel="noopener">Données publiques françaises</a>` : "",
     summary?.sourceUrl ? `<a href="${esc(safeExternalUrl(summary.sourceUrl))}" target="_blank" rel="noopener">Contexte Wikipédia</a>` : "",
-    rating?.sourceUrl ? `<a href="${esc(safeExternalUrl(rating.sourceUrl))}" target="_blank" rel="noopener">Source de la note</a>` : "",
+    ...ratings.map(rating => rating.sourceUrl ? `<a href="${esc(safeExternalUrl(rating.sourceUrl))}" target="_blank" rel="noopener">Avis ${esc(rating.source)}</a>` : ""),
     insight?.reviewSearchUrl ? `<a href="${esc(safeExternalUrl(insight.reviewSearchUrl))}" target="_blank" rel="noopener">Vérifier les avis salariés</a>` : "",
   ].filter(Boolean).join(" · ");
-  return `<section class="panel company-insights ready"><div class="company-heading"><div><p class="eyebrow">Aide à la décision</p><h2>L’entreprise en bref</h2></div>${rating ? `<div class="employer-rating"><b>${Number(rating.value).toLocaleString("fr-FR", {maximumFractionDigits:1})}/${Number(rating.best).toLocaleString("fr-FR")}</b><span>Note employeur · ${Number(rating.count).toLocaleString("fr-FR")} avis</span></div>` : ""}</div>${official ? `<p class="company-legal">${esc(official.legalName)}${official.siren ? ` · SIREN ${esc(official.siren)}` : ""}</p><div class="company-facts">${facts}</div>` : ""}${summary ? `<div class="company-summary"><h3>Contexte</h3><p>${esc(summary.text)}</p></div>` : ""}<p class="company-note">${rating ? `La note provient de ${esc(rating.source)} et ne modifie pas automatiquement le score de compatibilité.` : "Aucune note employeur publique et correctement sourcée n’a été trouvée."}</p>${sourceLinks ? `<p class="company-sources">Sources : ${sourceLinks}</p>` : ""}</section>`;
+  const ratingCards = ratings.map(rating => `<div class="employer-rating ${Number(rating.value) / Number(rating.best) < 0.6 ? "low" : ""}"><b>${Number(rating.value).toLocaleString("fr-FR", {maximumFractionDigits:1})}/${Number(rating.best).toLocaleString("fr-FR")}</b><span>${esc(rating.source)} · ${Number(rating.count).toLocaleString("fr-FR")} avis</span>${rating.checkedAt ? `<small>Vérifié le ${new Date(`${rating.checkedAt}T12:00:00`).toLocaleDateString("fr-FR")}</small>` : ""}</div>`).join("");
+  return `<section class="panel company-insights ready"><div class="company-heading"><div><p class="eyebrow">Aide à la décision</p><h2>L’entreprise en bref</h2></div>${ratingCards ? `<div class="employer-ratings">${ratingCards}</div>` : ""}</div>${official ? `<p class="company-legal">${esc(official.legalName)}${official.siren ? ` · SIREN ${esc(official.siren)}` : ""}</p><div class="company-facts">${facts}</div>` : ""}${summary ? `<div class="company-summary"><h3>Contexte</h3><p>${esc(summary.text)}</p></div>` : ""}<p class="company-note">${ratings.length ? "Les notes restent séparées par plateforme et ne modifient pas automatiquement le score. Le nombre d’avis doit être pris en compte." : "Aucune note employeur publique et correctement sourcée n’a été trouvée."}</p>${sourceLinks ? `<p class="company-sources">Sources : ${sourceLinks}</p>` : ""}</section>`;
 }
 
 async function fetchCompanyInsight(item) {
-  const [official, summary, rating] = await Promise.all([
+  const [official, summary, detectedRating] = await Promise.all([
     fetchOfficialCompany(item.company).catch(() => null),
     fetchWikipediaCompany(item.company).catch(() => null),
     fetchEmployerRating(item.url).catch(() => null),
   ]);
+  const verifiedRatings = verifiedEmployerRatings(item.company);
   return {
+    version:COMPANY_INSIGHT_VERSION,
     company:item.company,
     official,
     summary,
-    rating,
+    ratings:verifiedRatings.length ? verifiedRatings : (detectedRating ? [detectedRating] : []),
     reviewSearchUrl:`https://www.google.com/search?q=${encodeURIComponent(`${item.company} avis salariés note employeur`)}`,
     fetchedAt:new Date().toISOString(),
   };
@@ -177,7 +191,7 @@ async function enhanceCompanyView() {
   holder.className = "company-insights-holder";
   holder.dataset.id = id;
   const cachedAt = Date.parse(item.companyInsight?.fetchedAt || "");
-  const fresh = item.companyInsight && Number.isFinite(cachedAt) && Date.now() - cachedAt < COMPANY_INSIGHT_MAX_AGE;
+  const fresh = item.companyInsight?.version === COMPANY_INSIGHT_VERSION && Number.isFinite(cachedAt) && Date.now() - cachedAt < COMPANY_INSIGHT_MAX_AGE;
   holder.innerHTML = companyPanelHtml(fresh ? item.companyInsight : null, !fresh);
   holder.firstElementChild.dataset.id = id;
   anchor.insertAdjacentElement("afterend", holder);

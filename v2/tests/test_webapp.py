@@ -125,6 +125,18 @@ def test_mobile_browser_journey(tmp_path):
             assert "Vos candidatures, du premier regard" not in page.locator("body").inner_text()
             assert page.locator("#quick-link-form").is_visible()
             assert page.locator("#sync-account").is_visible()
+            lmm_ratings = page.evaluate(
+                "verifiedEmployerRatings('Le Mans Métropole Habitat')"
+            )
+            assert [(rating["source"], rating["value"], rating["count"]) for rating in lmm_ratings] == [
+                ("Glassdoor", 2.8, 3),
+                ("Indeed", 2.1, 9),
+            ]
+            lmm_rating_html = page.evaluate(
+                "companyPanelHtml({ratings: verifiedEmployerRatings('Le Mans Métropole Habitat')})"
+            )
+            assert "2,8/5" in lmm_rating_html
+            assert "2,1/5" in lmm_rating_html
             assert page.evaluate(
                 "getComputedStyle(document.documentElement).getPropertyValue('--brand').trim()"
             ) == "#7A9E87"
