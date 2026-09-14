@@ -70,6 +70,8 @@ def test_mobile_browser_journey(tmp_path):
             assert interesting_salary["salary"] == 60000
             assert not any("Rémunération" in flag for flag in interesting_salary["redFlags"])
             assert any("seuil d’intérêt" in value for value in interesting_salary["strengths"])
+            assert page.evaluate("analyze('CDI. Site de sécurité du patrimoine en passant par les équipes. Salaire 56 k€.').location") is None
+            assert page.evaluate("analyze('CDI. Poste basé à Laval. Salaire 56 k€.').location") == "Laval"
             page.fill(
                 '#quick-link-form input[name="url"]',
                 f"http://127.0.0.1:{server.server_port}/v2/web/index.html",
@@ -89,12 +91,14 @@ def test_mobile_browser_journey(tmp_path):
             page.set_input_files('input[name="logo"]', logo)
             page.click('#new-form button')
             page.wait_for_selector(".verdict")
-            assert page.locator(".verdict b").inner_text() == "À ÉTUDIER"
+            assert page.locator(".verdict b").inner_text() == "GO"
             assert not page.locator("#export").is_visible()
-            assert page.locator("#candidate-now").inner_text() == "Candidater malgré les points à vérifier"
+            assert page.locator("#candidate-now").inner_text() == "Marquer comme à candidater"
             assert page.get_by_role("heading", name="Pourquoi cette recommandation ?").is_visible()
             assert page.get_by_role("heading", name="Ce que l’employeur recherche").is_visible()
             assert page.get_by_role("heading", name="Correspondances expliquées").is_visible()
+            assert page.get_by_role("heading", name="Informations détectées dans l’annonce").is_visible()
+            assert page.locator(".fact-card").count() == 5
             assert page.locator(".match-details article").count() >= 4
             assert not page.evaluate(
                 "document.documentElement.scrollWidth > document.documentElement.clientWidth"

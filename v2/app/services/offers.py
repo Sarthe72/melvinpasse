@@ -36,13 +36,72 @@ def normalize(text):
     )
 
 
+INVALID_LOCATION_WORDS = {
+    "activite",
+    "client",
+    "direction",
+    "equipe",
+    "management",
+    "mission",
+    "passage",
+    "passant",
+    "patrimoine",
+    "projet",
+    "responsabilite",
+    "securite",
+    "service",
+}
+
+
+def clean_location(value):
+    candidate = re.sub(r"\s+", " ", value or "").strip(" ,;:.-")
+    candidate = re.split(
+        r"\s+(?:CDI|CDD|avec|pour|au sein|et|rattach[eé]e?|sous la responsabilit[eé]|dans le cadre)\b",
+        candidate,
+        maxsplit=1,
+        flags=re.IGNORECASE,
+    )[0].strip(" ,;:.-")
+    words = candidate.split()
+    if not 2 <= len(candidate) <= 45 or len(words) > 5:
+        return None
+    normalized_words = set(normalize(candidate).split())
+    if normalized_words & INVALID_LOCATION_WORDS:
+        return None
+    if re.search(r"\d", candidate) and not re.search(r"\b\d{5}\b|\(\d{2,3}\)", candidate):
+        return None
+    return candidate
+
+
+def extract_locations(text):
+    patterns = [
+        r"(?:localisation|lieu de travail|implantation)\s*[:\-]\s*([^.;|\n]{2,55})",
+        r"(?:poste\s+)?(?:bas[eé]|situ[eé]|localis[eé])\s+(?:à|au|aux|en)\s+([^.;|\n]{2,55})",
+        r"(?:poste|emploi)\s+(?:à|sur)\s+([^.;|\n]{2,45})",
+    ]
+    found = []
+    for pattern in patterns:
+        for raw_value in re.findall(pattern, text, flags=re.IGNORECASE):
+            value = clean_location(raw_value)
+            if value and value not in found:
+                found.append(value)
+    if not found:
+        postal = re.search(
+            r"\b(\d{5})\s+([A-ZÀ-ÖØ-Ý][A-Za-zÀ-ÿ' -]{2,30})(?=[,.;|]|$)", text
+        )
+        if postal:
+            value = clean_location(f"{postal.group(2)} ({postal.group(1)[:2]})")
+            if value:
+                found.append(value)
+    return found[:3]
+
+
 def extract_offer(text):
     normalized = normalize(text)
     words = re.findall(r"\b[a-z][a-z0-9+-]{3,}\b", normalized)
     salary = re.findall(
         r"(?:remuneration|salaire)?\s*(\d{2,3})(?:[\s.]?000|\s*k)\s*(?:€|euros)?", normalized
     )
-    locations = re.findall(r"\b(?:à|basé à|situé à)\s+([A-ZÀ-ÖØ-öø-ÿ][\wÀ-ÖØ-öø-ÿ' -]{2,35})", text)
+    locations = extract_locations(text)
     return {
         "keywords": [
             word

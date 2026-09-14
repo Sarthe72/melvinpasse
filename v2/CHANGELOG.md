@@ -8,6 +8,8 @@
 - Poste cible, positionnement, compétences et ordre des réalisations adaptés à l'annonce sans invention.
 - Engagements précisés : Initiative Sarthe et 13 ans comme secrétaire d'un club de football amateur.
 - Tests navigateur mis à jour pour contrôler la page A4, la palette dynamique, l'intégrité du logo, le QR code et l'absence de débordement.
+- Extraction de localisation sécurisée : seuls les libellés géographiques explicites sont retenus ; les fragments de mission comme « sécurité du patrimoine » sont rejetés.
+- Bloc « Informations détectées » clarifié avec un état visible « Détecté » ou « À confirmer » pour chaque donnée.
 
 ## 1.1.0 — Lecture des annonces en ligne
 - Lecture dédiée des offres APEC via leur référence publique, avec repli sur la recherche APEC lorsque le détail est protégé.

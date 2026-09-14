@@ -44,6 +44,7 @@ def test_offer_and_scoring(app):
     profile = load_master_profile(app.config["PROFILE_PATH"])
     text = "Directeur de site en CDI basé à Laval. Management, centre de profit, budget, performance, transformation et autonomie. Rémunération 80 k€."
     assert extract_offer(text)["salary_eur"] == 80_000
+    assert extract_offer(text)["location_mentions"] == ["Laval"]
     result = score_offer(text, profile["evidence"])
     assert result["overall"] >= 75 and result["recommendation"] == "GO"
     blocked = score_offer(
@@ -51,6 +52,17 @@ def test_offer_and_scoring(app):
         profile["evidence"],
     )
     assert blocked["recommendation"] == "NO GO" and len(blocked["red_flags"]) == 3
+
+
+def test_location_extraction_rejects_sentence_fragments():
+    misleading = (
+        "CDI. Le responsable garantit sur le site les conditions de sécurité du patrimoine "
+        "en passant par les équipes techniques. Salaire 56 k€."
+    )
+    assert extract_offer(misleading)["location_mentions"] == []
+    assert extract_offer("Localisation : Le Mans (72). Poste de direction.")[
+        "location_mentions"
+    ] == ["Le Mans (72)"]
 
 
 def test_cv_context_and_pdf(app, tmp_path):
