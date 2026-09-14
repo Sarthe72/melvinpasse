@@ -69,6 +69,18 @@ def test_lmm_edge_function_isolates_selected_offer():
     assert "const focusedText =" in source
 
 
+def test_company_profile_uses_only_explicit_public_sources():
+    source = (
+        Path(__file__).resolve().parents[1]
+        / "web"
+        / "company-insights.js"
+    ).read_text(encoding="utf-8")
+    assert "recherche-entreprises.api.gouv.fr/search" in source
+    assert "fr.wikipedia.org/w/api.php" in source
+    assert "hiringOrganization?.aggregateRating" in source
+    assert "selected.score < 0.6" in source
+
+
 def test_mobile_browser_journey(tmp_path):
     repository_root = Path(__file__).resolve().parents[2]
     handler = partial(SimpleHTTPRequestHandler, directory=repository_root)
@@ -81,6 +93,34 @@ def test_mobile_browser_journey(tmp_path):
         with sync_playwright() as playwright:
             browser = playwright.chromium.launch(headless=True)
             page = browser.new_page(viewport={"width": 390, "height": 844})
+            page.route(
+                "https://recherche-entreprises.api.gouv.fr/**",
+                lambda route: route.fulfill(
+                    status=200,
+                    content_type="application/json",
+                    body=(
+                        '{"results":[{"nom_complet":"ENTREPRISE MOBILE SAS",'
+                        '"nom_raison_sociale":"ENTREPRISE MOBILE SAS","siren":"123456789",'
+                        '"etat_administratif":"A","date_creation":"1998-01-01",'
+                        '"tranche_effectif_salarie":"32","annee_tranche_effectif_salarie":"2024",'
+                        '"categorie_entreprise":"ETI","nombre_etablissements_ouverts":12,'
+                        '"section_activite_principale":"H","activite_principale":"49.41A",'
+                        '"siege":{"libelle_commune":"LE MANS"}}]}'
+                    ),
+                ),
+            )
+            page.route(
+                "https://fr.wikipedia.org/w/api.php**",
+                lambda route: route.fulfill(
+                    status=200,
+                    content_type="application/json",
+                    body=(
+                        '{"query":{"pages":{"1":{"title":"Entreprise Mobile",'
+                        '"extract":"Entreprise française spécialisée dans les services logistiques.",'
+                        '"fullurl":"https://fr.wikipedia.org/wiki/Entreprise_Mobile"}}}}'
+                    ),
+                ),
+            )
             page.goto(f"http://127.0.0.1:{server.server_port}/v2/web/", wait_until="networkidle")
             assert "Vos candidatures, du premier regard" not in page.locator("body").inner_text()
             assert page.locator("#quick-link-form").is_visible()
@@ -120,7 +160,11 @@ def test_mobile_browser_journey(tmp_path):
             page.set_input_files('input[name="logo"]', logo)
             page.click('#new-form button')
             page.wait_for_selector(".verdict")
+            page.wait_for_selector(".company-insights.ready")
             assert page.locator(".verdict b").inner_text() == "GO"
+            assert "250 à 499 salariés" in page.locator(".company-insights").inner_text()
+            assert "Aucune note employeur" in page.locator(".company-insights").inner_text()
+            assert page.locator(".company-sources a").count() == 3
             assert not page.locator("#export").is_visible()
             assert page.locator("#candidate-now").inner_text() == "Marquer comme à candidater"
             assert page.get_by_role("heading", name="Pourquoi cette recommandation ?").is_visible()

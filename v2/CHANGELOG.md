@@ -1,6 +1,8 @@
 # Changelog
 
 ## 1.2.0 — Modèle CV exécutif dynamique
+- Fiche recruteur ajoutée à chaque analyse : identité légale, ancienneté, taille, catégorie, siège, implantations, secteur, contexte et éventuelle note employeur sourcée.
+- Les informations entreprise proviennent de sources publiques explicites et sont conservées 30 jours ; une donnée ou une note absente n'est jamais estimée.
 - Nouvelle identité d'application mobile : favicon, icône iPhone, icônes PWA Android et variante adaptative « maskable ».
 - Nouveau gabarit A4 pleine largeur issu de la maquette éditoriale validée, avec davantage d'espace blanc et sans barre latérale massive.
 - Palette harmonieuse calculée automatiquement depuis le logo fourni, avec teintes d'accent, sombres, neutres et claires contrôlées.
