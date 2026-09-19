@@ -1,6 +1,8 @@
 # Changelog
 
 ## 1.2.0 — Modèle CV exécutif dynamique
+- Lettre de motivation entièrement réécrite comme un argumentaire de dirigeant : motivation liée à l'annonce, réalisations rédigées en prose, méthode de management et conclusion orientée enjeux.
+- Message recruteur remplacé par une approche courte et directe avec un résultat fort, une demande d'échange claire et un objet réutilisable par e-mail.
 - Extraction ARCHE/SNEXI nettoyée : suppression du bandeau cookies, des offres voisines et du pied de page ; conservation de la seule annonce sélectionnée et identification de l'employeur réel.
 - Notes employeur Le Mans Métropole Habitat corrigées et séparées par source : Glassdoor 2,8/5 (3 avis) et Indeed 2,1/5 (9 avis), avec date de vérification et liens directs.
 - Fiche recruteur ajoutée à chaque analyse : identité légale, ancienneté, taille, catégorie, siège, implantations, secteur, contexte et éventuelle note employeur sourcée.

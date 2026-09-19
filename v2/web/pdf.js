@@ -1,17 +1,4 @@
-const buildApplicationLetter=item=>{const proofs=item.analysis.evidence.slice(0,2).map(proof=>`${proof.title} : ${proof.facts.join(" ; ")}`);const matches=item.analysis.matches.slice(0,4).join(", ")||"le pilotage opérationnel";return`Madame, Monsieur,
-
-Votre recherche d’un(e) ${item.title} au sein de ${item.company} retient mon attention, notamment pour : ${matches}.
-
-${profile.summary}
-
-Deux réalisations issues de mon parcours :
-${proofs.map(value=>`- ${value}`).join("\n")}
-
-${profile.signature}
-
-Je serais heureux d’échanger sur les priorités concrètes du poste.
-
-Bien cordialement,`};
+const buildApplicationLetter=item=>applicationCopy(item).letterBody;
 
 function printThenReturn(id){const back=()=>{removeEventListener("afterprint",back);location.hash=`kit/${id}`};addEventListener("afterprint",back,{once:true});setTimeout(()=>window.print(),180)}
 

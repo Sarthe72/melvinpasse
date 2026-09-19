@@ -227,6 +227,17 @@ def test_mobile_browser_journey(tmp_path):
             letter_pdf = tmp_path / "lettre-motivation.pdf"
             page.pdf(path=str(letter_pdf), format="A4", print_background=True, prefer_css_page_size=True)
             assert len(PdfReader(letter_pdf).pages) == 1
+            page.goto(f"http://127.0.0.1:{server.server_port}/v2/web/#kit/{first_id}")
+            page.wait_for_selector("[data-content='letter']")
+            letter_text = page.locator("[data-content='letter']").inner_text()
+            message_text = page.locator("[data-content='message']").inner_text()
+            assert "La perspective de rejoindre" in letter_text
+            assert "16 ans" in letter_text
+            assert "Deux réalisations issues de mon parcours" not in letter_text
+            assert len(letter_text) > 700
+            assert "15 minutes" in message_text
+            assert "version digitale" in message_text
+            assert page.locator(".copy-rationale").is_visible()
             page.goto(f"http://127.0.0.1:{server.server_port}/v2/web/#dashboard")
             page.goto(f"http://127.0.0.1:{server.server_port}/v2/web/#new")
             page.fill('input[name="url"]', f"http://127.0.0.1:{server.server_port}/v2/web/index.html")
