@@ -209,6 +209,7 @@ def test_mobile_browser_journey(tmp_path):
             )
             page.click('a[href^="#cv/"]')
             page.wait_for_selector(".cv-executive-page")
+            assert page.locator(".exec-identity h2").inner_text() == "Directeur des opérations"
             assert page.locator(".exec-identity h3").inner_text() == "CANDIDAT AU POSTE DE DIRECTEUR DES OPÉRATIONS"
             assert page.locator(".exec-groups > div").count() == 4
             assert page.locator(".exec-metrics > div").count() == 4
