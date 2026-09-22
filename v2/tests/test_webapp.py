@@ -14,6 +14,10 @@ LMM_URL = (
 )
 APEC_URL = "https://www.apec.fr/candidat/recherche-emploi.html/emploi/detail-offre/179398592W"
 ARCHE_URL = "https://www.arche.fr/offres/MGGWXGGFWRMEED454"
+ICIMS_URL = (
+    "https://recrute1-carrefour.icims.com/jobs/146489/job?"
+    "utm_source=indeed_integration&indeed-apply-token=private-tracking-token"
+)
 
 
 def test_pwa_icons_are_complete_and_valid():
@@ -68,6 +72,20 @@ def test_lmm_edge_function_isolates_selected_offer():
     assert "function selectedOfferText(" in source
     assert '"lmmhabitat.com"' in source
     assert "const focusedText =" in source
+
+
+def test_icims_edge_function_reads_embedded_job_page():
+    source = (
+        Path(__file__).resolve().parents[1]
+        / "supabase"
+        / "functions"
+        / "extract-offer"
+        / "index.ts"
+    ).read_text(encoding="utf-8")
+    assert "function icimsOffer(" in source
+    assert 'fetchUrl.searchParams.set("in_iframe", "1")' in source
+    assert 'source: "icims"' in source
+    assert 'host.includes("carrefour")' in source
 
 
 def test_company_profile_uses_only_explicit_public_sources():
@@ -283,7 +301,32 @@ def test_job_link_extraction_and_protected_source_fallback():
             page = browser.new_page()
 
             def extractor(route, request):
-                if "arche.fr" in request.post_data:
+                if "recrute1-carrefour.icims.com" in request.post_data:
+                    requested_url = json.loads(request.post_data)["url"]
+                    assert "in_iframe=1" in requested_url
+                    assert "indeed-apply-token" not in requested_url
+                    route.fulfill(
+                        status=200,
+                        content_type="application/json",
+                        body=json.dumps(
+                            {
+                                "title": "Directeur Entrepôt (F/H)",
+                                "company": "Carrefour",
+                                "source": "direct",
+                                "text": (
+                                    "Directeur d’entrepôt (F/H). Lieu : Le Mans Allonnes (72). "
+                                    "Poste CDI cadre. Pilotage de l’activité globale du site : "
+                                    "réception, stockage, expédition, relations clients et fournisseurs, "
+                                    "IRP, budget, hygiène et sécurité. Management des équipes logistiques, "
+                                    "optimisation de la performance, maîtrise des coûts et des délais. "
+                                    "Missions et profil : dix ans d’expérience en logistique, "
+                                    "compétences de management et maîtrise des outils Supply Chain demandés."
+                                ),
+                            },
+                            ensure_ascii=False,
+                        ),
+                    )
+                elif "arche.fr" in request.post_data:
                     route.fulfill(
                         status=200,
                         content_type="application/json",
@@ -392,6 +435,16 @@ def test_job_link_extraction_and_protected_source_fallback():
             assert "cookies" not in arche_offer
             assert "Négociateur transaction" not in arche_offer
             assert "Pied de page" not in arche_offer
+
+            page.goto(f"http://127.0.0.1:{server.server_port}/v2/web/#dashboard")
+            page.goto(f"http://127.0.0.1:{server.server_port}/v2/web/#new")
+            page.fill('input[name="url"]', ICIMS_URL)
+            page.click('#link-form button')
+            page.wait_for_selector('#new-form:not(.hidden)')
+            assert page.input_value('input[name="company"]') == "Carrefour"
+            assert page.input_value('input[name="title"]') == "Directeur Entrepôt (F/H)"
+            assert "Le Mans Allonnes" in page.input_value('textarea[name="offer"]')
+            assert "Annonce chargée" in page.locator("#link-help").inner_text()
             browser.close()
     finally:
         server.shutdown()

@@ -37,5 +37,16 @@ function cleanOfferResult(result, rawUrl) {
 
 const readOfferLinkWithoutCleanup = readOfferLink;
 readOfferLink = async function readCleanOfferLink(url) {
-  return cleanOfferResult(await readOfferLinkWithoutCleanup(url), url);
+  let extractionUrl = url;
+  try {
+    const parsed = new URL(url);
+    if (parsed.hostname.toLowerCase().endsWith(".icims.com")) {
+      parsed.searchParams.set("in_iframe", "1");
+      parsed.searchParams.delete("indeed-apply-token");
+      extractionUrl = parsed.toString();
+    }
+  } catch {
+    // The original reader will surface the invalid URL with its usual message.
+  }
+  return cleanOfferResult(await readOfferLinkWithoutCleanup(extractionUrl), url);
 };

@@ -99,8 +99,24 @@ function selectedOfferText(html: string, url: URL, requestedTitle: string) {
 function companyFromHost(url: URL) {
   const host = url.hostname.replace(/^www\./, "");
   if (host === "lmmhabitat.com") return "Le Mans Métropole Habitat";
+  if (host.endsWith(".icims.com") && host.includes("carrefour")) return "Carrefour";
   if (/(?:^|\.)(?:linkedin|indeed|glassdoor)\./i.test(host)) return "";
   return host.split(".")[0].replace(/[-_]+/g, " ").replace(/\b\w/g, (letter) => letter.toUpperCase());
+}
+
+function icimsOffer(html: string, url: URL) {
+  if (!url.hostname.toLowerCase().endsWith(".icims.com")) return null;
+  const text = meta(html, "og:description") || meta(html, "description");
+  if (text.length < 250) return null;
+  const firstLine = text.split(/\r?\n/).map((line) => line.trim()).find(Boolean) || "";
+  const pageTitle = meta(html, "og:title").split(/\s+in\s+.+?\s*\|/i)[0].trim();
+  const embeddedCompany = html.match(/"companyName"\s*:\s*"([^"]+)"/i)?.[1] || "";
+  return {
+    title: firstLine || pageTitle || titleFromUrl(url) || "Annonce à analyser",
+    company: decode(embeddedCompany).replace(/\s+France$/i, "").trim() || companyFromHost(url),
+    text: decode(text).trim(),
+    source: "icims",
+  };
 }
 
 function apecOfferNumber(url: URL) {
@@ -254,6 +270,10 @@ Deno.serve(async (request) => {
     const requestedTitle = titleFromUrl(url);
     const fetchUrl = new URL(url.toString());
     fetchUrl.hash = "";
+    if (fetchUrl.hostname.toLowerCase().endsWith(".icims.com")) {
+      fetchUrl.searchParams.set("in_iframe", "1");
+      fetchUrl.searchParams.delete("indeed-apply-token");
+    }
     if (apecOfferNumber(url)) {
       try {
         const offer = await fetchApecOffer(url);
@@ -276,6 +296,9 @@ Deno.serve(async (request) => {
       source = "reader";
       html = await fetchPage(new URL(`https://r.jina.ai/http://${fetchUrl.host}${fetchUrl.pathname}${fetchUrl.search}`));
     }
+
+    const icims = source === "direct" ? icimsOffer(html, url) : null;
+    if (icims) return new Response(JSON.stringify(icims), { headers: cors });
 
     const structured = jsonLdJob(html);
     const structuredCompany = structured?.hiringOrganization as Record<string, unknown> | undefined;

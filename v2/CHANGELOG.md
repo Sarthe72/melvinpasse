@@ -1,6 +1,7 @@
 # Changelog
 
 ## 1.2.0 — Modèle CV exécutif dynamique
+- Lecture dédiée des offres iCIMS intégrées, notamment Carrefour : ouverture automatique de la fiche embarquée et récupération du poste, de l'employeur et de l'annonce complète.
 - Lettre de motivation entièrement réécrite comme un argumentaire de dirigeant : motivation liée à l'annonce, réalisations rédigées en prose, méthode de management et conclusion orientée enjeux.
 - Message recruteur remplacé par une approche courte et directe avec un résultat fort, une demande d'échange claire et un objet réutilisable par e-mail.
 - Extraction ARCHE/SNEXI nettoyée : suppression du bandeau cookies, des offres voisines et du pied de page ; conservation de la seule annonce sélectionnée et identification de l'employeur réel.
