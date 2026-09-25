@@ -526,7 +526,7 @@ def test_apec_link_recovers_verified_recruiter_offer():
     def extractor(route):
         if "partnaire.fr" in route.request.post_data:
             payload = {"title": "Directeur de site (H/F)", "company": "Partnaire", "source": "direct",
-                       "text": f"Navigation. Description de l'offre {description} Profil souhaité Expérience en logistique et management. en savoir plus Navigation"}
+                       "text": f"Navigation. Description de l'offre {description.replace('plateforme logistique', 'plateforme  logistique')} Profil souhaité Expérience en logistique et management. en savoir plus Navigation"}
         else:
             payload = {"title": "Directeur de site F/H", "company": "PARTNAIRE", "source": "apec-search",
                        "reference": "179474342W",
