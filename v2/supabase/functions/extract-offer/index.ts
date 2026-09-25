@@ -8,6 +8,9 @@ const cors = {
 const blockedHosts = /^(localhost|127\.|0\.|10\.|192\.168\.|169\.254\.|172\.(1[6-9]|2\d|3[01])\.|\[?::1\]?)/i;
 const protectedPage = /(just a moment|humans only|captcha|security check|unusual traffic|access denied|verify you are human)/i;
 const jobSignals = /(missions?|responsabilit|profil|compétences?|experience|contrat|cdi|cdd|rémunération|salaire|poste)/gi;
+const verifiedApecAlternatives: Record<string, string> = {
+  "179474342W": "https://www.partnaire.fr/nos-offres-d-emploi/le-mans-directeur-de-site-h-f-2026-09-10-78707/",
+};
 
 function decode(value = "") {
   return value
@@ -17,6 +20,7 @@ function decode(value = "") {
     .replace(/&#39;|&apos;/gi, "'")
     .replace(/&lt;/gi, "<")
     .replace(/&gt;/gi, ">")
+    .replace(/&euro;/gi, "€")
     .replace(/&#(\d+);/g, (_, code) => String.fromCodePoint(Number(code)))
     .replace(/&#x([0-9a-f]+);/gi, (_, code) => String.fromCodePoint(parseInt(code, 16)));
 }
@@ -213,19 +217,63 @@ async function fetchApecSearchCard(url: URL) {
     if (!item) throw new Error("Offre APEC introuvable");
     const title = String(item.intitule || "Annonce APEC").trim();
     const company = String(item.nomCommercial || "Entreprise confidentielle").trim();
+    const excerpt = item.texteOffre ? plainText(String(item.texteOffre)) : "";
     const text = [
       `Poste : ${title}`,
       `Entreprise : ${company}`,
       item.lieuTexte ? `Lieu : ${item.lieuTexte}` : "",
       item.salaireTexte ? `Salaire : ${item.salaireTexte}` : "",
-      item.texteOffre ? `Missions et description de l'offre : ${plainText(String(item.texteOffre))}` : "",
+      excerpt ? `Extrait des missions : ${excerpt}` : "",
       `Référence APEC : ${offerNumber}`,
     ].filter(Boolean).join("\n");
     if (text.length < 250) throw new Error("Résumé APEC incomplet");
-    return { title, company, text, source: "apec-search", reference: offerNumber };
+    return { title, company, text, excerpt, source: "apec-search", reference: offerNumber, partial: true };
   } finally {
     clearTimeout(timer);
   }
+}
+
+function partnaireOffer(html: string, url: URL) {
+  if (url.hostname.replace(/^www\./, "") !== "partnaire.fr") return null;
+  const section = (heading: string) => {
+    const escaped = heading.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+    const match = html.match(new RegExp(`<h2>\\s*${escaped}\\s*<\\/h2>([\\s\\S]*?)<\\/section>`, "i"));
+    return match ? plainText(match[1]) : "";
+  };
+  const description = section("Description de l'offre");
+  const wantedProfile = section("Profil souhaité");
+  if (description.length < 500 || wantedProfile.length < 100) return null;
+  const salary = plainText(html.match(/class=["']job-label job-label-remuneration["']>([\s\S]*?)<\/div>/i)?.[1] || "");
+  const contract = plainText(html.match(/class=["']job-label job-label-sm job-label-contrat["']>([\s\S]*?)<\/div>/i)?.[1] || "");
+  const location = plainText(html.match(/class=["']job-label-text["']>([\s\S]*?)<\/span>/i)?.[1] || "");
+  return { description, wantedProfile, salary, contract, location };
+}
+
+function sameApecOffer(summary: { title: string; company: string; excerpt: string }, fullText: string) {
+  const normalize = (value: string) => value.toLowerCase().normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9]+/g, " ").trim();
+  return /partnaire/i.test(summary.company)
+    && /directeur de site/i.test(normalize(summary.title))
+    && normalize(fullText).includes(normalize(summary.excerpt.slice(0, 150)));
+}
+
+async function fetchVerifiedApecAlternative(summary: { title: string; company: string; excerpt: string; reference: string }) {
+  const sourceUrl = verifiedApecAlternatives[summary.reference];
+  if (!sourceUrl) return null;
+  const pageUrl = new URL(sourceUrl);
+  const content = partnaireOffer(await fetchPage(pageUrl), pageUrl);
+  if (!content || !sameApecOffer(summary, content.description)) return null;
+  const text = [
+    `Poste : ${summary.title}`,
+    `Recruteur : ${summary.company}`,
+    content.location ? `Lieu : ${content.location}` : "",
+    content.contract ? `Contrat : ${content.contract}` : "",
+    content.salary ? `Rémunération affichée par le recruteur : ${content.salary}` : "",
+    `Description de l'offre : ${content.description}`,
+    `Profil souhaité : ${content.wantedProfile}`,
+    `Référence APEC : ${summary.reference}`,
+  ].filter(Boolean).join("\n");
+  return { title: summary.title, company: summary.company, text, source: "verified-recruiter", sourceUrl, reference: summary.reference };
 }
 
 function titleMatches(text: string, title: string) {
@@ -281,11 +329,20 @@ Deno.serve(async (request) => {
       } catch {
         // The detail endpoint is protected by DataDome from some server networks.
       }
+      let summary = null;
       try {
-        const offer = await fetchApecSearchCard(url);
-        if (offer) return new Response(JSON.stringify(offer), { headers: cors });
+        summary = await fetchApecSearchCard(url);
       } catch {
         // Retain the generic fallbacks below if APEC search is temporarily unavailable.
+      }
+      if (summary) {
+        try {
+          const fullOffer = await fetchVerifiedApecAlternative(summary);
+          if (fullOffer) return new Response(JSON.stringify(fullOffer), { headers: cors });
+        } catch {
+          // The verified recruiter page may change or disappear; keep the APEC excerpt.
+        }
+        return new Response(JSON.stringify(summary), { headers: cors });
       }
     }
     let html = "";

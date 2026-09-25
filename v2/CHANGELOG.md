@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.2.1 — Import Apec fiabilisé
+- L'offre Apec 179474342W est rapprochée de sa publication complète sur le site du recruteur Partnaire, avec vérification du titre, du recruteur et du début du descriptif.
+- Si Apec ne livre qu'un extrait et qu'aucune publication complète vérifiée n'est accessible, l'interface le signale et maintient l'analyse au statut provisoire « À ÉTUDIER ».
+- Tests de l'extraction, du rapprochement et du parcours dans le navigateur ajoutés.
+
 ## 1.2.0 — Modèle CV exécutif dynamique
 - Le titre principal du CV reprend désormais exactement l'intitulé du poste analysé, au lieu d'afficher systématiquement « Directeur opérationnel ».
 - Lecture dédiée des offres iCIMS intégrées, notamment Carrefour : ouverture automatique de la fiche embarquée et récupération du poste, de l'employeur et de l'annonce complète.

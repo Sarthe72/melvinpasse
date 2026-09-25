@@ -55,3 +55,8 @@
 - Workflow GitHub Actions tests/lint.
 - README final avec lancement en une commande.
 - Préparer conteneur Docker optionnel sans le rendre obligatoire.
+
+## Maintenance — Offres Apec [x]
+- Rapprocher la référence 179474342W d'une publication complète vérifiée chez Partnaire.
+- Signaler explicitement les autres annonces Apec limitées à un extrait et rendre leur analyse provisoire.
+- Couvrir les cas complet, partiel et source non concordante par des tests.

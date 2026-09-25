@@ -370,6 +370,7 @@ def test_job_link_extraction_and_protected_source_fallback():
                         content_type="application/json",
                         body=(
                             '{"title":"Directeur de site F/H","company":"PARTNAIRE",'
+                            '"source":"verified-recruiter",'
                             '"text":"CDI au Mans. Salaire 70 k€ brut annuel. Direction de site logistique. '
                             'Missions et responsabilités du poste. Profil recherché avec expérience et compétences en '
                             'Pilotage des activités opérationnelles, humaines et financières. Management des équipes, '
@@ -409,7 +410,7 @@ def test_job_link_extraction_and_protected_source_fallback():
             assert page.input_value('input[name="company"]') == "PARTNAIRE"
             assert page.input_value('input[name="title"]') == "Directeur de site F/H"
             assert "70 k€" in page.input_value('textarea[name="offer"]')
-            assert "Annonce chargée" in page.locator("#link-help").inner_text()
+            assert "site du recruteur" in page.locator("#link-help").inner_text()
 
             page.goto(f"http://127.0.0.1:{server.server_port}/v2/web/#dashboard")
             page.goto(f"http://127.0.0.1:{server.server_port}/v2/web/#new")
@@ -446,6 +447,106 @@ def test_job_link_extraction_and_protected_source_fallback():
             assert page.input_value('input[name="title"]') == "Directeur Entrepôt (F/H)"
             assert "Le Mans Allonnes" in page.input_value('textarea[name="offer"]')
             assert "Annonce chargée" in page.locator("#link-help").inner_text()
+            browser.close()
+    finally:
+        server.shutdown()
+        thread.join(timeout=5)
+
+
+def test_apec_excerpt_is_visible_but_analysis_stays_provisional(tmp_path):
+    repository_root = Path(__file__).resolve().parents[2]
+    handler = partial(SimpleHTTPRequestHandler, directory=repository_root)
+    server = ThreadingHTTPServer(("127.0.0.1", 0), handler)
+    thread = Thread(target=server.serve_forever, daemon=True)
+    thread.start()
+    logo = tmp_path / "partnaire.png"
+    Image.new("RGB", (120, 60), "#24405B").save(logo)
+    url = (
+        "https://www.apec.fr/candidat/recherche-emploi.html/emploi/detail-offre/179474342W"
+        "?motsCles=directeur&lieux=589916&distance=15&selectedIndex=0&page=0"
+    )
+    try:
+        with sync_playwright() as playwright:
+            browser = playwright.chromium.launch(headless=True)
+            page = browser.new_page()
+            page.route(
+                "**/functions/v1/extract-offer",
+                lambda route: route.fulfill(
+                    status=200,
+                    content_type="application/json",
+                    body=json.dumps(
+                        {
+                            "title": "Directeur de site F/H",
+                            "company": "PARTNAIRE",
+                            "source": "apec-search",
+                            "partial": True,
+                            "text": (
+                                "Poste : Directeur de site F/H. Entreprise : PARTNAIRE. "
+                                "Lieu : Le Mans (72). Salaire : 70 k€ brut annuel. "
+                                "Extrait des missions : Direction opérationnelle d'une plateforme "
+                                "logistique, management des équipes, budget et performance. "
+                                "Pilotage des flux, sécurité et qualité. "
+                                "L'offre Apec ne fournit pas la suite du descriptif dans sa recherche."
+                            ),
+                        },
+                        ensure_ascii=False,
+                    ),
+                ),
+            )
+            page.goto(f"http://127.0.0.1:{server.server_port}/v2/web/#new")
+            page.fill('input[name="url"]', url)
+            page.click("#link-form button")
+            page.wait_for_selector("#new-form:not(.hidden)")
+            assert page.input_value('input[name="company"]') == "PARTNAIRE"
+            assert page.input_value('input[name="title"]') == "Directeur de site F/H"
+            assert "seul un extrait" in page.locator("#link-help").inner_text()
+            page.set_input_files('input[name="logo"]', str(logo))
+            page.click("#new-form button")
+            page.wait_for_url("**/#application/*")
+            analysis = page.evaluate("apps()[0].analysis")
+            assert analysis["recommendation"] == "À ÉTUDIER"
+            assert analysis["confidence"] <= 40
+            assert any("partielle" in note for note in analysis["missing"])
+            browser.close()
+    finally:
+        server.shutdown()
+        thread.join(timeout=5)
+
+
+def test_apec_link_recovers_verified_recruiter_offer():
+    repository_root = Path(__file__).resolve().parents[2]
+    handler = partial(SimpleHTTPRequestHandler, directory=repository_root)
+    server = ThreadingHTTPServer(("127.0.0.1", 0), handler)
+    thread = Thread(target=server.serve_forever, daemon=True)
+    thread.start()
+    url = "https://www.apec.fr/candidat/recherche-emploi.html/emploi/detail-offre/179474342W"
+    opening = "Notre client est une plateforme logistique en croissance qui cherche son futur directeur de site"
+    description = opening + (". Pilotage des flux, des équipes et de la performance opérationnelle" * 11)
+
+    def extractor(route):
+        if "partnaire.fr" in route.request.post_data:
+            payload = {"title": "Directeur de site (H/F)", "company": "Partnaire", "source": "direct",
+                       "text": f"Navigation. Description de l'offre {description} Profil souhaité Expérience en logistique et management. en savoir plus Navigation"}
+        else:
+            payload = {"title": "Directeur de site F/H", "company": "PARTNAIRE", "source": "apec-search",
+                       "reference": "179474342W", "partial": True, "excerpt": opening,
+                       "text": f"Poste : Directeur de site F/H\nEntreprise : PARTNAIRE\nLieu : Le Mans\nSalaire : 70 k€ brut annuel\nContrat : CDI\nExtrait des missions : {opening}. Missions de direction, management et pilotage de la performance.\nRéférence APEC : 179474342W"}
+        route.fulfill(status=200, content_type="application/json", body=json.dumps(payload, ensure_ascii=False))
+
+    try:
+        with sync_playwright() as playwright:
+            browser = playwright.chromium.launch(headless=True)
+            page = browser.new_page()
+            page.route("**/functions/v1/extract-offer", extractor)
+            page.goto(f"http://127.0.0.1:{server.server_port}/v2/web/#new")
+            page.fill('input[name="url"]', url)
+            page.click("#link-form button")
+            page.wait_for_selector("#new-form:not(.hidden)")
+            assert "site du recruteur" in page.locator("#link-help").inner_text()
+            offer = page.input_value('textarea[name="offer"]')
+            assert "Profil souhaité" in offer
+            assert "Navigation" not in offer
+            assert len(offer) > 650
             browser.close()
     finally:
         server.shutdown()
