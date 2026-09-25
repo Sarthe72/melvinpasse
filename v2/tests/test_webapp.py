@@ -529,8 +529,8 @@ def test_apec_link_recovers_verified_recruiter_offer():
                        "text": f"Navigation. Description de l'offre {description} Profil souhaité Expérience en logistique et management. en savoir plus Navigation"}
         else:
             payload = {"title": "Directeur de site F/H", "company": "PARTNAIRE", "source": "apec-search",
-                       "reference": "179474342W", "partial": True, "excerpt": opening,
-                       "text": f"Poste : Directeur de site F/H\nEntreprise : PARTNAIRE\nLieu : Le Mans\nSalaire : 70 k€ brut annuel\nContrat : CDI\nExtrait des missions : {opening}. Missions de direction, management et pilotage de la performance.\nRéférence APEC : 179474342W"}
+                       "reference": "179474342W",
+                       "text": f"Poste : Directeur de site F/H\nEntreprise : PARTNAIRE\nLieu : Le Mans\nSalaire : 70 k€ brut annuel\nContrat : CDI\nMissions et description de l'offre : {description[:130]}\nRéférence APEC : 179474342W"}
         route.fulfill(status=200, content_type="application/json", body=json.dumps(payload, ensure_ascii=False))
 
     try:
