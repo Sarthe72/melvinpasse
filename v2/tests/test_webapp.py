@@ -364,6 +364,12 @@ def test_job_link_extraction_and_protected_source_fallback():
                         content_type="application/json",
                         body='{"error":"SOURCE_PROTECTED","provider":"glassdoor.fr"}',
                     )
+                elif "indeed.com" in request.post_data:
+                    route.fulfill(
+                        status=422,
+                        content_type="application/json",
+                        body='{"error":"SOURCE_PROTECTED","provider":"fr.indeed.com"}',
+                    )
                 elif "apec.fr" in request.post_data:
                     route.fulfill(
                         status=200,
@@ -421,6 +427,14 @@ def test_job_link_extraction_and_protected_source_fallback():
             assert page.input_value('input[name="company"]') == ""
             assert page.input_value('input[name="title"]') == "Directeur Des Operations"
             assert "protège le contenu" in page.locator("#link-help").inner_text()
+            assert page.input_value('textarea[name="offer"]') == ""
+
+            page.goto(f"http://127.0.0.1:{server.server_port}/v2/web/#dashboard")
+            page.goto(f"http://127.0.0.1:{server.server_port}/v2/web/#new")
+            page.fill('input[name="url"]', "https://fr.indeed.com/viewjob?jk=33d9e0743029b4f2")
+            page.click('#link-form button')
+            page.wait_for_selector('#new-form:not(.hidden)')
+            assert "Indeed exige une connexion" in page.locator("#link-help").inner_text()
             assert page.input_value('textarea[name="offer"]') == ""
 
             page.goto(f"http://127.0.0.1:{server.server_port}/v2/web/#dashboard")

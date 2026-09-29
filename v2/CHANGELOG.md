@@ -5,6 +5,7 @@
 - Le titre, l'employeur, la localisation et le descriptif sont isolés et contrôlés avant analyse ; une fiche incomplète est refusée.
 - Tests simulés et contrôle en direct sur l'annonce Carrefour/Allonnes ajoutés.
 - Les annonces Indeed demandant une authentification restent protégées : aucun contenu ni score ne doit être inventé à partir du lien seul.
+- L'interface explique explicitement le blocage Indeed et conserve la saisie de l'annonce comme solution de secours, avec un test navigateur.
 
 ## 1.2.1 — Import Apec fiabilisé
 - L'offre Apec 179474342W est rapprochée de sa publication complète sur le site du recruteur Partnaire, avec vérification du titre, du recruteur et du début du descriptif.
