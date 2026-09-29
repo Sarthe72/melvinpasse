@@ -128,6 +128,34 @@ function apecOfferNumber(url: URL) {
   return url.pathname.match(/detail-offre\/(\d+[A-Z]?)/i)?.[1] || "";
 }
 
+function linkedInJobId(url: URL) {
+  if (!/(?:^|\.)linkedin\.com$/i.test(url.hostname)) return "";
+  return url.pathname.match(/\/jobs\/view\/(?:[^/]*?-)?(\d{6,})\/?$/i)?.[1] || "";
+}
+
+function linkedInGuestOffer(html: string, jobId: string) {
+  const title = plainText(html.match(/<h2[^>]*\btopcard__title\b[^>]*>([\s\S]*?)<\/h2>/i)?.[1] || "");
+  const company = plainText(html.match(/<a[^>]*\btopcard__org-name-link\b[^>]*>([\s\S]*?)<\/a>/i)?.[1] || "");
+  const location = plainText(html.match(/<span[^>]*\btopcard__flavor--bullet\b[^>]*>([\s\S]*?)<\/span>/i)?.[1] || "");
+  const description = plainText(html.match(/<div[^>]*\bshow-more-less-html__markup\b[^>]*>([\s\S]*?)<\/div>/i)?.[1] || "");
+  const signalCount = new Set((description.match(jobSignals) || []).map((signal) => signal.toLowerCase())).size;
+  if (!title || !company || description.length < 450 || signalCount < 3 || protectedPage.test(description.slice(0, 500))) return null;
+  return {
+    title,
+    company,
+    text: [`Poste : ${title}`, `Entreprise : ${company}`, location ? `Lieu : ${location}` : "", `Description de l'offre : ${description}`].filter(Boolean).join("\n"),
+    source: "linkedin-guest",
+    sourceUrl: `https://www.linkedin.com/jobs/view/${jobId}/`,
+  };
+}
+
+async function fetchLinkedInGuestOffer(url: URL) {
+  const jobId = linkedInJobId(url);
+  if (!jobId) return null;
+  const guestUrl = new URL(`https://www.linkedin.com/jobs-guest/jobs/api/jobPosting/${jobId}`);
+  return linkedInGuestOffer(await fetchPage(guestUrl), jobId);
+}
+
 function firstNestedString(value: unknown, keys: string[]): string {
   if (!value || typeof value !== "object") return "";
   const record = value as Record<string, unknown>;
@@ -321,6 +349,14 @@ Deno.serve(async (request) => {
     if (fetchUrl.hostname.toLowerCase().endsWith(".icims.com")) {
       fetchUrl.searchParams.set("in_iframe", "1");
       fetchUrl.searchParams.delete("indeed-apply-token");
+    }
+    if (linkedInJobId(url)) {
+      try {
+        const offer = await fetchLinkedInGuestOffer(url);
+        if (offer) return new Response(JSON.stringify(offer), { headers: cors });
+      } catch {
+        // Public guest pages can disappear or be unavailable in some regions.
+      }
     }
     if (apecOfferNumber(url)) {
       try {

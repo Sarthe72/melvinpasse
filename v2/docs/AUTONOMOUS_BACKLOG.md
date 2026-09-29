@@ -60,3 +60,9 @@
 - Rapprocher la référence 179474342W d'une publication complète vérifiée chez Partnaire.
 - Signaler explicitement les autres annonces Apec limitées à un extrait et rendre leur analyse provisoire.
 - Couvrir les cas complet, partiel et source non concordante par des tests.
+
+## Maintenance — Liens LinkedIn et Indeed [ ]
+- [x] Extraction des fiches publiques LinkedIn par identifiant, avec validation du contenu et tests.
+- [x] Vérification de la restriction d'accès sur l'offre Indeed 33d9e0743029b4f2 : le lien seul ne fournit pas de contenu exploitable sans authentification.
+- [ ] Publier la fonction d'extraction mise à jour et vérifier l'import LinkedIn sur le site public.
+- [ ] Prévoir un parcours de secours clair pour les annonces Indeed réellement protégées, sans analyse fictive.

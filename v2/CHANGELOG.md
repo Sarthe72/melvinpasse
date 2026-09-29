@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.2.2 — Lecture des annonces LinkedIn publiques
+- Les liens LinkedIn de type `/jobs/view/<identifiant>` utilisent la fiche publique associée à l'identifiant, sans transmettre les paramètres de suivi personnels.
+- Le titre, l'employeur, la localisation et le descriptif sont isolés et contrôlés avant analyse ; une fiche incomplète est refusée.
+- Tests simulés et contrôle en direct sur l'annonce Carrefour/Allonnes ajoutés.
+- Les annonces Indeed demandant une authentification restent protégées : aucun contenu ni score ne doit être inventé à partir du lien seul.
+
 ## 1.2.1 — Import Apec fiabilisé
 - L'offre Apec 179474342W est rapprochée de sa publication complète sur le site du recruteur Partnaire, avec vérification du titre, du recruteur et du début du descriptif.
 - Si Apec ne livre qu'un extrait et qu'aucune publication complète vérifiée n'est accessible, l'interface le signale et maintient l'analyse au statut provisoire « À ÉTUDIER ».
