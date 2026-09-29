@@ -16,7 +16,7 @@ def test_published_indeed_link_explains_access_limit_without_invention():
         page.fill('input[name="url"]', url)
         page.click("#link-form button")
         page.wait_for_selector("#new-form:not(.hidden)")
-        assert "Indeed exige une connexion" in page.locator("#link-help").inner_text()
+        assert "Indeed bloque la lecture automatisée" in page.locator("#link-help").inner_text()
         assert page.input_value('textarea[name="offer"]') == ""
         assert page.input_value('input[name="company"]') == ""
         browser.close()

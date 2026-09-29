@@ -434,7 +434,7 @@ def test_job_link_extraction_and_protected_source_fallback():
             page.fill('input[name="url"]', "https://fr.indeed.com/viewjob?jk=33d9e0743029b4f2")
             page.click('#link-form button')
             page.wait_for_selector('#new-form:not(.hidden)')
-            assert "Indeed exige une connexion" in page.locator("#link-help").inner_text()
+            assert "Indeed bloque la lecture automatisée" in page.locator("#link-help").inner_text()
             assert page.input_value('textarea[name="offer"]') == ""
 
             page.goto(f"http://127.0.0.1:{server.server_port}/v2/web/#dashboard")
