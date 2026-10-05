@@ -251,7 +251,10 @@ def test_mobile_browser_journey(tmp_path):
             letter_text = page.locator("[data-content='letter']").inner_text()
             message_text = page.locator("[data-content='message']").inner_text()
             assert "La perspective de rejoindre" in letter_text
-            assert "16 ans" in letter_text
+            assert "Dirigeant opérationnel" in letter_text
+            assert "16 ans" not in letter_text
+            assert not any(line.lstrip().startswith("- ") for line in letter_text.splitlines())
+            assert "—" not in letter_text
             assert "Deux réalisations issues de mon parcours" not in letter_text
             assert len(letter_text) > 700
             assert "15 minutes" in message_text

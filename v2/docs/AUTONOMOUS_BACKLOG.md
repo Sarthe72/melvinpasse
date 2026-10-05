@@ -66,3 +66,8 @@
 - [x] Vérification de la restriction d'accès sur l'offre Indeed 33d9e0743029b4f2 : le lien seul ne fournit pas de contenu exploitable sans authentification.
 - [x] Publier la fonction d'extraction mise à jour et vérifier l'import LinkedIn sur le site public.
 - [x] Expliquer clairement le blocage des annonces Indeed protégées et conserver la saisie manuelle, sans analyse fictive.
+
+## Maintenance — Lettres de motivation [x]
+- [x] Supprimer les tirets de liste et les tirets de ponctuation des lettres générées.
+- [x] Présenter le parcours comme celui d'un dirigeant opérationnel sans durée d'expérience chiffrée.
+- [x] Vérifier le texte du kit de candidature dans le test navigateur.

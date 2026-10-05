@@ -53,13 +53,13 @@ function applicationCopy(item) {
 
 La perspective de rejoindre ${company} au poste de ${item.title} m’intéresse pour une raison précise : ${angle}.
 
-Mon parcours s’est construit pendant 16 ans au sein de la même structure, depuis le terrain jusqu’à la direction d’un site et d’un centre de profit. Cette progression m’a appris à relier vision, exigence de résultat et réalité opérationnelle : fixer un cap, structurer les méthodes, donner aux équipes les moyens de l’atteindre et mesurer les résultats.
+Dirigeant opérationnel, j’ai évolué au sein d’une même structure, du terrain à la direction d’un site et d’un centre de profit. Cette progression m’a appris à relier vision, exigence de résultat et réalité opérationnelle : fixer un cap, structurer les méthodes, donner aux équipes les moyens de l’atteindre et mesurer les résultats.
 
 ${longProofSentence(proofs[0])}
 
 ${longProofSentence(proofs[1])}
 
-${priorities ? `Les priorités décrites dans votre annonce — ${priorities} — font ainsi directement écho à mon expérience. ` : ""}Ma manière de diriger repose sur une présence réelle auprès des équipes, des objectifs lisibles et une prise de décision fondée sur les faits. Je souhaite mettre cette approche au service de ${company}, avec la même attention portée à la qualité d’exécution, à la dynamique collective et aux résultats.
+${priorities ? `Les priorités décrites dans votre annonce, notamment ${priorities}, font ainsi directement écho à mon expérience. ` : ""}Ma manière de diriger repose sur une présence réelle auprès des équipes, des objectifs lisibles et une prise de décision fondée sur les faits. Je souhaite mettre cette approche au service de ${company}, avec la même attention portée à la qualité d’exécution, à la dynamique collective et aux résultats.
 
 Je serais heureux d’échanger avec vous sur les objectifs confiés au futur titulaire du poste, le niveau d’autonomie attendu et les résultats prioritaires des premiers mois.
 
@@ -69,7 +69,7 @@ Bien cordialement,`;
 
 Je me permets de vous contacter directement au sujet du poste de ${item.title} chez ${company}, afin que mon parcours puisse être étudié avec le contexte nécessaire.
 
-Après 16 années au sein de la même structure, j’ai construit une expérience complète du terrain à la direction d’un site : pilotage d’un centre de profit, management d’équipes jusqu’à 40 collaborateurs, structuration des process et conduite de projets de transformation.
+Dirigeant opérationnel, j’ai construit mon expérience du terrain à la direction d’un site : pilotage d’un centre de profit, management d’équipes jusqu’à 40 collaborateurs, structuration des process et conduite de projets de transformation.
 
 Parmi les réalisations les plus directement transposables au poste : ${shortProofSentence(proofs[0])}. Le périmètre présenté dans votre annonce fait ainsi écho à une expérience concrète, construite dans la durée et orientée résultats.
 

@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.2.3 — Lettres de motivation sans listes
+- Les réalisations des lettres sont rédigées en paragraphes, sans tirets de liste ni tirets de ponctuation.
+- La présentation utilise « dirigeant opérationnel » au lieu de répéter une durée d'expérience chiffrée.
+- Le test navigateur vérifie le rendu de la lettre dans le kit de candidature.
+
 ## 1.2.2 — Lecture des annonces LinkedIn publiques
 - Les liens LinkedIn de type `/jobs/view/<identifiant>` utilisent la fiche publique associée à l'identifiant, sans transmettre les paramètres de suivi personnels.
 - Le titre, l'employeur, la localisation et le descriptif sont isolés et contrôlés avant analyse ; une fiche incomplète est refusée.
