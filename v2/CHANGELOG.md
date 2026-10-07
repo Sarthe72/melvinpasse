@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.2.4 — Candidatures plus humaines
+- Lettres et messages plus courts, directs et moins scolaires, avec une seule réalisation pertinente au lieu d'un empilement de preuves.
+- Angle adapté au secteur de l'annonce ; pour un secteur nouveau comme le social, la transition est formulée honnêtement sans expérience inventée.
+- Intitulés de poste nettoyés pour éviter les mentions techniques « CDI », « H/F » et les répétitions du nom de l'employeur.
+- Tests navigateur ajoutés pour les contextes social et logistique, le message court et le PDF A4.
+
 ## 1.2.3 — Lettres de motivation sans listes
 - Les réalisations des lettres sont rédigées en paragraphes, sans tirets de liste ni tirets de ponctuation.
 - La présentation utilise « dirigeant opérationnel » au lieu de répéter une durée d'expérience chiffrée.

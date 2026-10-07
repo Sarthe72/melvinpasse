@@ -71,3 +71,9 @@
 - [x] Supprimer les tirets de liste et les tirets de ponctuation des lettres générées.
 - [x] Présenter le parcours comme celui d'un dirigeant opérationnel sans durée d'expérience chiffrée.
 - [x] Vérifier le texte du kit de candidature dans le test navigateur.
+
+## Maintenance — Ton des candidatures [x]
+- [x] Remplacer les formules scolaires par une rédaction plus directe et personnelle.
+- [x] Adapter l'angle au secteur sans inventer de motivation ni d'expérience.
+- [x] Limiter chaque lettre et message à une réalisation vérifiée et pertinente.
+- [x] Tester des offres sociale et logistique ainsi que la sortie PDF.

@@ -250,15 +250,38 @@ def test_mobile_browser_journey(tmp_path):
             page.wait_for_selector("[data-content='letter']")
             letter_text = page.locator("[data-content='letter']").inner_text()
             message_text = page.locator("[data-content='message']").inner_text()
-            assert "La perspective de rejoindre" in letter_text
-            assert "Dirigeant opérationnel" in letter_text
+            assert "Votre poste de directeur des opérations" in letter_text
+            assert "Je suis dirigeant opérationnel" in letter_text
             assert "16 ans" not in letter_text
             assert not any(line.lstrip().startswith("- ") for line in letter_text.splitlines())
             assert "—" not in letter_text
             assert "Deux réalisations issues de mon parcours" not in letter_text
-            assert len(letter_text) > 700
-            assert "15 minutes" in message_text
+            assert "Les priorités décrites dans votre annonce" not in letter_text
+            assert 700 < len(letter_text) < 1800
+            assert "Je vous écris au sujet du poste" in message_text
+            assert "15 minutes" not in message_text
             assert "version digitale" in message_text
+            assert len(message_text) < 950
+            social_copy = page.evaluate("""() => applicationCopy({
+              company:"Association Montjoie",
+              title:"CDI DIRECTEUR (H/F) TP SERAFM - Association Montjoie",
+              offer:"Direction du SERAFM, placement familial et protection de l’enfance.",
+              analysis:{evidence:[]}
+            })""")
+            assert "donner du sens à ce que je sais faire" in social_copy["letter"]
+            assert "poste de directeur du SERAFM" in social_copy["letter"]
+            assert "Je n’ai pas exercé dans le secteur social" in social_copy["letter"]
+            assert "Je souhaite donner un sens nouveau" in social_copy["message"]
+            assert "16 ans" not in social_copy["letter"] + social_copy["message"]
+            assert "CDI" not in social_copy["subject"]
+            logistics_copy = page.evaluate("""() => applicationCopy({
+              company:"Carrefour",title:"Directeur logistique",
+              offer:"Direction de plateforme logistique, transport et management des flux.",
+              analysis:{evidence:[]}
+            })""")
+            assert "poste de directeur logistique" in logistics_copy["message"]
+            assert "organisé un fonctionnement en 2x8" in logistics_copy["message"]
+            assert "secteur social" not in logistics_copy["letter"]
             assert page.locator(".copy-rationale").is_visible()
             page.goto(f"http://127.0.0.1:{server.server_port}/v2/web/#dashboard")
             page.goto(f"http://127.0.0.1:{server.server_port}/v2/web/#new")

@@ -1,12 +1,29 @@
 function copyOfferAngle(item) {
-  const text = norm(`${item.title} ${item.offer}`);
-  if (has(text,["expertise immobiliere","diagnostic immobilier","etat des lieux","multiservices","snexi"])) return "développer une offre de services immobiliers tout en transformant les projets en résultats opérationnels concrets";
-  if (has(text,["habitant","logement","bailleur","proximite","patrimoine immobilier"])) return "faire progresser la qualité de service aux habitants et piloter des équipes de proximité dans un environnement exigeant";
-  if (has(text,["logistique","supply chain","transport","plateforme","flux"])) return "conjuguer performance des opérations, maîtrise des flux et engagement des équipes";
-  if (has(text,["industrie","production","usine","maintenance"])) return "piloter la performance d’un site en associant exigence industrielle, sécurité et management de terrain";
-  if (has(text,["croissance","developpement","transformation","projet transverse"])) return "structurer le développement, conduire des projets transverses et installer une performance durable";
-  if (has(text,["management","equipe","collaborateur"])) return "donner un cap clair aux équipes et traduire les objectifs de l’entreprise en résultats mesurables";
-  return "prendre en charge un périmètre opérationnel avec autonomie, méthode et exigence de résultat";
+  const text = norm(`${item.title} ${item.offer} ${item.company}`);
+  if (has(text,["protection de l'enfance","protection de l’enfance","accueil familial","serafm","aide sociale a l'enfance","medico-social","handicap","accompagnement social"])) return "mettre mon expérience de direction au service d’un projet humain";
+  if (has(text,["expertise immobiliere","diagnostic immobilier","etat des lieux","multiservices","snexi"])) return "structurer une activité de services immobiliers et accompagner ses équipes";
+  if (has(text,["habitant","logement","bailleur","habitat","patrimoine immobilier"])) return "améliorer concrètement le service rendu aux habitants";
+  if (has(text,["logistique","supply chain","transport","plateforme","flux"])) return "tenir les engagements opérationnels sans perdre de vue les équipes";
+  if (has(text,["industrie","production","usine","maintenance"])) return "faire avancer un site avec ses équipes, au plus près du terrain";
+  if (has(text,["croissance","developpement","transformation","projet transverse"])) return "structurer une activité qui évolue et aider les équipes à franchir une étape";
+  return "prendre la responsabilité d’une activité et faire avancer les équipes avec des objectifs clairs";
+}
+
+function copySector(item) {
+  const text = norm(`${item.title} ${item.offer} ${item.company}`);
+  if (has(text,["protection de l'enfance","protection de l’enfance","accueil familial","serafm","aide sociale a l'enfance","medico-social","handicap","accompagnement social"])) return "social";
+  if (has(text,["habitant","logement","bailleur","habitat","patrimoine immobilier","expertise immobiliere"])) return "housing";
+  if (has(text,["logistique","supply chain","transport","plateforme","flux"])) return "logistics";
+  return "general";
+}
+
+function copyRole(item) {
+  if (copySector(item)==="social" && has(norm(item.title),["serafm"])) return "directeur du SERAFM";
+  const company=String(item.company||"").trim();
+  let title=String(item.title||"poste proposé").replace(/^\s*(?:CDI|CDD)\s+/i,"").replace(/\s*\(?H\s*\/\s*F\)?\s*/gi," ").replace(/\bTP\b/gi,"").trim();
+  if(company && title.toLowerCase().endsWith(` - ${company.toLowerCase()}`)) title=title.slice(0,-company.length-3).trim();
+  title=title.replace(/\s+/g," ");
+  return title===title.toLocaleUpperCase("fr")?title.toLocaleLowerCase("fr"):title[0].toLocaleLowerCase("fr")+title.slice(1);
 }
 
 function copyEvidenceScore(proof, offer) {
@@ -15,12 +32,15 @@ function copyEvidenceScore(proof, offer) {
 }
 
 function selectCopyEvidence(item) {
-  const selected = [...(item.analysis?.evidence || [])];
-  const fallback = [...profile.evidence].sort((left,right) => copyEvidenceScore(right,item.offer) - copyEvidenceScore(left,item.offer));
-  fallback.forEach(proof => {
-    if (!selected.some(value => value.id === proof.id)) selected.push(proof);
-  });
-  return selected.slice(0,2);
+  const sector=copySector(item);
+  const preferred=sector==="social"?["peak-2x8","move-2024"]:sector==="housing"?["move-2024","peak-2x8"]:sector==="logistics"?["peak-2x8","move-2024"]:[];
+  const selected=[...(item.analysis?.evidence||[]),...profile.evidence];
+  const unique=[...new Map(selected.map(proof=>[proof.id,proof])).values()];
+  return unique.sort((left,right) => {
+    const leftPreference=preferred.indexOf(left.id),rightPreference=preferred.indexOf(right.id);
+    if(leftPreference!==rightPreference)return (leftPreference<0?99:leftPreference)-(rightPreference<0?99:rightPreference);
+    return copyEvidenceScore(right,item.offer)-copyEvidenceScore(left,item.offer);
+  }).slice(0,1);
 }
 
 function longProofSentence(proof) {
@@ -33,53 +53,60 @@ function longProofSentence(proof) {
   return verified[proof.id] || `${proof.title} : ${proof.facts.slice(0,2).join(" ; ")}.`;
 }
 
-function shortProofSentence(proof) {
+function shortProofAction(proof) {
   const verified = {
-    "move-2024":"un déménagement de site de 1 200 m² livré en huit mois, à 47 % sous le budget prévisionnel et sans interruption d’activité",
-    "peak-2x8":"une organisation en 2x8 mobilisant jusqu’à 40 collaborateurs et reconduite trois années de suite",
-    "supplier-savings":"une renégociation fournisseurs générant environ 270 k€ d’économies annuelles, soit près de 40 %",
-    growth:"la structuration d’une activité passée de 250 k€ à 36 M€ de chiffre d’affaires et d’un service passé de 3 à 23 collaborateurs",
+    "move-2024":"piloté un déménagement de site de 1 200 m², réalisé en huit mois sans interruption d’activité",
+    "peak-2x8":"organisé un fonctionnement en 2x8 mobilisant jusqu’à 40 collaborateurs",
+    "supplier-savings":"renégocié des contrats fournisseurs, avec environ 270 k€ d’économies annuelles",
+    growth:"accompagné la croissance d’une activité passée de 250 k€ à 36 M€ de chiffre d’affaires",
   };
-  return verified[proof.id] || `${proof.title.toLowerCase()} (${proof.facts[0]})`;
+  return verified[proof.id] || `mené ce projet : ${proof.facts[0].toLowerCase()}`;
 }
 
 function applicationCopy(item) {
   const company = item.company || "votre organisation";
+  const role = copyRole(item);
+  const sector = copySector(item);
   const angle = copyOfferAngle(item);
   const proofs = selectCopyEvidence(item);
-  const requirements = (item.analysis?.requirements || []).slice(0,3).map(value => value.label.toLowerCase());
-  const priorities = requirements.length ? requirements.join(", ") : (item.analysis?.matches || []).slice(0,3).map(value => value.toLowerCase()).join(", ");
+  const opening = sector==="social"
+    ? `Je souhaite aujourd’hui donner du sens à ce que je sais faire. C’est dans cet esprit que je vous propose ma candidature au poste de ${role} chez ${company}.`
+    : `Votre poste de ${role} chez ${company} m’intéresse pour une raison simple : ${angle}.`;
+  const transition = sector==="social"
+    ? `Je n’ai pas exercé dans le secteur social et je ne prétends pas en connaître d’emblée toutes les exigences. J’apporterais mon expérience du pilotage et du management en m’appuyant sur les professionnels qui connaissent le métier et les personnes accompagnées.`
+    : `Je ne connais pas encore vos équipes ni les contraintes propres à votre organisation. J’aimerais comprendre ce qui fonctionne déjà, ce qui doit changer et la place que vous souhaitez donner à la personne qui prendra ce poste.`;
+  const messageReason = sector==="social"
+    ? `Je souhaite donner un sens nouveau à ce que je sais faire, sans prétendre avoir déjà exercé dans votre secteur.`
+    : `Ce qui m’intéresse dans votre offre, c’est de ${angle}.`;
   const letterBody = `Madame, Monsieur,
 
-La perspective de rejoindre ${company} au poste de ${item.title} m’intéresse pour une raison précise : ${angle}.
+${opening}
 
-Dirigeant opérationnel, j’ai évolué au sein d’une même structure, du terrain à la direction d’un site et d’un centre de profit. Cette progression m’a appris à relier vision, exigence de résultat et réalité opérationnelle : fixer un cap, structurer les méthodes, donner aux équipes les moyens de l’atteindre et mesurer les résultats.
+Je suis dirigeant opérationnel. J’ai commencé sur le terrain avant de prendre la direction d’un site et d’un centre de profit. Cette progression m’a appris à écouter les équipes, à fixer des priorités compréhensibles et à faire tenir l’activité, y compris dans les périodes tendues.
 
 ${longProofSentence(proofs[0])}
 
-${longProofSentence(proofs[1])}
+${transition}
 
-${priorities ? `Les priorités décrites dans votre annonce, notamment ${priorities}, font ainsi directement écho à mon expérience. ` : ""}Ma manière de diriger repose sur une présence réelle auprès des équipes, des objectifs lisibles et une prise de décision fondée sur les faits. Je souhaite mettre cette approche au service de ${company}, avec la même attention portée à la qualité d’exécution, à la dynamique collective et aux résultats.
-
-Je serais heureux d’échanger avec vous sur les objectifs confiés au futur titulaire du poste, le niveau d’autonomie attendu et les résultats prioritaires des premiers mois.
+Je serais heureux d’échanger avec vous sur les besoins réels du poste et sur ce que mon parcours pourrait apporter à ${company}.
 
 Bien cordialement,`;
   const letter = `${letterBody}\n${profile.identity.name}`;
   const message = `Bonjour,
 
-Je me permets de vous contacter directement au sujet du poste de ${item.title} chez ${company}, afin que mon parcours puisse être étudié avec le contexte nécessaire.
+Je vous écris au sujet du poste de ${role} chez ${company}.
 
-Dirigeant opérationnel, j’ai construit mon expérience du terrain à la direction d’un site : pilotage d’un centre de profit, management d’équipes jusqu’à 40 collaborateurs, structuration des process et conduite de projets de transformation.
+Je suis dirigeant opérationnel. J’ai progressé du terrain à la direction d’un site, avec le pilotage d’un centre de profit et d’équipes allant jusqu’à 40 collaborateurs. J’ai notamment ${shortProofAction(proofs[0])}.
 
-Parmi les réalisations les plus directement transposables au poste : ${shortProofSentence(proofs[0])}. Le périmètre présenté dans votre annonce fait ainsi écho à une expérience concrète, construite dans la durée et orientée résultats.
+${messageReason}
 
-Je vous joins mon CV et vous invite également à consulter sa version digitale :\nhttps://${profile.identity.cv_url}
+Je vous joins mon CV. Sa version digitale est également disponible ici :\nhttps://${profile.identity.cv_url}
 
-Seriez-vous disponible pour un échange de 15 minutes afin de vérifier ensemble l’adéquation entre vos enjeux et mon expérience ?
+Si mon parcours vous semble pouvoir répondre à vos besoins, je serais heureux d’en discuter avec vous.
 
 Bien cordialement,
-${profile.identity.name}\n${profile.identity.linkedin}`;
-  return {letterBody,letter,message,subject:`Candidature – ${item.title} – ${profile.identity.name}`,angle,proofs,priorities};
+${profile.identity.name}`;
+  return {letterBody,letter,message,subject:`Candidature au poste de ${role} | ${profile.identity.name}`,angle,proofs};
 }
 
 kit = function premiumApplicationKit(id) {
