@@ -9,6 +9,7 @@ const statusLabels={
   REFUSE:"Refusée",
   ABANDONNE:"Abandonnée"
 };
+const tableStatusLabels={...statusLabels,CANDIDATE:"Envoyée"};
 
 const renderDashboard=dashboard;
 dashboard=function(){
@@ -39,13 +40,14 @@ pipeline=function(){
   if(refreshed)save(all);
   const requestedFilter=decodeURIComponent(location.hash.slice(1).split("/")[1]||"");
   const filter=STATUSES.includes(requestedFilter)?requestedFilter:"";
-  const list=filter?all.filter(item=>item.status===filter):all;
+  const rank={ENTRETIEN:0,OFFRE:1,RELANCE:2,CANDIDATE:3,A_CANDIDATER:4,A_ETUDIER:5,ACCEPTE:6,REFUSE:7,ABANDONNE:8};
+  const list=(filter?all.filter(item=>item.status===filter):all).sort((a,b)=>(rank[a.status]??9)-(rank[b.status]??9)||(Date.parse(b.createdAt)||0)-(Date.parse(a.createdAt)||0));
   const rows=list.map(item=>`<tr>
     <td><div class="company-cell">${item.logo?`<img src="${item.logo}" alt="">`:`<span class="company-monogram" aria-hidden="true">${esc(item.company.slice(0,2).toUpperCase())}</span>`}<strong>${esc(item.company)}</strong></div></td>
     <td>${esc(item.title)}</td>
     <td>${item.trackingOnly?"<span class=\"muted\">Non analysée</span>":`<span class="verdict-pill ${item.analysis.recommendation==="GO"?"go":item.analysis.recommendation==="NO GO"?"nogo":"review"}">${esc(item.analysis.recommendation)}</span>`}</td>
     <td>${item.trackingOnly?"—":`<b>${item.analysis.overall}/100</b>`}</td>
-    <td><select class="table-status" data-id="${esc(item.id)}" aria-label="Statut de ${esc(item.title)}">${STATUSES.map(status=>`<option value="${status}" ${status===item.status?"selected":""}>${esc(statusLabels[status])}</option>`).join("")}</select></td>
+    <td><select class="table-status" data-id="${esc(item.id)}" aria-label="Statut de ${esc(item.title)}">${STATUSES.map(status=>`<option value="${status}" ${status===item.status?"selected":""}>${esc(tableStatusLabels[status])}</option>`).join("")}</select></td>
     <td class="tracking-note-cell">${esc(item.trackingNote||"—")}</td>
     <td>${new Date(item.events[0]?.date||item.createdAt).toLocaleDateString("fr-FR")}</td>
     <td><a class="row-link" href="#application/${item.id}">Ouvrir</a></td>
