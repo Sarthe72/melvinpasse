@@ -77,3 +77,9 @@
 - [x] Adapter l'angle au secteur sans inventer de motivation ni d'expérience.
 - [x] Limiter chaque lettre et message à une réalisation vérifiée et pertinente.
 - [x] Tester des offres sociale et logistique ainsi que la sortie PDF.
+
+## Maintenance — Tableau de suivi responsive [x]
+- [x] Supprimer la colonne d'action coupée et rendre le poste cliquable.
+- [x] Contraindre les largeurs des colonnes sur ordinateur.
+- [x] Présenter chaque ligne comme une fiche lisible sur écran étroit, avec statut modifiable.
+- [x] Vérifier le rendu et ajouter un test de structure du tableau.

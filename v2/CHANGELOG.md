@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.2.5 — Suivi lisible sur toute la largeur
+- Le poste ouvre directement le dossier : plus de lien d'action tronqué à droite.
+- Les colonnes du tableau tiennent dans la fenêtre sur ordinateur ; sur écran étroit, chaque candidature devient une fiche avec ses libellés et son statut modifiable.
+
 ## 1.2.4 — Candidatures plus humaines
 - Lettres et messages plus courts, directs et moins scolaires, avec une seule réalisation pertinente au lieu d'un empilement de preuves.
 - Angle adapté au secteur de l'annonce ; pour un secteur nouveau comme le social, la transition est formulée honnêtement sans expérience inventée.
