@@ -3,6 +3,7 @@
 ## 1.2.5 — Suivi lisible sur toute la largeur
 - Le poste ouvre directement le dossier : plus de lien d'action tronqué à droite.
 - Les colonnes du tableau tiennent dans la fenêtre sur ordinateur ; sur écran étroit, chaque candidature devient une fiche avec ses libellés et son statut modifiable.
+- Les annonces TalentUp importées affichent leurs accents normalement et distinguent le recruteur de l'employeur non divulgué.
 
 ## 1.2.4 — Candidatures plus humaines
 - Lettres et messages plus courts, directs et moins scolaires, avec une seule réalisation pertinente au lieu d'un empilement de preuves.

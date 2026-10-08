@@ -83,3 +83,8 @@
 - [x] Contraindre les largeurs des colonnes sur ordinateur.
 - [x] Présenter chaque ligne comme une fiche lisible sur écran étroit, avec statut modifiable.
 - [x] Vérifier le rendu et ajouter un test de structure du tableau.
+
+## Maintenance — Import TalentUp [x]
+- [x] Décoder les entités HTML présentes dans les titres et descriptifs importés.
+- [x] Identifier le client non divulgué derrière Vidal Associates pour l'offre Vb16817U.
+- [x] Vérifier l'import du lien fourni et couvrir son nettoyage par un test.

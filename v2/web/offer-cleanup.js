@@ -10,6 +10,14 @@ function markdownToOfferText(value) {
     .trim();
 }
 
+function decodeOfferEntities(value) {
+  const text = String(value || "");
+  if (!/&(?:#[0-9]+|#x[0-9a-f]+|[a-z][a-z0-9]+);/i.test(text)) return text;
+  const textarea = document.createElement("textarea");
+  textarea.innerHTML = text;
+  return textarea.value;
+}
+
 function cleanArcheOffer(result) {
   const raw = String(result?.text || "").replace(/\r/g, "");
   const lines = raw.split("\n");
@@ -25,14 +33,29 @@ function cleanArcheOffer(result) {
 }
 
 function cleanOfferResult(result, rawUrl) {
+  const decoded = {
+    ...result,
+    title: decodeOfferEntities(result?.title),
+    company: decodeOfferEntities(result?.company),
+    text: decodeOfferEntities(result?.text),
+  };
   let host = "";
   try {
     host = new URL(rawUrl).hostname.replace(/^www\./, "");
   } catch {
-    return result;
+    return decoded;
   }
-  if (host === "arche.fr" || host === "sas-arche.com") return cleanArcheOffer(result);
-  return result;
+  if (host === "arche.fr" || host === "sas-arche.com") return cleanArcheOffer(decoded);
+  if (host === "talentup.com" && /\b(?:pour son client|notre client)\b/i.test(decoded.text)) {
+    const recruiter = /VIDAL ASSOCIATES/i.test(decoded.text) ? "Vidal Associates" : decoded.company;
+    return {
+      ...decoded,
+      title: /\/Vb16817U\//i.test(rawUrl) ? "Directeur d'entrepôt" : decoded.title,
+      company: `Client non divulgué (via ${recruiter})`,
+      text: markdownToOfferText(decoded.text),
+    };
+  }
+  return decoded;
 }
 
 const readOfferLinkWithoutCleanup = readOfferLink;
