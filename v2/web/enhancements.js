@@ -10,6 +10,12 @@ const statusLabels={
   ABANDONNE:"Abandonnée"
 };
 const tableStatusLabels={...statusLabels,CANDIDATE:"Envoyée"};
+const logoCompanyKey=company=>String(company||"").split("(")[0].trim().toLocaleLowerCase("fr-FR");
+function logoForTracking(item,records){
+  if(item.logo)return item.logo;
+  const key=logoCompanyKey(item.company);
+  return key?records.find(other=>other.id!==item.id&&other.logo&&logoCompanyKey(other.company)===key)?.logo||"":"";
+}
 
 const renderDashboard=dashboard;
 dashboard=function(){
@@ -42,15 +48,15 @@ pipeline=function(){
   const filter=STATUSES.includes(requestedFilter)?requestedFilter:"";
   const rank={ENTRETIEN:0,OFFRE:1,RELANCE:2,CANDIDATE:3,A_CANDIDATER:4,A_ETUDIER:5,ACCEPTE:6,REFUSE:7,ABANDONNE:8};
   const list=(filter?all.filter(item=>item.status===filter):all).sort((a,b)=>(rank[a.status]??9)-(rank[b.status]??9)||(Date.parse(b.createdAt)||0)-(Date.parse(a.createdAt)||0));
-  const rows=list.map(item=>`<tr>
-    <td data-label="Entreprise"><div class="company-cell">${item.logo?`<img src="${esc(item.logo)}" alt="Logo de ${esc(item.company)}">`:`<span class="company-monogram" aria-hidden="true">${esc(item.company.slice(0,2).toUpperCase())}</span>`}<strong>${esc(item.company)}</strong></div></td>
+  const rows=list.map(item=>{const logo=logoForTracking(item,all);return`<tr>
+    <td data-label="Entreprise"><div class="company-cell">${logo?`<img src="${esc(logo)}" alt="Logo de ${esc(item.company)}">`:`<span class="company-monogram" aria-hidden="true">${esc(item.company.slice(0,2).toUpperCase())}</span>`}<strong>${esc(item.company)}</strong></div></td>
     <td data-label="Poste"><a class="tracking-title-link" href="#application/${item.id}">${esc(item.title)}</a></td>
     <td data-label="Analyse">${item.trackingOnly?"<span class=\"muted\">Non analysée</span>":`<span class="verdict-pill ${item.analysis.recommendation==="GO"?"go":item.analysis.recommendation==="NO GO"?"nogo":"review"}">${esc(item.analysis.recommendation)}</span>`}</td>
     <td data-label="Score">${item.trackingOnly?"—":`<b>${item.analysis.overall}/100</b>`}</td>
     <td data-label="Statut"><select class="table-status" data-id="${esc(item.id)}" aria-label="Statut de ${esc(item.title)}">${STATUSES.map(status=>`<option value="${status}" ${status===item.status?"selected":""}>${esc(tableStatusLabels[status])}</option>`).join("")}</select></td>
     <td data-label="Précision" class="tracking-note-cell">${esc(item.trackingNote||"—")}</td>
     <td data-label="Mise à jour" class="tracking-date-cell">${new Date(item.events[0]?.date||item.createdAt).toLocaleDateString("fr-FR")}</td>
-  </tr>`).join("");
+  </tr>`}).join("");
   const emptyLabel=filter?`Aucune candidature avec le statut « ${statusLabels[filter]} ».`:"Aucune candidature suivie pour le moment.";
   const content=list.length?`<div class="tracking-table-wrap"><table class="tracking-table"><thead><tr><th>Entreprise</th><th>Poste</th><th>Analyse</th><th>Score</th><th>Statut</th><th>Précision</th><th>Dernière mise à jour</th></tr></thead><tbody>${rows}</tbody></table></div>`:`<div class="empty"><p>${esc(emptyLabel)}</p>${filter?`<a class="button secondary" href="#pipeline">Voir toutes les candidatures</a>`:`<a class="button" href="#dashboard">Analyser une annonce</a>`}</div>`;
   const filterNotice=filter?`<div class="active-filter"><span>Filtre : <b>${esc(statusLabels[filter])}</b></span><a href="#pipeline">Afficher tout</a></div>`:"";
@@ -90,7 +96,8 @@ application=function(id){
   if(!item?.trackingOnly){
     renderAnalyzedApplication(id);
   }else{
-    layout(item.title,item.company,`<section class="panel tracking-detail"><p class="eyebrow">Dossier de suivi</p><h2>${esc(item.title)}</h2><p><strong>${esc(item.company)}</strong> · <a href="${esc(item.url)}" target="_blank" rel="noopener noreferrer">Voir l’offre d’origine</a></p><p>Ce dossier a été ajouté au suivi sans analyse automatique : aucun score ni CV personnalisé n’a été généré.</p><div class="tracking-logo-editor">${item.logo?`<img src="${esc(item.logo)}" alt="Logo de ${esc(item.company)}">`:`<span class="company-monogram" aria-hidden="true">${esc(item.company.slice(0,2).toUpperCase())}</span>`}<label>Logo de l’entreprise<input id="tracking-logo" type="file" accept="image/png,image/jpeg,image/webp"><small>Ajoutez ou remplacez le logo que vous avez fourni. La modification se synchronise sur vos appareils.</small></label></div><label>Statut<select id="status">${STATUSES.map(status=>`<option value="${status}" ${item.status===status?"selected":""}>${esc(statusLabels[status])}</option>`).join("")}</select></label><label>Précision factuelle<textarea id="tracking-note" rows="4">${esc(item.trackingNote||"")}</textarea></label><p class="muted">Les modifications sont enregistrées automatiquement.</p><button class="button danger" id="remove">Supprimer ce dossier</button></section>`,`<a class="button secondary" href="#pipeline">Retour au suivi</a>`);
+    const logo=logoForTracking(item,apps());
+    layout(item.title,item.company,`<section class="panel tracking-detail"><p class="eyebrow">Dossier de suivi</p><h2>${esc(item.title)}</h2><p><strong>${esc(item.company)}</strong> · <a href="${esc(item.url)}" target="_blank" rel="noopener noreferrer">Voir l’offre d’origine</a></p><p>Ce dossier a été ajouté au suivi sans analyse automatique : aucun score ni CV personnalisé n’a été généré.</p><div class="tracking-logo-editor">${logo?`<img src="${esc(logo)}" alt="Logo de ${esc(item.company)}">`:`<span class="company-monogram" aria-hidden="true">${esc(item.company.slice(0,2).toUpperCase())}</span>`}<label>Logo de l’entreprise<input id="tracking-logo" type="file" accept="image/png,image/jpeg,image/webp"><small>Ajoutez ou remplacez le logo que vous avez fourni. La modification se synchronise sur vos appareils.</small></label></div><label>Statut<select id="status">${STATUSES.map(status=>`<option value="${status}" ${item.status===status?"selected":""}>${esc(statusLabels[status])}</option>`).join("")}</select></label><label>Précision factuelle<textarea id="tracking-note" rows="4">${esc(item.trackingNote||"")}</textarea></label><p class="muted">Les modifications sont enregistrées automatiquement.</p><button class="button danger" id="remove">Supprimer ce dossier</button></section>`,`<a class="button secondary" href="#pipeline">Retour au suivi</a>`);
     document.querySelector("#tracking-logo").onchange=async event=>{const file=event.target.files?.[0];if(!file)return;const logo=await trackingLogoData(file);if(!logo)return;const records=rawApps(),found=records.find(entry=>entry.id===id);if(!found)return;found.logo=logo;found.events.unshift({type:"LOGO_CHANGED",date:new Date().toISOString()});save(records);application(id);toast("Logo mis à jour")};
     document.querySelector("#status").onchange=event=>{const records=rawApps(),found=records.find(entry=>entry.id===id);found.status=event.target.value;found.events.unshift({type:"STATUS_CHANGED",date:new Date().toISOString()});save(records);toast(`Statut : ${statusLabels[found.status]}`)};
     document.querySelector("#tracking-note").onchange=event=>{const records=rawApps(),found=records.find(entry=>entry.id===id);found.trackingNote=event.target.value.trim();found.events.unshift({type:"NOTE_CHANGED",date:new Date().toISOString()});save(records);toast("Précision mise à jour")};

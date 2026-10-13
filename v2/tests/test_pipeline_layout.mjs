@@ -1,5 +1,6 @@
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
+import { runInNewContext } from "node:vm";
 
 const markup = readFileSync(new URL("../web/enhancements.js", import.meta.url), "utf8");
 const css = readFileSync(new URL("../web/styles.css", import.meta.url), "utf8");
@@ -16,5 +17,10 @@ assert.match(markup, /id="tracking-logo" type="file" accept="image\/png,image\/j
 assert.match(markup, /found\.logo=logo;found\.events\.unshift\(\{type:"LOGO_CHANGED"/);
 assert.match(markup, /const file=form\.get\("logo"\),logo=file\?\.size\?await trackingLogoData\(file\):""/);
 assert.match(markup, /file\.size>5\*1024\*1024/);
+const logoLogic=markup.slice(markup.indexOf("const logoCompanyKey="),markup.indexOf("const renderDashboard="));
+const logoForTracking=runInNewContext(`${logoLogic};logoForTracking`);
+const original={id:"first",company:"Partnaire",logo:"data:image/png;base64,abc"};
+assert.equal(logoForTracking({id:"second",company:"Partnaire (client industriel)",logo:""},[original]),original.logo);
+assert.equal(logoForTracking({id:"third",company:"LHH (client industriel)",logo:""},[original]),"");
 
-console.log("Suivi responsive et logos : 9 contrôles réussis");
+console.log("Suivi responsive et logos : 11 contrôles réussis");

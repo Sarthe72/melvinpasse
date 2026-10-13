@@ -88,6 +88,7 @@
 - [x] Autoriser l'ajout d'un logo fourni par l'utilisateur lors de la création d'un dossier déjà traité.
 - [x] Permettre le remplacement du logo dans une fiche de suivi existante, avec synchronisation et contrôle du format/taille.
 - [x] Tester la présence des contrôles et la mise à jour des données.
+- [x] Réutiliser un logo déjà présent dans une autre candidature du même recruteur, sans récupération automatique externe.
 
 ## Maintenance — Import TalentUp [x]
 - [x] Décoder les entités HTML présentes dans les titres et descriptifs importés.

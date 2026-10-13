@@ -3,6 +3,7 @@
 ## 1.2.6 — Logos dans le suivi
 - Les dossiers ajoutés après candidature peuvent maintenant recevoir un logo d'entreprise fourni par l'utilisateur, à la création ou depuis leur fiche.
 - Le logo choisi remplace les initiales dans le tableau et se synchronise entre appareils ; les fichiers sont limités aux formats PNG, JPG et WebP de 5 Mo maximum.
+- Un logo déjà fourni pour une autre candidature de la même entreprise est réutilisé dans le suivi, notamment pour Partnaire.
 
 ## 1.2.5 — Suivi lisible sur toute la largeur
 - Le poste ouvre directement le dossier : plus de lien d'action tronqué à droite.
