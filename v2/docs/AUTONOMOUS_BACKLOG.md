@@ -84,6 +84,11 @@
 - [x] Présenter chaque ligne comme une fiche lisible sur écran étroit, avec statut modifiable.
 - [x] Vérifier le rendu et ajouter un test de structure du tableau.
 
+## Maintenance — Logos des dossiers de suivi [x]
+- [x] Autoriser l'ajout d'un logo fourni par l'utilisateur lors de la création d'un dossier déjà traité.
+- [x] Permettre le remplacement du logo dans une fiche de suivi existante, avec synchronisation et contrôle du format/taille.
+- [x] Tester la présence des contrôles et la mise à jour des données.
+
 ## Maintenance — Import TalentUp [x]
 - [x] Décoder les entités HTML présentes dans les titres et descriptifs importés.
 - [x] Identifier le client non divulgué derrière Vidal Associates pour l'offre Vb16817U.

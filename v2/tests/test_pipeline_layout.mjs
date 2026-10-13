@@ -12,5 +12,9 @@ assert.deepEqual(
 );
 assert.match(css, /\.tracking-table\{table-layout:fixed;min-width:0\}/);
 assert.match(css, /@media\(max-width:900px\)[\s\S]*?\.tracking-table td::before\{content:attr\(data-label\)/);
+assert.match(markup, /id="tracking-logo" type="file" accept="image\/png,image\/jpeg,image\/webp"/);
+assert.match(markup, /found\.logo=logo;found\.events\.unshift\(\{type:"LOGO_CHANGED"/);
+assert.match(markup, /const file=form\.get\("logo"\),logo=file\?\.size\?await trackingLogoData\(file\):""/);
+assert.match(markup, /file\.size>5\*1024\*1024/);
 
-console.log("Suivi responsive : 5 contrôles réussis");
+console.log("Suivi responsive et logos : 9 contrôles réussis");
