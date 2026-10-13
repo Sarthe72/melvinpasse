@@ -14,6 +14,7 @@ const logoCompanyKey=company=>String(company||"").split("(")[0].trim().toLocaleL
 function logoForTracking(item,records){
   if(item.logo)return item.logo;
   const key=logoCompanyKey(item.company);
+  if(key==="résidence le champ de l'ormeau")return "icons/champ-ormeau-logo.png";
   return key?records.find(other=>other.id!==item.id&&other.logo&&logoCompanyKey(other.company)===key)?.logo||"":"";
 }
 
