@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.2.7 — Date de candidature
+- Date d'envoi distincte de la dernière mise à jour dans le tableau de suivi, modifiable directement sur ordinateur et téléphone.
+- Les anciens dossiers gardent une date vide tant qu'elle n'est pas confirmée ; le passage au statut « Envoyée » initialise la date du jour pour les nouveaux envois.
+- Le formulaire d'ajout d'un ancien dossier accepte sa date de candidature et la synchronisation conserve cette donnée.
+
 ## 1.2.6 — Logos dans le suivi
 - Les dossiers ajoutés après candidature peuvent maintenant recevoir un logo d'entreprise fourni par l'utilisateur, à la création ou depuis leur fiche.
 - Le logo choisi remplace les initiales dans le tableau et se synchronise entre appareils ; les fichiers sont limités aux formats PNG, JPG et WebP de 5 Mo maximum.

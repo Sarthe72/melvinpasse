@@ -9,8 +9,13 @@ assert.match(markup, /<td data-label="Poste"><a class="tracking-title-link" href
 assert.doesNotMatch(markup, /<th><\/th><\/tr>/);
 assert.deepEqual(
   [...markup.matchAll(/<td data-label="([^"]+)"/g)].map(match => match[1]),
-  ["Entreprise", "Poste", "Analyse", "Score", "Statut", "Précision", "Mise à jour"],
+  ["Entreprise", "Poste", "Analyse", "Score", "Statut", "Date de candidature", "Précision", "Mise à jour"],
 );
+assert.match(markup, /<th>Date de candidature<\/th>/);
+assert.match(markup, /class="table-applied-date"/);
+assert.match(markup, /name="appliedAt" type="date"/);
+assert.match(markup, /item\.status==="CANDIDATE"&&!item\.appliedAt/);
+assert.match(markup, /APPLICATION_DATE_CHANGED/);
 assert.match(css, /\.tracking-table\{table-layout:fixed;min-width:0\}/);
 assert.match(css, /@media\(max-width:900px\)[\s\S]*?\.tracking-table td::before\{content:attr\(data-label\)/);
 assert.match(markup, /id="tracking-logo" type="file" accept="image\/png,image\/jpeg,image\/webp"/);
@@ -23,4 +28,4 @@ const original={id:"first",company:"Partnaire",logo:"data:image/png;base64,abc"}
 assert.equal(logoForTracking({id:"second",company:"Partnaire (client industriel)",logo:""},[original]),original.logo);
 assert.equal(logoForTracking({id:"third",company:"LHH (client industriel)",logo:""},[original]),"");
 
-console.log("Suivi responsive et logos : 11 contrôles réussis");
+console.log("Suivi responsive, logos et date de candidature : contrôles réussis");

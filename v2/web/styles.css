@@ -60,17 +60,22 @@
 .tracking-table-wrap{overflow-x:visible}
 .tracking-table{table-layout:fixed;min-width:0}
 .tracking-table th,.tracking-table td{padding:13px 11px;overflow-wrap:anywhere}
-.tracking-table th:nth-child(1){width:18%}
-.tracking-table th:nth-child(2){width:18%}
-.tracking-table th:nth-child(3){width:10%}
-.tracking-table th:nth-child(4){width:8%}
-.tracking-table th:nth-child(5){width:17%}
-.tracking-table th:nth-child(6){width:19%}
-.tracking-table th:nth-child(7){width:10%}
+.tracking-table th:nth-child(1){width:16%}
+.tracking-table th:nth-child(2){width:16%}
+.tracking-table th:nth-child(3){width:9%}
+.tracking-table th:nth-child(4){width:7%}
+.tracking-table th:nth-child(5){width:16%}
+.tracking-table th:nth-child(6){width:13%}
+.tracking-table th:nth-child(7){width:16%}
+.tracking-table th:nth-child(8){width:7%}
 .tracking-table .company-cell{min-width:0}
 .tracking-table .table-status{min-width:0;width:100%;padding:9px 25px 9px 9px}
 .tracking-table .tracking-note-cell{min-width:0;max-width:none}
 .tracking-date-cell{white-space:nowrap;font-size:13px}
+.table-applied-date{width:100%;min-width:0;padding:7px 3px;font-size:12px;box-sizing:border-box}
+.application-date-editor{display:block;margin-top:18px}
+.application-date-editor input{display:block;max-width:240px;margin-top:7px}
+.application-date-editor small{display:block;color:#81786e;margin-top:5px}
 .tracking-title-link{color:var(--ink);text-decoration:none;font-weight:700}
 .tracking-title-link:hover,.tracking-title-link:focus-visible{color:#426b50;text-decoration:underline}
 @media(max-width:900px){
