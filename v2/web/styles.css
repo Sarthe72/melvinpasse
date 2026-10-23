@@ -72,10 +72,8 @@
 .tracking-table .table-status{min-width:0;width:100%;padding:9px 25px 9px 9px}
 .tracking-table .tracking-note-cell{min-width:0;max-width:none}
 .tracking-date-cell{white-space:nowrap;font-size:13px}
-.table-applied-date{width:100%;min-width:0;padding:7px 3px;font-size:12px;box-sizing:border-box}
-.application-date-editor{display:block;margin-top:18px}
-.application-date-editor input{display:block;max-width:240px;margin-top:7px}
-.application-date-editor small{display:block;color:#81786e;margin-top:5px}
+.tracking-applied-date-cell{white-space:nowrap;font-size:13px;font-weight:700}
+.application-date-editor{margin-top:18px;font-weight:700}
 .tracking-title-link{color:var(--ink);text-decoration:none;font-weight:700}
 .tracking-title-link:hover,.tracking-title-link:focus-visible{color:#426b50;text-decoration:underline}
 @media(max-width:900px){

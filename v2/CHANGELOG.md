@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.2.8 — Dates automatiques et tri chronologique
+- La date de candidature est désormais en lecture seule et la pipeline est triée du plus récent au plus ancien en fonction de cette date, indépendamment du statut.
+- Les dates d'envoi explicites dans les notes des dossiers antérieurs sont affichées automatiquement ; une date inconnue reste indiquée comme telle et le dossier est placé en fin de liste.
+- Aucun champ de saisie de date n'est proposé dans le tableau, la fiche ou le formulaire d'ajout.
+
 ## 1.2.7 — Date de candidature
 - Date d'envoi distincte de la dernière mise à jour dans le tableau de suivi, modifiable directement sur ordinateur et téléphone.
 - Les anciens dossiers gardent une date vide tant qu'elle n'est pas confirmée ; le passage au statut « Envoyée » initialise la date du jour pour les nouveaux envois.
