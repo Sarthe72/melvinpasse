@@ -9,8 +9,12 @@ assert.match(markup, /<td data-label="Poste"><a class="tracking-title-link" href
 assert.doesNotMatch(markup, /<th><\/th><\/tr>/);
 assert.deepEqual(
   [...markup.matchAll(/<td data-label="([^"]+)"/g)].map(match => match[1]),
-  ["Entreprise", "Poste", "Analyse", "Score", "Statut", "Date de candidature", "Précision", "Mise à jour"],
+  ["Entreprise", "Candidature FR", "Poste", "Analyse", "Score", "Statut", "Date de candidature", "Précision", "Mise à jour"],
 );
+assert.match(markup, /<th>Entreprise<\/th><th>CANDIDATURE FR<\/th><th>Poste<\/th>/);
+assert.match(markup, /class="table-candidature-fr-date"[^>]+type="date"[^>]+candidatureFrAt/);
+assert.match(markup, /item\.candidatureFrAt=value/);
+assert.doesNotMatch(markup, /candidatureFrAt\s*[:=]\s*todayLocal\(\)/);
 assert.match(markup, /<th>Date de candidature<\/th>/);
 assert.match(markup, /class="tracking-applied-date-cell"/);
 assert.doesNotMatch(markup, /class="table-applied-date"|name="appliedAt" type="date"|id="application-date"/);

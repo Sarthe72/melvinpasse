@@ -64,6 +64,7 @@ pipeline=function(){
   const list=(filter?all.filter(item=>item.status===filter):all).sort((a,b)=>applicationDate(b).localeCompare(applicationDate(a))||(Date.parse(b.createdAt)||0)-(Date.parse(a.createdAt)||0));
   const rows=list.map(item=>{const logo=logoForTracking(item,all);return`<tr>
     <td data-label="Entreprise"><div class="company-cell">${logo?`<img src="${esc(logo)}" alt="Logo de ${esc(item.company)}">`:`<span class="company-monogram" aria-hidden="true">${esc(item.company.slice(0,2).toUpperCase())}</span>`}<strong>${esc(item.company)}</strong></div></td>
+    <td data-label="Candidature FR"><input class="table-candidature-fr-date" data-id="${esc(item.id)}" type="date" value="${validApplicationDate(item.candidatureFrAt)?esc(item.candidatureFrAt):""}" aria-label="Candidature FR pour ${esc(item.company)}" title="Date à renseigner par vous uniquement"></td>
     <td data-label="Poste"><a class="tracking-title-link" href="#application/${item.id}">${esc(item.title)}</a></td>
     <td data-label="Analyse">${item.trackingOnly?"<span class=\"muted\">Non analysée</span>":`<span class="verdict-pill ${item.analysis.recommendation==="GO"?"go":item.analysis.recommendation==="NO GO"?"nogo":"review"}">${esc(item.analysis.recommendation)}</span>`}</td>
     <td data-label="Score">${item.trackingOnly?"—":`<b>${item.analysis.overall}/100</b>`}</td>
@@ -73,7 +74,7 @@ pipeline=function(){
     <td data-label="Mise à jour" class="tracking-date-cell">${new Date(item.events[0]?.date||item.createdAt).toLocaleDateString("fr-FR")}</td>
   </tr>`}).join("");
   const emptyLabel=filter?`Aucune candidature avec le statut « ${statusLabels[filter]} ».`:"Aucune candidature suivie pour le moment.";
-  const content=list.length?`<div class="tracking-table-wrap"><table class="tracking-table"><thead><tr><th>Entreprise</th><th>Poste</th><th>Analyse</th><th>Score</th><th>Statut</th><th>Date de candidature</th><th>Précision</th><th>Dernière mise à jour</th></tr></thead><tbody>${rows}</tbody></table></div>`:`<div class="empty"><p>${esc(emptyLabel)}</p>${filter?`<a class="button secondary" href="#pipeline">Voir toutes les candidatures</a>`:`<a class="button" href="#dashboard">Analyser une annonce</a>`}</div>`;
+  const content=list.length?`<div class="tracking-table-wrap"><table class="tracking-table"><thead><tr><th>Entreprise</th><th>CANDIDATURE FR</th><th>Poste</th><th>Analyse</th><th>Score</th><th>Statut</th><th>Date de candidature</th><th>Précision</th><th>Dernière mise à jour</th></tr></thead><tbody>${rows}</tbody></table></div>`:`<div class="empty"><p>${esc(emptyLabel)}</p>${filter?`<a class="button secondary" href="#pipeline">Voir toutes les candidatures</a>`:`<a class="button" href="#dashboard">Analyser une annonce</a>`}</div>`;
   const filterNotice=filter?`<div class="active-filter"><span>Filtre : <b>${esc(statusLabels[filter])}</b></span><a href="#pipeline">Afficher tout</a></div>`:"";
   const addForm=`<details class="panel tracking-add"><summary>Ajouter un dossier déjà traité</summary><p>Pour suivre une candidature antérieure sans créer une fausse analyse.</p><form id="tracking-add-form" class="form"><label>Entreprise<input name="company" required></label><label>Poste<input name="title" required></label><label class="full">Lien de l’offre<input name="url" type="url" required placeholder="https://…"></label><label>Statut<select name="status">${STATUSES.map(status=>`<option value="${status}">${esc(statusLabels[status])}</option>`).join("")}</select></label><label class="full">Logo fourni par vous (facultatif)<input name="logo" type="file" accept="image/png,image/jpeg,image/webp"><small>Image PNG, JPG ou WebP, 5 Mo maximum.</small></label><label class="full">Précision factuelle<textarea name="trackingNote" rows="3" required placeholder="Ex. : envoyée sur Apec le 07/10/2026"></textarea></label><div class="full form-actions"><button class="button" type="submit">Ajouter au suivi</button></div></form></details>`;
   layout(filter?statusLabels[filter]:"Suivi des candidatures","Tableau de bord",`${filterNotice}<section class="panel tracking-panel">${content}</section>${filter?"":addForm}`,`<a class="button" href="#dashboard">Analyser une annonce</a>`);
@@ -85,6 +86,16 @@ pipeline=function(){
     item.events.unshift({type:"STATUS_CHANGED",date:new Date().toISOString()});
     save(records);
     toast(`Statut : ${statusLabels[item.status]}`);
+  });
+  document.querySelectorAll(".table-candidature-fr-date").forEach(input=>input.onchange=event=>{
+    const value=event.currentTarget.value;
+    if(value&&!validApplicationDate(value)){toast("Choisissez une date valide");return}
+    const records=rawApps(),item=records.find(entry=>entry.id===event.currentTarget.dataset.id);
+    if(!item)return;
+    item.candidatureFrAt=value;
+    item.events.unshift({type:"CANDIDATURE_FR_DATE_CHANGED",date:new Date().toISOString()});
+    save(records);
+    toast(value?"Date CANDIDATURE FR enregistrée":"Date CANDIDATURE FR effacée");
   });
   document.querySelector("#tracking-add-form")?.addEventListener("submit",async event=>{
     event.preventDefault();

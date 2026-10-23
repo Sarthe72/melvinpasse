@@ -94,3 +94,8 @@
 - [x] Décoder les entités HTML présentes dans les titres et descriptifs importés.
 - [x] Identifier le client non divulgué derrière Vidal Associates pour l'offre Vb16817U.
 - [x] Vérifier l'import du lien fourni et couvrir son nettoyage par un test.
+
+## Maintenance — Date CANDIDATURE FR manuelle [x]
+- [x] Ajouter la colonne immédiatement après Entreprise dans le suivi.
+- [x] Ne renseigner la date que sur action explicite de l’utilisateur, sans préremplissage ni déduction.
+- [x] Conserver séparément la date de candidature automatique et son tri chronologique.

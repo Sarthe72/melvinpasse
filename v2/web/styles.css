@@ -60,16 +60,18 @@
 .tracking-table-wrap{overflow-x:visible}
 .tracking-table{table-layout:fixed;min-width:0}
 .tracking-table th,.tracking-table td{padding:13px 11px;overflow-wrap:anywhere}
-.tracking-table th:nth-child(1){width:16%}
-.tracking-table th:nth-child(2){width:16%}
-.tracking-table th:nth-child(3){width:9%}
-.tracking-table th:nth-child(4){width:7%}
-.tracking-table th:nth-child(5){width:16%}
-.tracking-table th:nth-child(6){width:13%}
-.tracking-table th:nth-child(7){width:16%}
-.tracking-table th:nth-child(8){width:7%}
+.tracking-table th:nth-child(1){width:14%}
+.tracking-table th:nth-child(2){width:13%}
+.tracking-table th:nth-child(3){width:13%}
+.tracking-table th:nth-child(4){width:8%}
+.tracking-table th:nth-child(5){width:6%}
+.tracking-table th:nth-child(6){width:14%}
+.tracking-table th:nth-child(7){width:11%}
+.tracking-table th:nth-child(8){width:14%}
+.tracking-table th:nth-child(9){width:7%}
 .tracking-table .company-cell{min-width:0}
 .tracking-table .table-status{min-width:0;width:100%;padding:9px 25px 9px 9px}
+.tracking-table .table-candidature-fr-date{width:100%;min-width:0;max-width:100%;margin:0;padding:8px 3px;border:1px solid var(--line);border-radius:7px;background:#fff;color:var(--ink);font:inherit;font-size:12px}
 .tracking-table .tracking-note-cell{min-width:0;max-width:none}
 .tracking-date-cell{white-space:nowrap;font-size:13px}
 .tracking-applied-date-cell{white-space:nowrap;font-size:13px;font-weight:700}

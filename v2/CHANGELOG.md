@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.2.9 — Date « CANDIDATURE FR » saisie par l’utilisateur
+- Nouvelle colonne immédiatement après « Entreprise », distincte de la date de candidature automatique.
+- Le champ reste vide jusqu’à une saisie manuelle et peut être modifié ou effacé directement dans le suivi, sur ordinateur et téléphone.
+- La saisie est conservée par la synchronisation ; le tri chronologique continue d’utiliser la date de candidature automatique.
+
 ## 1.2.8 — Dates automatiques et tri chronologique
 - La date de candidature est désormais en lecture seule et la pipeline est triée du plus récent au plus ancien en fonction de cette date, indépendamment du statut.
 - Les dates d'envoi explicites dans les notes des dossiers antérieurs sont affichées automatiquement ; une date inconnue reste indiquée comme telle et le dossier est placé en fin de liste.
