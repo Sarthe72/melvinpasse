@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.3.4 — Tri interactif des dates
+- Les en-têtes « CANDIDATURE FR », « Date de candidature » et « Dernière mise à jour » trient le suivi d’un clic ; un second clic inverse l’ordre.
+- Sur téléphone, ces trois tris sont également accessibles au-dessus des fiches, puisque les en-têtes du tableau sont masqués.
+- Les dates inconnues restent en bas, les entretiens demeurent sous leur candidature et leurs dates suivent le sens du tri CANDIDATURE FR.
+- À l’ajout d’une candidature, le tri par date d’ajout est rétabli pour afficher le nouveau dossier en tête.
+
 ## 1.3.3 — Dernier dossier ajouté en premier
 - Le suivi affiche désormais les candidatures dans l’ordre d’ajout, de la plus récente à la plus ancienne. Une candidature nouvellement créée apparaît donc tout en haut, même si sa date d’envoi est inconnue.
 - Les dates de candidature et d’entretien restent visibles dans leurs colonnes respectives et ne sont pas modifiées par ce tri.

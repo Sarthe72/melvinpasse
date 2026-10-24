@@ -60,6 +60,8 @@
 .tracking-table-wrap{overflow-x:visible}
 .tracking-table{table-layout:fixed;min-width:0}
 .tracking-table th,.tracking-table td{padding:13px 11px;overflow-wrap:anywhere}
+.tracking-sort{display:block;width:100%;padding:0;border:0;background:none;color:inherit;font:inherit;font-weight:inherit;letter-spacing:inherit;text-align:left;text-transform:inherit;cursor:pointer}.tracking-sort:hover{text-decoration:underline}.tracking-sort:focus-visible{outline:2px solid #426b50;outline-offset:3px}
+.tracking-sort-mobile{display:none}
 .tracking-table th:nth-child(1){width:17%}
 .tracking-table th:nth-child(2){width:11%}
 .tracking-table th:nth-child(3){width:14%}
@@ -95,6 +97,7 @@
 .interview-form .interview-actions{grid-column:1/-1;display:flex;gap:8px;flex-wrap:wrap}
 .interview-form .interview-actions .button{padding:8px 12px;font-size:12px}
 @media(max-width:900px){
+  .tracking-sort-mobile{display:flex;align-items:center;gap:8px;flex-wrap:wrap;padding:12px 12px 0}.tracking-sort-mobile>span{font-size:12px;font-weight:800;color:var(--muted)}.tracking-sort-mobile .tracking-sort{width:auto;padding:7px 9px;border:1px solid var(--line);border-radius:7px;background:#fff;color:#426b50;font-size:12px;font-weight:800;text-transform:none;letter-spacing:0}
   .tracking-table-wrap{padding:12px}
   .tracking-table,.tracking-table tbody,.tracking-table tr{display:block;width:100%}
   .tracking-table thead{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}

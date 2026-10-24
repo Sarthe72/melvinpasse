@@ -112,3 +112,9 @@
 ## Maintenance — Ordre d’ajout du suivi [x]
 - [x] Afficher en premier chaque nouvelle candidature ajoutée, même sans date d’envoi connue.
 - [x] Conserver les dates existantes sans les modifier lors du tri.
+
+## Maintenance — Tri interactif du suivi [x]
+- [x] Rendre les trois en-têtes de date cliquables avec inversion croissante/décroissante.
+- [x] Exposer les mêmes tris sur mobile malgré l’absence d’en-têtes visibles.
+- [x] Garder les valeurs inconnues en fin de tableau et les entretiens groupés sous leur candidature.
+- [x] Rétablir le tri par ajout après la création manuelle d’un dossier.

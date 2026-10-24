@@ -12,13 +12,18 @@ assert.deepEqual(
   [...mainRowMarkup.matchAll(/<td data-label="([^"]+)"/g)].map(match => match[1]),
   ["Entreprise", "Démarche", "Candidature FR", "Poste", "Statut", "Date de candidature", "Précision", "Mise à jour"],
 );
-assert.match(markup, /<th>Entreprise<\/th><th>Démarche<\/th><th>CANDIDATURE FR<\/th><th>Poste<\/th><th>Statut<\/th>/);
+assert.match(markup, /<th>Entreprise<\/th><th>Démarche<\/th>\$\{sortHeader\("fr","CANDIDATURE FR"\)\}<th>Poste<\/th><th>Statut<\/th>/);
+assert.match(markup, /sortHeader\("applied","Date de candidature"\)/);
+assert.match(markup, /sortHeader\("updated","Dernière mise à jour"\)/);
+assert.match(markup, /class="tracking-sort-mobile"/);
+assert.match(css, /@media\(max-width:900px\)[\s\S]*?\.tracking-sort-mobile\{display:flex/);
+assert.match(markup, /aria-sort=/);
 assert.doesNotMatch(markup, /<th>Analyse<\/th>|<th>Score<\/th>/);
 assert.match(markup, /class="table-candidature-fr-date"[^>]+type="date"[^>]+candidatureFrAt/);
 assert.match(markup, /item\.candidatureFrAt=value/);
 assert.match(markup, /aria-label="Saisir ou modifier la date Candidature FR/);
 assert.doesNotMatch(markup, /candidatureFrAt\s*[:=]\s*todayLocal\(\)/);
-assert.match(markup, /<th>Date de candidature<\/th>/);
+assert.match(markup, /\.tracking-sort/);
 assert.match(markup, /class="tracking-applied-date-cell"/);
 assert.doesNotMatch(markup, /class="table-applied-date"|name="appliedAt" type="date"|id="application-date"/);
 assert.match(markup, /\.sort\(comparePipelineItems\)/);
@@ -45,6 +50,14 @@ const comparePipelineItems=runInNewContext(`${dateLogic};comparePipelineItems`);
 const older={createdAt:"2026-10-10T10:00:00Z",appliedAt:"2026-10-10"};
 const newlyAdded={createdAt:"2026-10-24T10:00:00Z"};
 assert.ok(comparePipelineItems(newlyAdded,older)<0);
+const first={createdAt:"2026-10-01T10:00:00Z",candidatureFrAt:"2026-10-11",appliedAt:"2026-10-05",events:[{date:"2026-10-21T10:00:00Z"}]};
+const second={createdAt:"2026-10-02T10:00:00Z",candidatureFrAt:"2026-10-12",appliedAt:"2026-10-06",events:[{date:"2026-10-22T10:00:00Z"}]};
+for(const key of ["fr","applied","updated"]){
+  assert.ok(comparePipelineItems(second,first,{key,direction:"desc"})<0);
+  assert.ok(comparePipelineItems(first,second,{key,direction:"asc"})<0);
+}
+assert.ok(comparePipelineItems(first,newlyAdded,{key:"fr",direction:"asc"})<0);
+assert.ok(comparePipelineItems(first,newlyAdded,{key:"fr",direction:"desc"})<0);
 assert.equal(applicationDate({trackingNote:"Envoyée sur Apec le 07/10/2026 ; confirmation visible."}),"2026-10-07");
 assert.equal(applicationDate({trackingNote:"13/10/2026 : candidature envoyée sur Indeed."}),"2026-10-13");
 assert.equal(applicationDate({trackingNote:"Candidature envoyée par e-mail à vb16817u@talentup.net le 08/10/2026."}),"2026-10-08");

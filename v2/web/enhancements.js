@@ -24,7 +24,22 @@ function applicationDate(item){
   return validApplicationDate(item.appliedAt)?item.appliedAt:"";
 }
 const displayApplicationDate=date=>date?`${date.slice(8,10)}/${date.slice(5,7)}/${date.slice(0,4)}`:"Date inconnue";
-const comparePipelineItems=(a,b)=>(Date.parse(b.createdAt)||0)-(Date.parse(a.createdAt)||0)||applicationDate(b).localeCompare(applicationDate(a));
+const pipelineSort={key:"added",direction:"desc"};
+const addedOrder=(a,b)=>(Date.parse(b.createdAt)||0)-(Date.parse(a.createdAt)||0)||applicationDate(b).localeCompare(applicationDate(a));
+function comparePipelineItems(a,b,sort=pipelineSort){
+  if(sort.key==="added")return addedOrder(a,b);
+  const value=item=>{
+    if(sort.key==="fr")return validApplicationDate(item.candidatureFrAt)?Date.parse(`${item.candidatureFrAt}T12:00:00`):NaN;
+    if(sort.key==="applied")return applicationDate(item)?Date.parse(`${applicationDate(item)}T12:00:00`):NaN;
+    return Date.parse(item.events?.[0]?.date||item.createdAt||"");
+  };
+  const first=value(a),second=value(b);
+  if(Number.isNaN(first))return Number.isNaN(second)?addedOrder(a,b):1;
+  if(Number.isNaN(second))return -1;
+  return (sort.direction==="desc"?second-first:first-second)||addedOrder(a,b);
+}
+const sortControl=(key,label)=>`<button class="tracking-sort" type="button" data-sort="${key}" aria-label="Trier par ${label}${pipelineSort.key===key?`, ordre ${pipelineSort.direction==="desc"?"décroissant":"croissant"}`:""}">${label}<span aria-hidden="true">${pipelineSort.key===key?(pipelineSort.direction==="desc"?" ↓":" ↑"):" ↕"}</span></button>`;
+const sortHeader=(key,label)=>`<th aria-sort="${pipelineSort.key===key?(pipelineSort.direction==="desc"?"descending":"ascending"):"none"}">${sortControl(key,label)}</th>`;
 const logoCompanyKey=company=>String(company||"").split("(")[0].trim().toLocaleLowerCase("fr-FR");
 const openInterviewPanel=(id,interviewId="new")=>document.querySelectorAll(".interview-panel").forEach(panel=>{if(panel.dataset.id===id&&panel.dataset.interviewId===interviewId)panel.open=true});
 function interviewRow(item,interview,index){
@@ -70,7 +85,7 @@ pipeline=function(){
   const requestedFilter=decodeURIComponent(location.hash.slice(1).split("/")[1]||"");
   const filter=STATUSES.includes(requestedFilter)?requestedFilter:"";
   const list=(filter?all.filter(item=>item.status===filter):all).sort(comparePipelineItems);
-  const rows=list.map(item=>{const logo=logoForTracking(item,all),interviews=Array.isArray(item.interviews)?item.interviews:[];return`<tr>
+  const rows=list.map(item=>{const logo=logoForTracking(item,all),interviews=Array.isArray(item.interviews)?item.interviews:[],orderedInterviews=pipelineSort.key==="fr"?[...interviews].sort((a,b)=>pipelineSort.direction==="desc"?String(b.date||"").localeCompare(String(a.date||"")):String(a.date||"").localeCompare(String(b.date||""))):interviews;return`<tr>
     <td data-label="Entreprise"><div class="company-cell">${logo?`<img src="${esc(logo)}" alt="Logo de ${esc(item.company)}">`:`<span class="company-monogram" aria-hidden="true">${esc(item.company.slice(0,2).toUpperCase())}</span>`}<strong>${esc(item.company)}</strong></div></td>
     <td data-label="Démarche"><span class="tracking-step">Candidature</span></td>
     <td data-label="Candidature FR"><input class="table-candidature-fr-date" data-id="${esc(item.id)}" type="date" value="${validApplicationDate(item.candidatureFrAt)?esc(item.candidatureFrAt):""}" aria-label="Saisir ou modifier la date Candidature FR pour ${esc(item.company)}" title="Cliquez pour saisir ou modifier cette date"></td>
@@ -79,12 +94,19 @@ pipeline=function(){
     <td data-label="Date de candidature" class="tracking-applied-date-cell">${displayApplicationDate(applicationDate(item))}</td>
     <td data-label="Précision" class="tracking-note-cell">${item.trackingNote?`<details class="tracking-note-details"><summary>Voir</summary><div>${esc(item.trackingNote)}</div></details>`:"—"}</td>
     <td data-label="Mise à jour" class="tracking-date-cell">${new Date(item.events[0]?.date||item.createdAt).toLocaleDateString("fr-FR")}</td>
-  </tr>${interviews.map((interview,index)=>interviewRow(item,interview,index)).join("")}${item.status==="ENTRETIEN"||interviews.length?interviewAddRow(item):""}`}).join("");
+  </tr>${orderedInterviews.map((interview,index)=>interviewRow(item,interview,index)).join("")}${item.status==="ENTRETIEN"||interviews.length?interviewAddRow(item):""}`}).join("");
   const emptyLabel=filter?`Aucune candidature avec le statut « ${statusLabels[filter]} ».`:"Aucune candidature suivie pour le moment.";
-  const content=list.length?`<div class="tracking-table-wrap"><table class="tracking-table"><thead><tr><th>Entreprise</th><th>Démarche</th><th>CANDIDATURE FR</th><th>Poste</th><th>Statut</th><th>Date de candidature</th><th>Précision</th><th>Dernière mise à jour</th></tr></thead><tbody>${rows}</tbody></table></div>`:`<div class="empty"><p>${esc(emptyLabel)}</p>${filter?`<a class="button secondary" href="#pipeline">Voir toutes les candidatures</a>`:`<a class="button" href="#dashboard">Analyser une annonce</a>`}</div>`;
+  const mobileSort=`<div class="tracking-sort-mobile"><span>Trier par</span>${sortControl("fr","Candidature FR")}${sortControl("applied","Candidature")}${sortControl("updated","Mise à jour")}</div>`;
+  const content=list.length?`${mobileSort}<div class="tracking-table-wrap"><table class="tracking-table"><thead><tr><th>Entreprise</th><th>Démarche</th>${sortHeader("fr","CANDIDATURE FR")}<th>Poste</th><th>Statut</th>${sortHeader("applied","Date de candidature")}<th>Précision</th>${sortHeader("updated","Dernière mise à jour")}</tr></thead><tbody>${rows}</tbody></table></div>`:`<div class="empty"><p>${esc(emptyLabel)}</p>${filter?`<a class="button secondary" href="#pipeline">Voir toutes les candidatures</a>`:`<a class="button" href="#dashboard">Analyser une annonce</a>`}</div>`;
   const filterNotice=filter?`<div class="active-filter"><span>Filtre : <b>${esc(statusLabels[filter])}</b></span><a href="#pipeline">Afficher tout</a></div>`:"";
   const addForm=`<details id="tracking-add" class="panel tracking-add"><summary>Ajouter une candidature manuellement</summary><p>Pour suivre une candidature sans créer une analyse automatique.</p><form id="tracking-add-form" class="form"><label>Entreprise<input name="company" required></label><label>Poste<input name="title" required></label><label class="full">Lien de l’offre (facultatif)<input name="url" type="url" placeholder="https://…"></label><label>Statut<select name="status">${STATUSES.map(status=>`<option value="${status}">${esc(statusLabels[status])}</option>`).join("")}</select></label><label class="full">Logo fourni par vous (facultatif)<input name="logo" type="file" accept="image/png,image/jpeg,image/webp"><small>Image PNG, JPG ou WebP, 5 Mo maximum.</small></label><label class="full">Précision factuelle (facultatif)<textarea name="trackingNote" rows="3" placeholder="Ex. : envoyée sur Apec le 07/10/2026"></textarea></label><div class="full form-actions"><button class="button" type="submit">Ajouter au suivi</button></div></form></details>`;
   layout(filter?statusLabels[filter]:"Suivi des candidatures","Tableau de bord",`${filterNotice}<section class="panel tracking-panel">${content}</section>${filter?"":addForm}`,`<button class="button secondary" id="open-tracking-add" type="button">Ajouter une candidature</button><a class="button" href="#dashboard">Analyser une annonce</a>`);
+  document.querySelectorAll(".tracking-sort").forEach(button=>button.addEventListener("click",()=>{
+    const key=button.dataset.sort;
+    pipelineSort.direction=pipelineSort.key===key&&pipelineSort.direction==="desc"?"asc":"desc";
+    pipelineSort.key=key;
+    pipeline();
+  }));
   document.querySelector("#open-tracking-add")?.addEventListener("click",()=>{if(filter){location.hash="pipeline";setTimeout(()=>document.querySelector("#open-tracking-add")?.click(),0);return}const details=document.querySelector("#tracking-add");details.open=true;details.scrollIntoView({behavior:"smooth",block:"start"});details.querySelector('[name="company"]').focus()});
   document.querySelectorAll(".table-status").forEach(select=>select.onchange=event=>{
     const records=apps(),item=records.find(entry=>entry.id===event.currentTarget.dataset.id);
@@ -133,6 +155,7 @@ pipeline=function(){
     item.candidatureFrAt=value;
     item.events.unshift({type:"CANDIDATURE_FR_DATE_CHANGED",date:new Date().toISOString()});
     save(records);
+    if(pipelineSort.key!=="added")pipeline();
     toast(value?"Date CANDIDATURE FR enregistrée":"Date CANDIDATURE FR effacée");
   });
   document.querySelector("#tracking-add-form")?.addEventListener("submit",async event=>{
@@ -145,6 +168,7 @@ pipeline=function(){
     const date=new Date().toISOString();
     const item={id:slug(),company:String(form.get("company")).trim(),title:String(form.get("title")).trim(),url,offer:"",logo,status:String(form.get("status")),trackingOnly:true,trackingNote:String(form.get("trackingNote")).trim(),createdAt:date,events:[{type:"ADDED_TO_TRACKING",date}]};
     save([item,...rawApps()]);
+    pipelineSort.key="added";pipelineSort.direction="desc";
     route();
     toast("Dossier ajouté au suivi");
   });
