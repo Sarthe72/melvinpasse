@@ -4,23 +4,28 @@ import { runInNewContext } from "node:vm";
 
 const markup = readFileSync(new URL("../web/enhancements.js", import.meta.url), "utf8");
 const css = readFileSync(new URL("../web/styles.css", import.meta.url), "utf8");
+const mainRowMarkup=markup.slice(markup.indexOf("const rows=list.map"),markup.indexOf("const emptyLabel="));
 
 assert.match(markup, /<td data-label="Poste"><a class="tracking-title-link" href="#application\/\$\{item\.id\}">/);
 assert.doesNotMatch(markup, /<th><\/th><\/tr>/);
 assert.deepEqual(
-  [...markup.matchAll(/<td data-label="([^"]+)"/g)].map(match => match[1]),
-  ["Entreprise", "Démarche", "Candidature FR", "Poste", "Analyse", "Score", "Statut", "Date de candidature", "Précision", "Mise à jour"],
+  [...mainRowMarkup.matchAll(/<td data-label="([^"]+)"/g)].map(match => match[1]),
+  ["Entreprise", "Démarche", "Candidature FR", "Poste", "Statut", "Date de candidature", "Précision", "Mise à jour"],
 );
-assert.match(markup, /<th>Entreprise<\/th><th>Démarche<\/th><th>CANDIDATURE FR<\/th><th>Poste<\/th>/);
+assert.match(markup, /<th>Entreprise<\/th><th>Démarche<\/th><th>CANDIDATURE FR<\/th><th>Poste<\/th><th>Statut<\/th>/);
+assert.doesNotMatch(markup, /<th>Analyse<\/th>|<th>Score<\/th>/);
 assert.match(markup, /class="table-candidature-fr-date"[^>]+type="date"[^>]+candidatureFrAt/);
 assert.match(markup, /item\.candidatureFrAt=value/);
+assert.match(markup, /aria-label="Saisir ou modifier la date Candidature FR/);
 assert.doesNotMatch(markup, /candidatureFrAt\s*[:=]\s*todayLocal\(\)/);
 assert.match(markup, /<th>Date de candidature<\/th>/);
 assert.match(markup, /class="tracking-applied-date-cell"/);
 assert.doesNotMatch(markup, /class="table-applied-date"|name="appliedAt" type="date"|id="application-date"/);
 assert.match(markup, /applicationDate\(b\)\.localeCompare\(applicationDate\(a\)\)/);
 assert.match(markup, /item\.status==="ENTRETIEN"\|\|interviews\.length/);
-assert.match(markup, /<tr class="interview-subrow"><td colspan="10">/);
+assert.match(markup, /<tr class="interview-subrow"><td class="interview-indent"/);
+assert.match(markup, /data-label="Candidature FR" class="interview-date-cell">\$\{displayApplicationDate\(interview.date\)\}/);
+assert.match(markup, /<td colspan="5"><details class="interview-panel"/);
 assert.match(markup, /<details class="interview-panel" data-id=/);
 assert.match(markup, /<summary class="interview-heading">/);
 assert.doesNotMatch(markup, /<details class="interview-panel"[^>]*\sopen(?:\s|>)/);
@@ -33,7 +38,7 @@ assert.match(markup, /item\.interviews=item\.interviews\.filter/);
 assert.match(markup, /id="open-tracking-add"[^>]*>Ajouter une candidature/);
 assert.match(markup, /id="tracking-add" class="panel tracking-add"/);
 assert.match(markup, /class="tracking-note-details"><summary>Voir<\/summary>/);
-assert.match(css, /\.tracking-table \.interview-subrow>td\{display:block/);
+assert.match(css, /\.tracking-table \.interview-subrow>td:last-child\{display:block/);
 const dateLogic=markup.slice(markup.indexOf("const validApplicationDate="),markup.indexOf("const logoCompanyKey="));
 const applicationDate=runInNewContext(`${dateLogic};applicationDate`);
 assert.equal(applicationDate({trackingNote:"Envoyée sur Apec le 07/10/2026 ; confirmation visible."}),"2026-10-07");

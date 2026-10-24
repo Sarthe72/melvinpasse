@@ -106,3 +106,5 @@
 - [x] Ajouter un bouton visible en haut du suivi pour la création manuelle d’un dossier.
 - [x] Réduire la colonne Précision et n’afficher son contenu que sur demande.
 - [x] Replier les détails d’entretien par défaut tout en conservant un accès direct à leur historique.
+- [x] Afficher chaque date d’entretien dans la colonne CANDIDATURE FR de sa sous-ligne, distincte de la date manuelle de candidature.
+- [x] Retirer les colonnes Analyse et Score du tableau sans supprimer ces informations des dossiers.

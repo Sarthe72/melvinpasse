@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.3.2 — Une date visible par entretien
+- Chaque entretien a désormais sa propre sous-ligne repliée avec sa date affichée dans la colonne « CANDIDATURE FR ».
+- La date de candidature dans cette même colonne reste modifiable manuellement, sans modifier les entretiens.
+- Les colonnes « Score » et « Analyse » sont retirées du tableau de suivi ; leurs informations restent dans la fiche du dossier.
+
 ## 1.3.1 — Entretiens repliés par défaut
 - Les sous-lignes d’entretien montrent uniquement un résumé dans le tableau ; les formulaires s’ouvrent sur demande.
 - Après le passage au statut « Entretien » ou la modification d’un rendez-vous, le panneau concerné reste ouvert pour poursuivre la saisie.

@@ -60,16 +60,14 @@
 .tracking-table-wrap{overflow-x:visible}
 .tracking-table{table-layout:fixed;min-width:0}
 .tracking-table th,.tracking-table td{padding:13px 11px;overflow-wrap:anywhere}
-.tracking-table th:nth-child(1){width:14%}
-.tracking-table th:nth-child(2){width:9%}
-.tracking-table th:nth-child(3){width:12%}
-.tracking-table th:nth-child(4){width:13%}
-.tracking-table th:nth-child(5){width:7%}
-.tracking-table th:nth-child(6){width:6%}
-.tracking-table th:nth-child(7){width:14%}
-.tracking-table th:nth-child(8){width:10%}
-.tracking-table th:nth-child(9){width:8%}
-.tracking-table th:nth-child(10){width:7%}
+.tracking-table th:nth-child(1){width:17%}
+.tracking-table th:nth-child(2){width:11%}
+.tracking-table th:nth-child(3){width:14%}
+.tracking-table th:nth-child(4){width:18%}
+.tracking-table th:nth-child(5){width:16%}
+.tracking-table th:nth-child(6){width:10%}
+.tracking-table th:nth-child(7){width:7%}
+.tracking-table th:nth-child(8){width:7%}
 .tracking-table .company-cell{min-width:0}
 .tracking-table .table-status{min-width:0;width:100%;padding:9px 25px 9px 9px}
 .tracking-table .table-candidature-fr-date{width:100%;min-width:0;max-width:100%;margin:0;padding:8px 3px;border:1px solid var(--line);border-radius:7px;background:#fff;color:var(--ink);font:inherit;font-size:12px}
@@ -81,22 +79,21 @@
 .tracking-title-link{color:var(--ink);text-decoration:none;font-weight:700}
 .tracking-title-link:hover,.tracking-title-link:focus-visible{color:#426b50;text-decoration:underline}
 .tracking-step{display:inline-block;padding:5px 7px;border-radius:6px;background:#ede5d8;color:#5a544d;font-size:11px;font-weight:800}.interview-step{margin-right:7px;background:#e5efe8;color:#426b50}
-.tracking-table .interview-subrow>td{padding:0;border-top:0;background:#f7f4ee}
-.interview-panel{margin:0 14px 8px;padding:9px 16px;border-left:3px solid #7b9d85;background:#f7f4ee}
+.tracking-table .interview-subrow>td{padding:7px 11px;border-top:0;background:#f7f4ee}
+.tracking-table .interview-subrow>.interview-indent{border-left:3px solid #7b9d85}
+.interview-date-cell{font-size:13px;font-weight:800;color:#426b50}
+.interview-panel{margin:0;padding:5px 10px;background:#f7f4ee}
 .interview-heading{display:flex;justify-content:space-between;gap:12px;align-items:center;color:var(--ink);cursor:pointer;list-style:none}
 .interview-heading::-webkit-details-marker{display:none}
 .interview-heading::before{content:"▸";color:#426b50;font-size:14px}
 .interview-panel[open]>.interview-heading::before{content:"▾"}
-.interview-heading>strong{flex:1}.interview-heading>span{font-size:12px;color:var(--muted);white-space:nowrap}
-.interview-body{padding-top:10px}
-.interview-form{display:grid;grid-template-columns:auto minmax(115px,1fr) minmax(100px,.7fr) minmax(150px,1.3fr);gap:10px;align-items:end;padding:12px 0;border-top:1px solid var(--line)}
-.interview-form>b{align-self:center;font-size:13px;white-space:nowrap}
+.interview-heading>strong{flex:1}.interview-heading>span{font-size:12px;color:var(--muted);text-align:right}
+.interview-form{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;align-items:end;padding:12px 0;border-top:1px solid var(--line)}
 .interview-form label{display:block;font-size:12px;font-weight:700;color:#5a544d}
 .interview-form input,.interview-form textarea{display:block;width:100%;min-width:0;margin-top:5px;padding:8px;border:1px solid var(--line);border-radius:7px;background:#fff;color:var(--ink);font:inherit;font-size:13px}
-.interview-form .interview-note{grid-column:2/-1}
-.interview-form .interview-actions{grid-column:2/-1;display:flex;gap:8px;flex-wrap:wrap}
+.interview-form .interview-note{grid-column:1/-1}
+.interview-form .interview-actions{grid-column:1/-1;display:flex;gap:8px;flex-wrap:wrap}
 .interview-form .interview-actions .button{padding:8px 12px;font-size:12px}
-.interview-add{margin-top:8px}.interview-add summary{width:max-content;cursor:pointer;font-weight:800;color:#426b50}.interview-add .interview-form{margin-top:10px}.interview-add .interview-form label:first-child{grid-column:2}
 @media(max-width:900px){
   .tracking-table-wrap{padding:12px}
   .tracking-table,.tracking-table tbody,.tracking-table tr{display:block;width:100%}
@@ -109,11 +106,12 @@
   .tracking-table .company-cell{min-width:0}
   .tracking-table .table-status{margin:0}
   .tracking-date-cell{white-space:normal}
-  .tracking-table .interview-subrow{margin:-12px 0 12px;border-top:0;background:#f7f4ee}
-  .tracking-table .interview-subrow>td{display:block;padding:0}
-  .tracking-table .interview-subrow>td::before{content:none}
-  .interview-panel{margin:0;padding:10px 14px;border-left:0;border-top:3px solid #7b9d85}
+  .tracking-table .interview-subrow{margin:-12px 0 12px;border-top:3px solid #7b9d85;background:#f7f4ee}
+  .tracking-table .interview-subrow>.interview-indent{display:none}
+  .tracking-table .interview-subrow>td:last-child{display:block;padding:7px 11px}
+  .tracking-table .interview-subrow>td:last-child::before{content:none}
+  .interview-panel{padding:5px 0}
   .interview-form{grid-template-columns:repeat(2,minmax(0,1fr))}
-  .interview-form>b,.interview-form .interview-note,.interview-form .interview-actions,.interview-add .interview-form label:first-child{grid-column:1/-1}
+  .interview-form .interview-note,.interview-form .interview-actions{grid-column:1/-1}
 }
 @media(max-width:420px){.tracking-table td{grid-template-columns:83px minmax(0,1fr);gap:8px;padding:9px 10px}.tracking-table-wrap{padding:9px}}
