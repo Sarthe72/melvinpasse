@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.3.0 — Entretiens multiples et suivi plus compact
+- Une sous-ligne d’entretiens apparaît sous une candidature au statut « Entretien » ou comportant déjà des rendez-vous. Plusieurs entretiens peuvent être ajoutés, modifiés et supprimés séparément.
+- La colonne « Démarche » distingue la candidature de ses entretiens.
+- Un bouton en haut du suivi ouvre directement l’ajout manuel d’une candidature ; le lien et la précision sont facultatifs.
+- La colonne « Précision » reste repliée tant que l’utilisateur ne demande pas à la lire.
+
 ## 1.2.9 — Date « CANDIDATURE FR » saisie par l’utilisateur
 - Nouvelle colonne immédiatement après « Entreprise », distincte de la date de candidature automatique.
 - Le champ reste vide jusqu’à une saisie manuelle et peut être modifié ou effacé directement dans le suivi, sur ordinateur et téléphone.

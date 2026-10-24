@@ -99,3 +99,9 @@
 - [x] Ajouter la colonne immédiatement après Entreprise dans le suivi.
 - [x] Ne renseigner la date que sur action explicite de l’utilisateur, sans préremplissage ni déduction.
 - [x] Conserver séparément la date de candidature automatique et son tri chronologique.
+
+## Maintenance — Entretiens et ajout manuel [x]
+- [x] Afficher une sous-ligne dédiée et conserver plusieurs entretiens par candidature.
+- [x] Distinguer visuellement les démarches « Candidature » et « Entretien ».
+- [x] Ajouter un bouton visible en haut du suivi pour la création manuelle d’un dossier.
+- [x] Réduire la colonne Précision et n’afficher son contenu que sur demande.

@@ -9,9 +9,9 @@ assert.match(markup, /<td data-label="Poste"><a class="tracking-title-link" href
 assert.doesNotMatch(markup, /<th><\/th><\/tr>/);
 assert.deepEqual(
   [...markup.matchAll(/<td data-label="([^"]+)"/g)].map(match => match[1]),
-  ["Entreprise", "Candidature FR", "Poste", "Analyse", "Score", "Statut", "Date de candidature", "Précision", "Mise à jour"],
+  ["Entreprise", "Démarche", "Candidature FR", "Poste", "Analyse", "Score", "Statut", "Date de candidature", "Précision", "Mise à jour"],
 );
-assert.match(markup, /<th>Entreprise<\/th><th>CANDIDATURE FR<\/th><th>Poste<\/th>/);
+assert.match(markup, /<th>Entreprise<\/th><th>Démarche<\/th><th>CANDIDATURE FR<\/th><th>Poste<\/th>/);
 assert.match(markup, /class="table-candidature-fr-date"[^>]+type="date"[^>]+candidatureFrAt/);
 assert.match(markup, /item\.candidatureFrAt=value/);
 assert.doesNotMatch(markup, /candidatureFrAt\s*[:=]\s*todayLocal\(\)/);
@@ -19,6 +19,18 @@ assert.match(markup, /<th>Date de candidature<\/th>/);
 assert.match(markup, /class="tracking-applied-date-cell"/);
 assert.doesNotMatch(markup, /class="table-applied-date"|name="appliedAt" type="date"|id="application-date"/);
 assert.match(markup, /applicationDate\(b\)\.localeCompare\(applicationDate\(a\)\)/);
+assert.match(markup, /item\.status==="ENTRETIEN"\|\|interviews\.length/);
+assert.match(markup, /<tr class="interview-subrow"><td colspan="10">/);
+assert.match(markup, /<span class="tracking-step">Candidature<\/span>/);
+assert.match(markup, /<span class="tracking-step interview-step">Entretien<\/span>/);
+assert.match(markup, /class="interview-form interview-new"/);
+assert.match(markup, /class="interview-form interview-existing"/);
+assert.match(markup, /item\.interviews\.push\(\{id:slug\(\),\.\.\.values\}\)/);
+assert.match(markup, /item\.interviews=item\.interviews\.filter/);
+assert.match(markup, /id="open-tracking-add"[^>]*>Ajouter une candidature/);
+assert.match(markup, /id="tracking-add" class="panel tracking-add"/);
+assert.match(markup, /class="tracking-note-details"><summary>Voir<\/summary>/);
+assert.match(css, /\.tracking-table \.interview-subrow>td\{display:block/);
 const dateLogic=markup.slice(markup.indexOf("const validApplicationDate="),markup.indexOf("const logoCompanyKey="));
 const applicationDate=runInNewContext(`${dateLogic};applicationDate`);
 assert.equal(applicationDate({trackingNote:"Envoyée sur Apec le 07/10/2026 ; confirmation visible."}),"2026-10-07");

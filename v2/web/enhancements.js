@@ -62,22 +62,24 @@ pipeline=function(){
   const requestedFilter=decodeURIComponent(location.hash.slice(1).split("/")[1]||"");
   const filter=STATUSES.includes(requestedFilter)?requestedFilter:"";
   const list=(filter?all.filter(item=>item.status===filter):all).sort((a,b)=>applicationDate(b).localeCompare(applicationDate(a))||(Date.parse(b.createdAt)||0)-(Date.parse(a.createdAt)||0));
-  const rows=list.map(item=>{const logo=logoForTracking(item,all);return`<tr>
+  const rows=list.map(item=>{const logo=logoForTracking(item,all),interviews=Array.isArray(item.interviews)?item.interviews:[];return`<tr>
     <td data-label="Entreprise"><div class="company-cell">${logo?`<img src="${esc(logo)}" alt="Logo de ${esc(item.company)}">`:`<span class="company-monogram" aria-hidden="true">${esc(item.company.slice(0,2).toUpperCase())}</span>`}<strong>${esc(item.company)}</strong></div></td>
+    <td data-label="Démarche"><span class="tracking-step">Candidature</span></td>
     <td data-label="Candidature FR"><input class="table-candidature-fr-date" data-id="${esc(item.id)}" type="date" value="${validApplicationDate(item.candidatureFrAt)?esc(item.candidatureFrAt):""}" aria-label="Candidature FR pour ${esc(item.company)}" title="Date à renseigner par vous uniquement"></td>
     <td data-label="Poste"><a class="tracking-title-link" href="#application/${item.id}">${esc(item.title)}</a></td>
     <td data-label="Analyse">${item.trackingOnly?"<span class=\"muted\">Non analysée</span>":`<span class="verdict-pill ${item.analysis.recommendation==="GO"?"go":item.analysis.recommendation==="NO GO"?"nogo":"review"}">${esc(item.analysis.recommendation)}</span>`}</td>
     <td data-label="Score">${item.trackingOnly?"—":`<b>${item.analysis.overall}/100</b>`}</td>
     <td data-label="Statut"><select class="table-status" data-id="${esc(item.id)}" aria-label="Statut de ${esc(item.title)}">${STATUSES.map(status=>`<option value="${status}" ${status===item.status?"selected":""}>${esc(tableStatusLabels[status])}</option>`).join("")}</select></td>
     <td data-label="Date de candidature" class="tracking-applied-date-cell">${displayApplicationDate(applicationDate(item))}</td>
-    <td data-label="Précision" class="tracking-note-cell">${esc(item.trackingNote||"—")}</td>
+    <td data-label="Précision" class="tracking-note-cell">${item.trackingNote?`<details class="tracking-note-details"><summary>Voir</summary><div>${esc(item.trackingNote)}</div></details>`:"—"}</td>
     <td data-label="Mise à jour" class="tracking-date-cell">${new Date(item.events[0]?.date||item.createdAt).toLocaleDateString("fr-FR")}</td>
-  </tr>`}).join("");
+  </tr>${item.status==="ENTRETIEN"||interviews.length?`<tr class="interview-subrow"><td colspan="10"><div class="interview-panel"><div class="interview-heading"><strong><span class="tracking-step interview-step">Entretien</span> ${esc(item.company)}</strong><span>${interviews.length} rendez-vous</span></div>${interviews.map((interview,index)=>`<form class="interview-form interview-existing" data-id="${esc(item.id)}" data-interview-id="${esc(interview.id)}"><b>Entretien ${index+1}</b><label>Date<input name="date" type="date" required value="${esc(interview.date||"")}"></label><label>Heure<input name="time" type="time" value="${esc(interview.time||"")}"></label><label>Interlocuteur(s)<input name="people" value="${esc(interview.people||"")}"></label><label class="interview-note">Notes<textarea name="note" rows="2">${esc(interview.note||"")}</textarea></label><div class="interview-actions"><button class="button secondary" type="submit">Enregistrer</button><button class="button secondary interview-delete" type="button" data-id="${esc(item.id)}" data-interview-id="${esc(interview.id)}">Supprimer</button></div></form>`).join("")}<details class="interview-add"><summary>+ Ajouter un entretien</summary><form class="interview-form interview-new" data-id="${esc(item.id)}"><label>Date<input name="date" type="date" required></label><label>Heure<input name="time" type="time"></label><label>Interlocuteur(s)<input name="people"></label><label class="interview-note">Notes<textarea name="note" rows="2"></textarea></label><div class="interview-actions"><button class="button" type="submit">Ajouter cet entretien</button></div></form></details></div></td></tr>`:""}`}).join("");
   const emptyLabel=filter?`Aucune candidature avec le statut « ${statusLabels[filter]} ».`:"Aucune candidature suivie pour le moment.";
-  const content=list.length?`<div class="tracking-table-wrap"><table class="tracking-table"><thead><tr><th>Entreprise</th><th>CANDIDATURE FR</th><th>Poste</th><th>Analyse</th><th>Score</th><th>Statut</th><th>Date de candidature</th><th>Précision</th><th>Dernière mise à jour</th></tr></thead><tbody>${rows}</tbody></table></div>`:`<div class="empty"><p>${esc(emptyLabel)}</p>${filter?`<a class="button secondary" href="#pipeline">Voir toutes les candidatures</a>`:`<a class="button" href="#dashboard">Analyser une annonce</a>`}</div>`;
+  const content=list.length?`<div class="tracking-table-wrap"><table class="tracking-table"><thead><tr><th>Entreprise</th><th>Démarche</th><th>CANDIDATURE FR</th><th>Poste</th><th>Analyse</th><th>Score</th><th>Statut</th><th>Date de candidature</th><th>Précision</th><th>Dernière mise à jour</th></tr></thead><tbody>${rows}</tbody></table></div>`:`<div class="empty"><p>${esc(emptyLabel)}</p>${filter?`<a class="button secondary" href="#pipeline">Voir toutes les candidatures</a>`:`<a class="button" href="#dashboard">Analyser une annonce</a>`}</div>`;
   const filterNotice=filter?`<div class="active-filter"><span>Filtre : <b>${esc(statusLabels[filter])}</b></span><a href="#pipeline">Afficher tout</a></div>`:"";
-  const addForm=`<details class="panel tracking-add"><summary>Ajouter un dossier déjà traité</summary><p>Pour suivre une candidature antérieure sans créer une fausse analyse.</p><form id="tracking-add-form" class="form"><label>Entreprise<input name="company" required></label><label>Poste<input name="title" required></label><label class="full">Lien de l’offre<input name="url" type="url" required placeholder="https://…"></label><label>Statut<select name="status">${STATUSES.map(status=>`<option value="${status}">${esc(statusLabels[status])}</option>`).join("")}</select></label><label class="full">Logo fourni par vous (facultatif)<input name="logo" type="file" accept="image/png,image/jpeg,image/webp"><small>Image PNG, JPG ou WebP, 5 Mo maximum.</small></label><label class="full">Précision factuelle<textarea name="trackingNote" rows="3" required placeholder="Ex. : envoyée sur Apec le 07/10/2026"></textarea></label><div class="full form-actions"><button class="button" type="submit">Ajouter au suivi</button></div></form></details>`;
-  layout(filter?statusLabels[filter]:"Suivi des candidatures","Tableau de bord",`${filterNotice}<section class="panel tracking-panel">${content}</section>${filter?"":addForm}`,`<a class="button" href="#dashboard">Analyser une annonce</a>`);
+  const addForm=`<details id="tracking-add" class="panel tracking-add"><summary>Ajouter une candidature manuellement</summary><p>Pour suivre une candidature sans créer une analyse automatique.</p><form id="tracking-add-form" class="form"><label>Entreprise<input name="company" required></label><label>Poste<input name="title" required></label><label class="full">Lien de l’offre (facultatif)<input name="url" type="url" placeholder="https://…"></label><label>Statut<select name="status">${STATUSES.map(status=>`<option value="${status}">${esc(statusLabels[status])}</option>`).join("")}</select></label><label class="full">Logo fourni par vous (facultatif)<input name="logo" type="file" accept="image/png,image/jpeg,image/webp"><small>Image PNG, JPG ou WebP, 5 Mo maximum.</small></label><label class="full">Précision factuelle (facultatif)<textarea name="trackingNote" rows="3" placeholder="Ex. : envoyée sur Apec le 07/10/2026"></textarea></label><div class="full form-actions"><button class="button" type="submit">Ajouter au suivi</button></div></form></details>`;
+  layout(filter?statusLabels[filter]:"Suivi des candidatures","Tableau de bord",`${filterNotice}<section class="panel tracking-panel">${content}</section>${filter?"":addForm}`,`<button class="button secondary" id="open-tracking-add" type="button">Ajouter une candidature</button><a class="button" href="#dashboard">Analyser une annonce</a>`);
+  document.querySelector("#open-tracking-add")?.addEventListener("click",()=>{if(filter){location.hash="pipeline";setTimeout(()=>document.querySelector("#open-tracking-add")?.click(),0);return}const details=document.querySelector("#tracking-add");details.open=true;details.scrollIntoView({behavior:"smooth",block:"start"});details.querySelector('[name="company"]').focus()});
   document.querySelectorAll(".table-status").forEach(select=>select.onchange=event=>{
     const records=apps(),item=records.find(entry=>entry.id===event.currentTarget.dataset.id);
     if(!item)return;
@@ -85,8 +87,35 @@ pipeline=function(){
     if(item.status==="CANDIDATE"&&!applicationDate(item))item.appliedAt=todayLocal();
     item.events.unshift({type:"STATUS_CHANGED",date:new Date().toISOString()});
     save(records);
+    pipeline();
     toast(`Statut : ${statusLabels[item.status]}`);
   });
+  document.querySelectorAll(".interview-form").forEach(form=>form.addEventListener("submit",event=>{
+    event.preventDefault();
+    const data=new FormData(form),date=String(data.get("date")||"");
+    if(!validApplicationDate(date)){toast("Renseignez une date d’entretien valide");return}
+    const records=rawApps(),item=records.find(entry=>entry.id===form.dataset.id);
+    if(!item)return;
+    item.interviews=Array.isArray(item.interviews)?item.interviews:[];
+    const interview=form.dataset.interviewId?item.interviews.find(entry=>entry.id===form.dataset.interviewId):null;
+    const values={date,time:String(data.get("time")||""),people:String(data.get("people")||"").trim(),note:String(data.get("note")||"").trim()};
+    if(interview)Object.assign(interview,values);
+    else item.interviews.push({id:slug(),...values});
+    item.events.unshift({type:interview?"INTERVIEW_UPDATED":"INTERVIEW_ADDED",date:new Date().toISOString()});
+    save(records);
+    pipeline();
+    toast(interview?"Entretien mis à jour":"Entretien ajouté");
+  }));
+  document.querySelectorAll(".interview-delete").forEach(button=>button.addEventListener("click",()=>{
+    if(!confirm("Supprimer cet entretien ?"))return;
+    const records=rawApps(),item=records.find(entry=>entry.id===button.dataset.id);
+    if(!item||!Array.isArray(item.interviews))return;
+    item.interviews=item.interviews.filter(entry=>entry.id!==button.dataset.interviewId);
+    item.events.unshift({type:"INTERVIEW_REMOVED",date:new Date().toISOString()});
+    save(records);
+    pipeline();
+    toast("Entretien supprimé");
+  }));
   document.querySelectorAll(".table-candidature-fr-date").forEach(input=>input.onchange=event=>{
     const value=event.currentTarget.value;
     if(value&&!validApplicationDate(value)){toast("Choisissez une date valide");return}
@@ -100,8 +129,8 @@ pipeline=function(){
   document.querySelector("#tracking-add-form")?.addEventListener("submit",async event=>{
     event.preventDefault();
     const form=new FormData(event.currentTarget),url=String(form.get("url")).trim();
-    if(!/^https?:\/\//i.test(url)){toast("Utilisez un lien http ou https");return}
-    if(apps().some(item=>item.url===url)){toast("Cette offre figure déjà dans le suivi");return}
+    if(url&&!/^https?:\/\//i.test(url)){toast("Utilisez un lien http ou https");return}
+    if(url&&apps().some(item=>item.url===url)){toast("Cette offre figure déjà dans le suivi");return}
     const file=form.get("logo"),logo=file?.size?await trackingLogoData(file):"";
     if(logo===null)return;
     const date=new Date().toISOString();
@@ -124,7 +153,7 @@ application=function(id){
     renderAnalyzedApplication(id);
   }else{
     const logo=logoForTracking(item,apps());
-    layout(item.title,item.company,`<section class="panel tracking-detail"><p class="eyebrow">Dossier de suivi</p><h2>${esc(item.title)}</h2><p><strong>${esc(item.company)}</strong> · <a href="${esc(item.url)}" target="_blank" rel="noopener noreferrer">Voir l’offre d’origine</a></p><p>Ce dossier a été ajouté au suivi sans analyse automatique : aucun score ni CV personnalisé n’a été généré.</p><div class="tracking-logo-editor">${logo?`<img src="${esc(logo)}" alt="Logo de ${esc(item.company)}">`:`<span class="company-monogram" aria-hidden="true">${esc(item.company.slice(0,2).toUpperCase())}</span>`}<label>Logo de l’entreprise<input id="tracking-logo" type="file" accept="image/png,image/jpeg,image/webp"><small>Ajoutez ou remplacez le logo que vous avez fourni. La modification se synchronise sur vos appareils.</small></label></div><label>Statut<select id="status">${STATUSES.map(status=>`<option value="${status}" ${item.status===status?"selected":""}>${esc(statusLabels[status])}</option>`).join("")}</select></label><label>Précision factuelle<textarea id="tracking-note" rows="4">${esc(item.trackingNote||"")}</textarea></label><p class="muted">Les modifications sont enregistrées automatiquement.</p><button class="button danger" id="remove">Supprimer ce dossier</button></section>`,`<a class="button secondary" href="#pipeline">Retour au suivi</a>`);
+    layout(item.title,item.company,`<section class="panel tracking-detail"><p class="eyebrow">Dossier de suivi</p><h2>${esc(item.title)}</h2><p><strong>${esc(item.company)}</strong>${item.url?` · <a href="${esc(item.url)}" target="_blank" rel="noopener noreferrer">Voir l’offre d’origine</a>`:""}</p><p>Ce dossier a été ajouté au suivi sans analyse automatique : aucun score ni CV personnalisé n’a été généré.</p><div class="tracking-logo-editor">${logo?`<img src="${esc(logo)}" alt="Logo de ${esc(item.company)}">`:`<span class="company-monogram" aria-hidden="true">${esc(item.company.slice(0,2).toUpperCase())}</span>`}<label>Logo de l’entreprise<input id="tracking-logo" type="file" accept="image/png,image/jpeg,image/webp"><small>Ajoutez ou remplacez le logo que vous avez fourni. La modification se synchronise sur vos appareils.</small></label></div><label>Statut<select id="status">${STATUSES.map(status=>`<option value="${status}" ${item.status===status?"selected":""}>${esc(statusLabels[status])}</option>`).join("")}</select></label><label>Précision factuelle<textarea id="tracking-note" rows="4">${esc(item.trackingNote||"")}</textarea></label><p class="muted">Les modifications sont enregistrées automatiquement.</p><button class="button danger" id="remove">Supprimer ce dossier</button></section>`,`<a class="button secondary" href="#pipeline">Retour au suivi</a>`);
     document.querySelector("#tracking-logo").onchange=async event=>{const file=event.target.files?.[0];if(!file)return;const logo=await trackingLogoData(file);if(!logo)return;const records=rawApps(),found=records.find(entry=>entry.id===id);if(!found)return;found.logo=logo;found.events.unshift({type:"LOGO_CHANGED",date:new Date().toISOString()});save(records);application(id);toast("Logo mis à jour")};
     document.querySelector("#status").onchange=event=>{const records=rawApps(),found=records.find(entry=>entry.id===id);found.status=event.target.value;if(found.status==="CANDIDATE"&&!applicationDate(found))found.appliedAt=todayLocal();found.events.unshift({type:"STATUS_CHANGED",date:new Date().toISOString()});save(records);toast(`Statut : ${statusLabels[found.status]}`)};
     document.querySelector("#tracking-note").onchange=event=>{const records=rawApps(),found=records.find(entry=>entry.id===id);found.trackingNote=event.target.value.trim();found.events.unshift({type:"NOTE_CHANGED",date:new Date().toISOString()});save(records);toast("Précision mise à jour")};
