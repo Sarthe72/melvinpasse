@@ -24,6 +24,7 @@ function applicationDate(item){
   return validApplicationDate(item.appliedAt)?item.appliedAt:"";
 }
 const displayApplicationDate=date=>date?`${date.slice(8,10)}/${date.slice(5,7)}/${date.slice(0,4)}`:"Date inconnue";
+const comparePipelineItems=(a,b)=>(Date.parse(b.createdAt)||0)-(Date.parse(a.createdAt)||0)||applicationDate(b).localeCompare(applicationDate(a));
 const logoCompanyKey=company=>String(company||"").split("(")[0].trim().toLocaleLowerCase("fr-FR");
 const openInterviewPanel=(id,interviewId="new")=>document.querySelectorAll(".interview-panel").forEach(panel=>{if(panel.dataset.id===id&&panel.dataset.interviewId===interviewId)panel.open=true});
 function interviewRow(item,interview,index){
@@ -68,7 +69,7 @@ pipeline=function(){
   if(refreshed)save(all);
   const requestedFilter=decodeURIComponent(location.hash.slice(1).split("/")[1]||"");
   const filter=STATUSES.includes(requestedFilter)?requestedFilter:"";
-  const list=(filter?all.filter(item=>item.status===filter):all).sort((a,b)=>applicationDate(b).localeCompare(applicationDate(a))||(Date.parse(b.createdAt)||0)-(Date.parse(a.createdAt)||0));
+  const list=(filter?all.filter(item=>item.status===filter):all).sort(comparePipelineItems);
   const rows=list.map(item=>{const logo=logoForTracking(item,all),interviews=Array.isArray(item.interviews)?item.interviews:[];return`<tr>
     <td data-label="Entreprise"><div class="company-cell">${logo?`<img src="${esc(logo)}" alt="Logo de ${esc(item.company)}">`:`<span class="company-monogram" aria-hidden="true">${esc(item.company.slice(0,2).toUpperCase())}</span>`}<strong>${esc(item.company)}</strong></div></td>
     <td data-label="Démarche"><span class="tracking-step">Candidature</span></td>

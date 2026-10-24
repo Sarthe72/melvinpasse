@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.3.3 — Dernier dossier ajouté en premier
+- Le suivi affiche désormais les candidatures dans l’ordre d’ajout, de la plus récente à la plus ancienne. Une candidature nouvellement créée apparaît donc tout en haut, même si sa date d’envoi est inconnue.
+- Les dates de candidature et d’entretien restent visibles dans leurs colonnes respectives et ne sont pas modifiées par ce tri.
+
 ## 1.3.2 — Une date visible par entretien
 - Chaque entretien a désormais sa propre sous-ligne repliée avec sa date affichée dans la colonne « CANDIDATURE FR ».
 - La date de candidature dans cette même colonne reste modifiable manuellement, sans modifier les entretiens.

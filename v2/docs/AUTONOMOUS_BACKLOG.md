@@ -108,3 +108,7 @@
 - [x] Replier les détails d’entretien par défaut tout en conservant un accès direct à leur historique.
 - [x] Afficher chaque date d’entretien dans la colonne CANDIDATURE FR de sa sous-ligne, distincte de la date manuelle de candidature.
 - [x] Retirer les colonnes Analyse et Score du tableau sans supprimer ces informations des dossiers.
+
+## Maintenance — Ordre d’ajout du suivi [x]
+- [x] Afficher en premier chaque nouvelle candidature ajoutée, même sans date d’envoi connue.
+- [x] Conserver les dates existantes sans les modifier lors du tri.
