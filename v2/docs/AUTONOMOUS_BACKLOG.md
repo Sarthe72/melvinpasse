@@ -118,3 +118,8 @@
 - [x] Exposer les mêmes tris sur mobile malgré l’absence d’en-têtes visibles.
 - [x] Garder les valeurs inconnues en fin de tableau et les entretiens groupés sous leur candidature.
 - [x] Rétablir le tri par ajout après la création manuelle d’un dossier.
+
+## Maintenance — Tri CANDIDATURE FR par défaut [x]
+- [x] Ouvrir le suivi sur CANDIDATURE FR décroissant, conformément à la nouvelle préférence utilisateur.
+- [x] Classer ensemble les candidatures et entretiens selon les dates visibles dans cette colonne, dates inconnues en dernier.
+- [x] Conserver la saisie manuelle de la date FR et l’accès aux entretiens même lorsqu’ils ne sont plus regroupés par candidature.

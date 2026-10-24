@@ -24,12 +24,18 @@ function applicationDate(item){
   return validApplicationDate(item.appliedAt)?item.appliedAt:"";
 }
 const displayApplicationDate=date=>date?`${date.slice(8,10)}/${date.slice(5,7)}/${date.slice(0,4)}`:"Date inconnue";
-const pipelineSort={key:"added",direction:"desc"};
+const pipelineSort={key:"fr",direction:"desc"};
 const addedOrder=(a,b)=>(Date.parse(b.createdAt)||0)-(Date.parse(a.createdAt)||0)||applicationDate(b).localeCompare(applicationDate(a));
+const frEntryDate=entry=>entry.kind==="interview"?entry.interview.date:entry.kind==="application"?entry.item.candidatureFrAt:"";
+function compareFrEntries(a,b,direction="desc"){
+  const first=validApplicationDate(frEntryDate(a))?frEntryDate(a):"";
+  const second=validApplicationDate(frEntryDate(b))?frEntryDate(b):"";
+  if(!first||!second)return first&&!second?-1:second&&!first?1:addedOrder(a.item,b.item)||({application:0,interview:1,add:2}[a.kind]-{application:0,interview:1,add:2}[b.kind]);
+  return (direction==="desc"?second.localeCompare(first):first.localeCompare(second))||addedOrder(a.item,b.item)||({application:0,interview:1,add:2}[a.kind]-{application:0,interview:1,add:2}[b.kind]);
+}
 function comparePipelineItems(a,b,sort=pipelineSort){
   if(sort.key==="added")return addedOrder(a,b);
   const value=item=>{
-    if(sort.key==="fr")return validApplicationDate(item.candidatureFrAt)?Date.parse(`${item.candidatureFrAt}T12:00:00`):NaN;
     if(sort.key==="applied")return applicationDate(item)?Date.parse(`${applicationDate(item)}T12:00:00`):NaN;
     return Date.parse(item.events?.[0]?.date||item.createdAt||"");
   };
@@ -42,17 +48,30 @@ const sortControl=(key,label)=>`<button class="tracking-sort" type="button" data
 const sortHeader=(key,label)=>`<th aria-sort="${pipelineSort.key===key?(pipelineSort.direction==="desc"?"descending":"ascending"):"none"}">${sortControl(key,label)}</th>`;
 const logoCompanyKey=company=>String(company||"").split("(")[0].trim().toLocaleLowerCase("fr-FR");
 const openInterviewPanel=(id,interviewId="new")=>document.querySelectorAll(".interview-panel").forEach(panel=>{if(panel.dataset.id===id&&panel.dataset.interviewId===interviewId)panel.open=true});
-function interviewRow(item,interview,index){
-  return `<tr class="interview-subrow"><td class="interview-indent" aria-hidden="true"></td><td data-label="Démarche"><span class="tracking-step interview-step">Entretien ${index+1}</span></td><td data-label="Candidature FR" class="interview-date-cell">${displayApplicationDate(interview.date)}</td><td colspan="5"><details class="interview-panel" data-id="${esc(item.id)}" data-interview-id="${esc(interview.id)}"><summary class="interview-heading"><strong>Entretien ${index+1} · ${esc(item.company)}</strong><span>Voir / modifier</span></summary><form class="interview-form interview-existing" data-id="${esc(item.id)}" data-interview-id="${esc(interview.id)}"><label>Date<input name="date" type="date" required value="${esc(interview.date||"")}"></label><label>Heure<input name="time" type="time" value="${esc(interview.time||"")}"></label><label>Interlocuteur(s)<input name="people" value="${esc(interview.people||"")}"></label><label class="interview-note">Notes<textarea name="note" rows="2">${esc(interview.note||"")}</textarea></label><div class="interview-actions"><button class="button secondary" type="submit">Enregistrer</button><button class="button secondary interview-delete" type="button" data-id="${esc(item.id)}" data-interview-id="${esc(interview.id)}">Supprimer</button></div></form></details></td></tr>`;
+function interviewRow(item,interview,index,detached=false){
+  return `<tr class="interview-subrow${detached?" interview-detached":""}"><td class="interview-indent" ${detached?'data-label="Entreprise"':'aria-hidden="true"'}>${detached?`↳ ${esc(item.company)}`:""}</td><td data-label="Démarche"><span class="tracking-step interview-step">Entretien ${index+1}</span></td><td data-label="Candidature FR" class="interview-date-cell">${displayApplicationDate(interview.date)}</td><td colspan="5"><details class="interview-panel" data-id="${esc(item.id)}" data-interview-id="${esc(interview.id)}"><summary class="interview-heading"><strong>Entretien ${index+1} · ${esc(item.company)}</strong><span>Voir / modifier</span></summary><form class="interview-form interview-existing" data-id="${esc(item.id)}" data-interview-id="${esc(interview.id)}"><label>Date<input name="date" type="date" required value="${esc(interview.date||"")}"></label><label>Heure<input name="time" type="time" value="${esc(interview.time||"")}"></label><label>Interlocuteur(s)<input name="people" value="${esc(interview.people||"")}"></label><label class="interview-note">Notes<textarea name="note" rows="2">${esc(interview.note||"")}</textarea></label><div class="interview-actions"><button class="button secondary" type="submit">Enregistrer</button><button class="button secondary interview-delete" type="button" data-id="${esc(item.id)}" data-interview-id="${esc(interview.id)}">Supprimer</button></div></form></details></td></tr>`;
 }
-function interviewAddRow(item){
-  return `<tr class="interview-subrow"><td class="interview-indent" aria-hidden="true"></td><td data-label="Démarche"><span class="tracking-step interview-step">Entretien</span></td><td data-label="Candidature FR" class="interview-date-cell">—</td><td colspan="5"><details class="interview-panel" data-id="${esc(item.id)}" data-interview-id="new"><summary class="interview-heading"><strong>+ Ajouter un entretien</strong></summary><form class="interview-form interview-new" data-id="${esc(item.id)}"><label>Date<input name="date" type="date" required></label><label>Heure<input name="time" type="time"></label><label>Interlocuteur(s)<input name="people"></label><label class="interview-note">Notes<textarea name="note" rows="2"></textarea></label><div class="interview-actions"><button class="button" type="submit">Ajouter cet entretien</button></div></form></details></td></tr>`;
+function interviewAddRow(item,detached=false){
+  return `<tr class="interview-subrow${detached?" interview-detached":""}"><td class="interview-indent" ${detached?'data-label="Entreprise"':'aria-hidden="true"'}>${detached?`↳ ${esc(item.company)}`:""}</td><td data-label="Démarche"><span class="tracking-step interview-step">Entretien</span></td><td data-label="Candidature FR" class="interview-date-cell">—</td><td colspan="5"><details class="interview-panel" data-id="${esc(item.id)}" data-interview-id="new"><summary class="interview-heading"><strong>+ Ajouter un entretien</strong></summary><form class="interview-form interview-new" data-id="${esc(item.id)}"><label>Date<input name="date" type="date" required></label><label>Heure<input name="time" type="time"></label><label>Interlocuteur(s)<input name="people"></label><label class="interview-note">Notes<textarea name="note" rows="2"></textarea></label><div class="interview-actions"><button class="button" type="submit">Ajouter cet entretien</button></div></form></details></td></tr>`;
 }
 function logoForTracking(item,records){
   if(item.logo)return item.logo;
   const key=logoCompanyKey(item.company);
   if(key==="résidence le champ de l'ormeau")return "icons/champ-ormeau-logo.png";
   return key?records.find(other=>other.id!==item.id&&other.logo&&logoCompanyKey(other.company)===key)?.logo||"":"";
+}
+function trackingMainRow(item,all){
+  const logo=logoForTracking(item,all);
+  return `<tr>
+    <td data-label="Entreprise"><div class="company-cell">${logo?`<img src="${esc(logo)}" alt="Logo de ${esc(item.company)}">`:`<span class="company-monogram" aria-hidden="true">${esc(item.company.slice(0,2).toUpperCase())}</span>`}<strong>${esc(item.company)}</strong></div></td>
+    <td data-label="Démarche"><span class="tracking-step">Candidature</span></td>
+    <td data-label="Candidature FR"><input class="table-candidature-fr-date" data-id="${esc(item.id)}" type="date" value="${validApplicationDate(item.candidatureFrAt)?esc(item.candidatureFrAt):""}" aria-label="Saisir ou modifier la date Candidature FR pour ${esc(item.company)}" title="Cliquez pour saisir ou modifier cette date"></td>
+    <td data-label="Poste"><a class="tracking-title-link" href="#application/${item.id}">${esc(item.title)}</a></td>
+    <td data-label="Statut"><select class="table-status" data-id="${esc(item.id)}" aria-label="Statut de ${esc(item.title)}">${STATUSES.map(status=>`<option value="${status}" ${status===item.status?"selected":""}>${esc(tableStatusLabels[status])}</option>`).join("")}</select></td>
+    <td data-label="Date de candidature" class="tracking-applied-date-cell">${displayApplicationDate(applicationDate(item))}</td>
+    <td data-label="Précision" class="tracking-note-cell">${item.trackingNote?`<details class="tracking-note-details"><summary>Voir</summary><div>${esc(item.trackingNote)}</div></details>`:"—"}</td>
+    <td data-label="Mise à jour" class="tracking-date-cell">${new Date(item.events[0]?.date||item.createdAt).toLocaleDateString("fr-FR")}</td>
+  </tr>`;
 }
 
 const renderDashboard=dashboard;
@@ -85,16 +104,15 @@ pipeline=function(){
   const requestedFilter=decodeURIComponent(location.hash.slice(1).split("/")[1]||"");
   const filter=STATUSES.includes(requestedFilter)?requestedFilter:"";
   const list=(filter?all.filter(item=>item.status===filter):all).sort(comparePipelineItems);
-  const rows=list.map(item=>{const logo=logoForTracking(item,all),interviews=Array.isArray(item.interviews)?item.interviews:[],orderedInterviews=pipelineSort.key==="fr"?[...interviews].sort((a,b)=>pipelineSort.direction==="desc"?String(b.date||"").localeCompare(String(a.date||"")):String(a.date||"").localeCompare(String(b.date||""))):interviews;return`<tr>
-    <td data-label="Entreprise"><div class="company-cell">${logo?`<img src="${esc(logo)}" alt="Logo de ${esc(item.company)}">`:`<span class="company-monogram" aria-hidden="true">${esc(item.company.slice(0,2).toUpperCase())}</span>`}<strong>${esc(item.company)}</strong></div></td>
-    <td data-label="Démarche"><span class="tracking-step">Candidature</span></td>
-    <td data-label="Candidature FR"><input class="table-candidature-fr-date" data-id="${esc(item.id)}" type="date" value="${validApplicationDate(item.candidatureFrAt)?esc(item.candidatureFrAt):""}" aria-label="Saisir ou modifier la date Candidature FR pour ${esc(item.company)}" title="Cliquez pour saisir ou modifier cette date"></td>
-    <td data-label="Poste"><a class="tracking-title-link" href="#application/${item.id}">${esc(item.title)}</a></td>
-    <td data-label="Statut"><select class="table-status" data-id="${esc(item.id)}" aria-label="Statut de ${esc(item.title)}">${STATUSES.map(status=>`<option value="${status}" ${status===item.status?"selected":""}>${esc(tableStatusLabels[status])}</option>`).join("")}</select></td>
-    <td data-label="Date de candidature" class="tracking-applied-date-cell">${displayApplicationDate(applicationDate(item))}</td>
-    <td data-label="Précision" class="tracking-note-cell">${item.trackingNote?`<details class="tracking-note-details"><summary>Voir</summary><div>${esc(item.trackingNote)}</div></details>`:"—"}</td>
-    <td data-label="Mise à jour" class="tracking-date-cell">${new Date(item.events[0]?.date||item.createdAt).toLocaleDateString("fr-FR")}</td>
-  </tr>${orderedInterviews.map((interview,index)=>interviewRow(item,interview,index)).join("")}${item.status==="ENTRETIEN"||interviews.length?interviewAddRow(item):""}`}).join("");
+  const rows=pipelineSort.key==="fr"
+    ?list.flatMap(item=>{
+      const interviews=Array.isArray(item.interviews)?item.interviews:[];
+      return [{kind:"application",item},...interviews.map((interview,index)=>({kind:"interview",item,interview,index})),...(item.status==="ENTRETIEN"||interviews.length?[{kind:"add",item}]:[])];
+    }).sort((a,b)=>compareFrEntries(a,b,pipelineSort.direction)).map(entry=>entry.kind==="application"?trackingMainRow(entry.item,all):entry.kind==="interview"?interviewRow(entry.item,entry.interview,entry.index,true):interviewAddRow(entry.item,true)).join("")
+    :list.map(item=>{
+      const interviews=Array.isArray(item.interviews)?item.interviews:[];
+      return trackingMainRow(item,all)+interviews.map((interview,index)=>interviewRow(item,interview,index)).join("")+(item.status==="ENTRETIEN"||interviews.length?interviewAddRow(item):"");
+    }).join("");
   const emptyLabel=filter?`Aucune candidature avec le statut « ${statusLabels[filter]} ».`:"Aucune candidature suivie pour le moment.";
   const mobileSort=`<div class="tracking-sort-mobile"><span>Trier par</span>${sortControl("fr","Candidature FR")}${sortControl("applied","Candidature")}${sortControl("updated","Mise à jour")}</div>`;
   const content=list.length?`${mobileSort}<div class="tracking-table-wrap"><table class="tracking-table"><thead><tr><th>Entreprise</th><th>Démarche</th>${sortHeader("fr","CANDIDATURE FR")}<th>Poste</th><th>Statut</th>${sortHeader("applied","Date de candidature")}<th>Précision</th>${sortHeader("updated","Dernière mise à jour")}</tr></thead><tbody>${rows}</tbody></table></div>`:`<div class="empty"><p>${esc(emptyLabel)}</p>${filter?`<a class="button secondary" href="#pipeline">Voir toutes les candidatures</a>`:`<a class="button" href="#dashboard">Analyser une annonce</a>`}</div>`;
@@ -168,7 +186,7 @@ pipeline=function(){
     const date=new Date().toISOString();
     const item={id:slug(),company:String(form.get("company")).trim(),title:String(form.get("title")).trim(),url,offer:"",logo,status:String(form.get("status")),trackingOnly:true,trackingNote:String(form.get("trackingNote")).trim(),createdAt:date,events:[{type:"ADDED_TO_TRACKING",date}]};
     save([item,...rawApps()]);
-    pipelineSort.key="added";pipelineSort.direction="desc";
+    pipelineSort.key="fr";pipelineSort.direction="desc";
     route();
     toast("Dossier ajouté au suivi");
   });

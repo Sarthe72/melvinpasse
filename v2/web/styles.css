@@ -83,6 +83,7 @@
 .tracking-step{display:inline-block;padding:5px 7px;border-radius:6px;background:#ede5d8;color:#5a544d;font-size:11px;font-weight:800}.interview-step{margin-right:7px;background:#e5efe8;color:#426b50}
 .tracking-table .interview-subrow>td{padding:7px 11px;border-top:0;background:#f7f4ee}
 .tracking-table .interview-subrow>.interview-indent{border-left:3px solid #7b9d85}
+.tracking-table .interview-detached>.interview-indent{font-size:12px;font-weight:800;color:#426b50}
 .interview-date-cell{font-size:13px;font-weight:800;color:#426b50}
 .interview-panel{margin:0;padding:5px 10px;background:#f7f4ee}
 .interview-heading{display:flex;justify-content:space-between;gap:12px;align-items:center;color:var(--ink);cursor:pointer;list-style:none}
@@ -111,6 +112,7 @@
   .tracking-date-cell{white-space:normal}
   .tracking-table .interview-subrow{margin:-12px 0 12px;border-top:3px solid #7b9d85;background:#f7f4ee}
   .tracking-table .interview-subrow>.interview-indent{display:none}
+  .tracking-table .interview-detached>.interview-indent{display:grid}
   .tracking-table .interview-subrow>td:last-child{display:block;padding:7px 11px}
   .tracking-table .interview-subrow>td:last-child::before{content:none}
   .interview-panel{padding:5px 0}

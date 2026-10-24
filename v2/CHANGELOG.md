@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.3.5 — Tri chronologique de CANDIDATURE FR par défaut
+- Le suivi s’ouvre sur le tri « CANDIDATURE FR » du plus récent au plus ancien.
+- Les candidatures et leurs entretiens sont classés ensemble selon les dates affichées dans cette colonne ; chaque entretien conserve son entreprise identifiable.
+- Les lignes sans date FR restent en fin de tableau. La date FR demeure saisie uniquement par l’utilisateur.
+
 ## 1.3.4 — Tri interactif des dates
 - Les en-têtes « CANDIDATURE FR », « Date de candidature » et « Dernière mise à jour » trient le suivi d’un clic ; un second clic inverse l’ordre.
 - Sur téléphone, ces trois tris sont également accessibles au-dessus des fiches, puisque les en-têtes du tableau sont masqués.

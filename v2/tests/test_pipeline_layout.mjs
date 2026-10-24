@@ -4,7 +4,7 @@ import { runInNewContext } from "node:vm";
 
 const markup = readFileSync(new URL("../web/enhancements.js", import.meta.url), "utf8");
 const css = readFileSync(new URL("../web/styles.css", import.meta.url), "utf8");
-const mainRowMarkup=markup.slice(markup.indexOf("const rows=list.map"),markup.indexOf("const emptyLabel="));
+const mainRowMarkup=markup.slice(markup.indexOf("function trackingMainRow"),markup.indexOf("const renderDashboard="));
 
 assert.match(markup, /<td data-label="Poste"><a class="tracking-title-link" href="#application\/\$\{item\.id\}">/);
 assert.doesNotMatch(markup, /<th><\/th><\/tr>/);
@@ -28,7 +28,7 @@ assert.match(markup, /class="tracking-applied-date-cell"/);
 assert.doesNotMatch(markup, /class="table-applied-date"|name="appliedAt" type="date"|id="application-date"/);
 assert.match(markup, /\.sort\(comparePipelineItems\)/);
 assert.match(markup, /item\.status==="ENTRETIEN"\|\|interviews\.length/);
-assert.match(markup, /<tr class="interview-subrow"><td class="interview-indent"/);
+assert.match(markup, /<tr class="interview-subrow\$\{detached\?" interview-detached":""\}"><td class="interview-indent"/);
 assert.match(markup, /data-label="Candidature FR" class="interview-date-cell">\$\{displayApplicationDate\(interview.date\)\}/);
 assert.match(markup, /<td colspan="5"><details class="interview-panel"/);
 assert.match(markup, /<details class="interview-panel" data-id=/);
@@ -52,12 +52,23 @@ const newlyAdded={createdAt:"2026-10-24T10:00:00Z"};
 assert.ok(comparePipelineItems(newlyAdded,older)<0);
 const first={createdAt:"2026-10-01T10:00:00Z",candidatureFrAt:"2026-10-11",appliedAt:"2026-10-05",events:[{date:"2026-10-21T10:00:00Z"}]};
 const second={createdAt:"2026-10-02T10:00:00Z",candidatureFrAt:"2026-10-12",appliedAt:"2026-10-06",events:[{date:"2026-10-22T10:00:00Z"}]};
-for(const key of ["fr","applied","updated"]){
+for(const key of ["applied","updated"]){
   assert.ok(comparePipelineItems(second,first,{key,direction:"desc"})<0);
   assert.ok(comparePipelineItems(first,second,{key,direction:"asc"})<0);
 }
-assert.ok(comparePipelineItems(first,newlyAdded,{key:"fr",direction:"asc"})<0);
-assert.ok(comparePipelineItems(first,newlyAdded,{key:"fr",direction:"desc"})<0);
+const compareFrEntries=runInNewContext(`${dateLogic};compareFrEntries`);
+const frRows=[
+  {kind:"application",item:first},
+  {kind:"application",item:second},
+  {kind:"interview",item:first,interview:{date:"2026-10-20"}},
+  {kind:"application",item:newlyAdded},
+  {kind:"add",item:first},
+];
+assert.deepEqual(frRows.toSorted((a,b)=>compareFrEntries(a,b,"desc")).map(row=>row.kind==="interview"?"interview":row.item===second?"second":row.item===first?row.kind:"undated"),["interview","second","application","undated","add"]);
+assert.deepEqual(frRows.toSorted((a,b)=>compareFrEntries(a,b,"asc")).slice(0,3).map(row=>row.kind==="interview"?"interview":row.item===second?"second":"first"),["first","second","interview"]);
+assert.match(markup,/const pipelineSort=\{key:"fr",direction:"desc"\}/);
+assert.match(markup,/\.sort\(\(a,b\)=>compareFrEntries\(a,b,pipelineSort.direction\)\)/);
+assert.match(css,/\.tracking-table \.interview-detached>\.interview-indent\{display:grid\}/);
 assert.equal(applicationDate({trackingNote:"Envoyée sur Apec le 07/10/2026 ; confirmation visible."}),"2026-10-07");
 assert.equal(applicationDate({trackingNote:"13/10/2026 : candidature envoyée sur Indeed."}),"2026-10-13");
 assert.equal(applicationDate({trackingNote:"Candidature envoyée par e-mail à vb16817u@talentup.net le 08/10/2026."}),"2026-10-08");
