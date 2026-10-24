@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.3.1 — Entretiens repliés par défaut
+- Les sous-lignes d’entretien montrent uniquement un résumé dans le tableau ; les formulaires s’ouvrent sur demande.
+- Après le passage au statut « Entretien » ou la modification d’un rendez-vous, le panneau concerné reste ouvert pour poursuivre la saisie.
+
 ## 1.3.0 — Entretiens multiples et suivi plus compact
 - Une sous-ligne d’entretiens apparaît sous une candidature au statut « Entretien » ou comportant déjà des rendez-vous. Plusieurs entretiens peuvent être ajoutés, modifiés et supprimés séparément.
 - La colonne « Démarche » distingue la candidature de ses entretiens.

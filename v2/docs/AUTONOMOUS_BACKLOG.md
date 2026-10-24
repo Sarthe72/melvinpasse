@@ -105,3 +105,4 @@
 - [x] Distinguer visuellement les démarches « Candidature » et « Entretien ».
 - [x] Ajouter un bouton visible en haut du suivi pour la création manuelle d’un dossier.
 - [x] Réduire la colonne Précision et n’afficher son contenu que sur demande.
+- [x] Replier les détails d’entretien par défaut tout en conservant un accès direct à leur historique.

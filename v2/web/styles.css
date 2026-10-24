@@ -82,9 +82,13 @@
 .tracking-title-link:hover,.tracking-title-link:focus-visible{color:#426b50;text-decoration:underline}
 .tracking-step{display:inline-block;padding:5px 7px;border-radius:6px;background:#ede5d8;color:#5a544d;font-size:11px;font-weight:800}.interview-step{margin-right:7px;background:#e5efe8;color:#426b50}
 .tracking-table .interview-subrow>td{padding:0;border-top:0;background:#f7f4ee}
-.interview-panel{margin:0 14px 14px;padding:16px 20px;border-left:3px solid #7b9d85;background:#f7f4ee}
-.interview-heading{display:flex;justify-content:space-between;gap:12px;align-items:center;margin-bottom:10px;color:var(--ink)}
-.interview-heading span{font-size:13px;color:var(--muted)}
+.interview-panel{margin:0 14px 8px;padding:9px 16px;border-left:3px solid #7b9d85;background:#f7f4ee}
+.interview-heading{display:flex;justify-content:space-between;gap:12px;align-items:center;color:var(--ink);cursor:pointer;list-style:none}
+.interview-heading::-webkit-details-marker{display:none}
+.interview-heading::before{content:"▸";color:#426b50;font-size:14px}
+.interview-panel[open]>.interview-heading::before{content:"▾"}
+.interview-heading>strong{flex:1}.interview-heading>span{font-size:12px;color:var(--muted);white-space:nowrap}
+.interview-body{padding-top:10px}
 .interview-form{display:grid;grid-template-columns:auto minmax(115px,1fr) minmax(100px,.7fr) minmax(150px,1.3fr);gap:10px;align-items:end;padding:12px 0;border-top:1px solid var(--line)}
 .interview-form>b{align-self:center;font-size:13px;white-space:nowrap}
 .interview-form label{display:block;font-size:12px;font-weight:700;color:#5a544d}
@@ -108,7 +112,7 @@
   .tracking-table .interview-subrow{margin:-12px 0 12px;border-top:0;background:#f7f4ee}
   .tracking-table .interview-subrow>td{display:block;padding:0}
   .tracking-table .interview-subrow>td::before{content:none}
-  .interview-panel{margin:0;padding:14px;border-left:0;border-top:3px solid #7b9d85}
+  .interview-panel{margin:0;padding:10px 14px;border-left:0;border-top:3px solid #7b9d85}
   .interview-form{grid-template-columns:repeat(2,minmax(0,1fr))}
   .interview-form>b,.interview-form .interview-note,.interview-form .interview-actions,.interview-add .interview-form label:first-child{grid-column:1/-1}
 }

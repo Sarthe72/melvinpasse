@@ -25,6 +25,7 @@ function applicationDate(item){
 }
 const displayApplicationDate=date=>date?`${date.slice(8,10)}/${date.slice(5,7)}/${date.slice(0,4)}`:"Date inconnue";
 const logoCompanyKey=company=>String(company||"").split("(")[0].trim().toLocaleLowerCase("fr-FR");
+const openInterviewPanel=id=>document.querySelectorAll(".interview-panel").forEach(panel=>{if(panel.dataset.id===id)panel.open=true});
 function logoForTracking(item,records){
   if(item.logo)return item.logo;
   const key=logoCompanyKey(item.company);
@@ -73,7 +74,7 @@ pipeline=function(){
     <td data-label="Date de candidature" class="tracking-applied-date-cell">${displayApplicationDate(applicationDate(item))}</td>
     <td data-label="Précision" class="tracking-note-cell">${item.trackingNote?`<details class="tracking-note-details"><summary>Voir</summary><div>${esc(item.trackingNote)}</div></details>`:"—"}</td>
     <td data-label="Mise à jour" class="tracking-date-cell">${new Date(item.events[0]?.date||item.createdAt).toLocaleDateString("fr-FR")}</td>
-  </tr>${item.status==="ENTRETIEN"||interviews.length?`<tr class="interview-subrow"><td colspan="10"><div class="interview-panel"><div class="interview-heading"><strong><span class="tracking-step interview-step">Entretien</span> ${esc(item.company)}</strong><span>${interviews.length} rendez-vous</span></div>${interviews.map((interview,index)=>`<form class="interview-form interview-existing" data-id="${esc(item.id)}" data-interview-id="${esc(interview.id)}"><b>Entretien ${index+1}</b><label>Date<input name="date" type="date" required value="${esc(interview.date||"")}"></label><label>Heure<input name="time" type="time" value="${esc(interview.time||"")}"></label><label>Interlocuteur(s)<input name="people" value="${esc(interview.people||"")}"></label><label class="interview-note">Notes<textarea name="note" rows="2">${esc(interview.note||"")}</textarea></label><div class="interview-actions"><button class="button secondary" type="submit">Enregistrer</button><button class="button secondary interview-delete" type="button" data-id="${esc(item.id)}" data-interview-id="${esc(interview.id)}">Supprimer</button></div></form>`).join("")}<details class="interview-add"><summary>+ Ajouter un entretien</summary><form class="interview-form interview-new" data-id="${esc(item.id)}"><label>Date<input name="date" type="date" required></label><label>Heure<input name="time" type="time"></label><label>Interlocuteur(s)<input name="people"></label><label class="interview-note">Notes<textarea name="note" rows="2"></textarea></label><div class="interview-actions"><button class="button" type="submit">Ajouter cet entretien</button></div></form></details></div></td></tr>`:""}`}).join("");
+  </tr>${item.status==="ENTRETIEN"||interviews.length?`<tr class="interview-subrow"><td colspan="10"><details class="interview-panel" data-id="${esc(item.id)}"><summary class="interview-heading"><strong><span class="tracking-step interview-step">Entretien</span> ${esc(item.company)}</strong><span>${interviews.length} rendez-vous · Voir</span></summary><div class="interview-body">${interviews.map((interview,index)=>`<form class="interview-form interview-existing" data-id="${esc(item.id)}" data-interview-id="${esc(interview.id)}"><b>Entretien ${index+1}</b><label>Date<input name="date" type="date" required value="${esc(interview.date||"")}"></label><label>Heure<input name="time" type="time" value="${esc(interview.time||"")}"></label><label>Interlocuteur(s)<input name="people" value="${esc(interview.people||"")}"></label><label class="interview-note">Notes<textarea name="note" rows="2">${esc(interview.note||"")}</textarea></label><div class="interview-actions"><button class="button secondary" type="submit">Enregistrer</button><button class="button secondary interview-delete" type="button" data-id="${esc(item.id)}" data-interview-id="${esc(interview.id)}">Supprimer</button></div></form>`).join("")}<details class="interview-add"><summary>+ Ajouter un entretien</summary><form class="interview-form interview-new" data-id="${esc(item.id)}"><label>Date<input name="date" type="date" required></label><label>Heure<input name="time" type="time"></label><label>Interlocuteur(s)<input name="people"></label><label class="interview-note">Notes<textarea name="note" rows="2"></textarea></label><div class="interview-actions"><button class="button" type="submit">Ajouter cet entretien</button></div></form></details></div></details></td></tr>`:""}`}).join("");
   const emptyLabel=filter?`Aucune candidature avec le statut « ${statusLabels[filter]} ».`:"Aucune candidature suivie pour le moment.";
   const content=list.length?`<div class="tracking-table-wrap"><table class="tracking-table"><thead><tr><th>Entreprise</th><th>Démarche</th><th>CANDIDATURE FR</th><th>Poste</th><th>Analyse</th><th>Score</th><th>Statut</th><th>Date de candidature</th><th>Précision</th><th>Dernière mise à jour</th></tr></thead><tbody>${rows}</tbody></table></div>`:`<div class="empty"><p>${esc(emptyLabel)}</p>${filter?`<a class="button secondary" href="#pipeline">Voir toutes les candidatures</a>`:`<a class="button" href="#dashboard">Analyser une annonce</a>`}</div>`;
   const filterNotice=filter?`<div class="active-filter"><span>Filtre : <b>${esc(statusLabels[filter])}</b></span><a href="#pipeline">Afficher tout</a></div>`:"";
@@ -88,6 +89,7 @@ pipeline=function(){
     item.events.unshift({type:"STATUS_CHANGED",date:new Date().toISOString()});
     save(records);
     pipeline();
+    if(item.status==="ENTRETIEN")openInterviewPanel(item.id);
     toast(`Statut : ${statusLabels[item.status]}`);
   });
   document.querySelectorAll(".interview-form").forEach(form=>form.addEventListener("submit",event=>{
@@ -104,6 +106,7 @@ pipeline=function(){
     item.events.unshift({type:interview?"INTERVIEW_UPDATED":"INTERVIEW_ADDED",date:new Date().toISOString()});
     save(records);
     pipeline();
+    openInterviewPanel(item.id);
     toast(interview?"Entretien mis à jour":"Entretien ajouté");
   }));
   document.querySelectorAll(".interview-delete").forEach(button=>button.addEventListener("click",()=>{
@@ -114,6 +117,7 @@ pipeline=function(){
     item.events.unshift({type:"INTERVIEW_REMOVED",date:new Date().toISOString()});
     save(records);
     pipeline();
+    openInterviewPanel(item.id);
     toast("Entretien supprimé");
   }));
   document.querySelectorAll(".table-candidature-fr-date").forEach(input=>input.onchange=event=>{

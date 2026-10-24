@@ -21,6 +21,9 @@ assert.doesNotMatch(markup, /class="table-applied-date"|name="appliedAt" type="d
 assert.match(markup, /applicationDate\(b\)\.localeCompare\(applicationDate\(a\)\)/);
 assert.match(markup, /item\.status==="ENTRETIEN"\|\|interviews\.length/);
 assert.match(markup, /<tr class="interview-subrow"><td colspan="10">/);
+assert.match(markup, /<details class="interview-panel" data-id=/);
+assert.match(markup, /<summary class="interview-heading">/);
+assert.doesNotMatch(markup, /<details class="interview-panel"[^>]*\sopen(?:\s|>)/);
 assert.match(markup, /<span class="tracking-step">Candidature<\/span>/);
 assert.match(markup, /<span class="tracking-step interview-step">Entretien<\/span>/);
 assert.match(markup, /class="interview-form interview-new"/);
