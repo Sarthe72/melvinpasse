@@ -123,3 +123,6 @@
 - [x] Ouvrir le suivi sur CANDIDATURE FR décroissant, conformément à la nouvelle préférence utilisateur.
 - [x] Classer ensemble les candidatures et entretiens selon les dates visibles dans cette colonne, dates inconnues en dernier.
 - [x] Conserver la saisie manuelle de la date FR et l’accès aux entretiens même lorsqu’ils ne sont plus regroupés par candidature.
+
+## Maintenance — Boutons d’entretien rattachés [x]
+- [x] Garder chaque commande « Ajouter un entretien » sous sa candidature plutôt qu’en bloc en bas du tri CANDIDATURE FR.

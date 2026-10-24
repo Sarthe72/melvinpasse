@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.3.6 — Ajout d’entretien rattaché au bon dossier
+- Le bouton « Ajouter un entretien » reste immédiatement sous la candidature concernée, même lorsque CANDIDATURE FR est triée chronologiquement.
+- Les entretiens datés continuent d’être classés selon leur propre date ; aucun bouton sans date n’est rejeté en bas du tableau.
+
 ## 1.3.5 — Tri chronologique de CANDIDATURE FR par défaut
 - Le suivi s’ouvre sur le tri « CANDIDATURE FR » du plus récent au plus ancien.
 - Les candidatures et leurs entretiens sont classés ensemble selon les dates affichées dans cette colonne ; chaque entretien conserve son entreprise identifiable.

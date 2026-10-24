@@ -62,12 +62,13 @@ const frRows=[
   {kind:"application",item:second},
   {kind:"interview",item:first,interview:{date:"2026-10-20"}},
   {kind:"application",item:newlyAdded},
-  {kind:"add",item:first},
 ];
-assert.deepEqual(frRows.toSorted((a,b)=>compareFrEntries(a,b,"desc")).map(row=>row.kind==="interview"?"interview":row.item===second?"second":row.item===first?row.kind:"undated"),["interview","second","application","undated","add"]);
+assert.deepEqual(frRows.toSorted((a,b)=>compareFrEntries(a,b,"desc")).map(row=>row.kind==="interview"?"interview":row.item===second?"second":row.item===first?row.kind:"undated"),["interview","second","application","undated"]);
 assert.deepEqual(frRows.toSorted((a,b)=>compareFrEntries(a,b,"asc")).slice(0,3).map(row=>row.kind==="interview"?"interview":row.item===second?"second":"first"),["first","second","interview"]);
 assert.match(markup,/const pipelineSort=\{key:"fr",direction:"desc"\}/);
 assert.match(markup,/\.sort\(\(a,b\)=>compareFrEntries\(a,b,pipelineSort.direction\)\)/);
+assert.doesNotMatch(markup,/\{kind:"add",item\}/);
+assert.match(markup,/trackingMainRow\(entry.item,all\)\+\(entry.item.status==="ENTRETIEN"\|\|entry.item.interviews\?\.length\?interviewAddRow\(entry.item\):""\)/);
 assert.match(css,/\.tracking-table \.interview-detached>\.interview-indent\{display:grid\}/);
 assert.equal(applicationDate({trackingNote:"Envoyée sur Apec le 07/10/2026 ; confirmation visible."}),"2026-10-07");
 assert.equal(applicationDate({trackingNote:"13/10/2026 : candidature envoyée sur Indeed."}),"2026-10-13");

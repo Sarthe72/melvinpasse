@@ -30,8 +30,8 @@ const frEntryDate=entry=>entry.kind==="interview"?entry.interview.date:entry.kin
 function compareFrEntries(a,b,direction="desc"){
   const first=validApplicationDate(frEntryDate(a))?frEntryDate(a):"";
   const second=validApplicationDate(frEntryDate(b))?frEntryDate(b):"";
-  if(!first||!second)return first&&!second?-1:second&&!first?1:addedOrder(a.item,b.item)||({application:0,interview:1,add:2}[a.kind]-{application:0,interview:1,add:2}[b.kind]);
-  return (direction==="desc"?second.localeCompare(first):first.localeCompare(second))||addedOrder(a.item,b.item)||({application:0,interview:1,add:2}[a.kind]-{application:0,interview:1,add:2}[b.kind]);
+  if(!first||!second)return first&&!second?-1:second&&!first?1:addedOrder(a.item,b.item)||(a.kind==="application"?-1:1);
+  return (direction==="desc"?second.localeCompare(first):first.localeCompare(second))||addedOrder(a.item,b.item)||(a.kind==="application"?-1:1);
 }
 function comparePipelineItems(a,b,sort=pipelineSort){
   if(sort.key==="added")return addedOrder(a,b);
@@ -107,8 +107,8 @@ pipeline=function(){
   const rows=pipelineSort.key==="fr"
     ?list.flatMap(item=>{
       const interviews=Array.isArray(item.interviews)?item.interviews:[];
-      return [{kind:"application",item},...interviews.map((interview,index)=>({kind:"interview",item,interview,index})),...(item.status==="ENTRETIEN"||interviews.length?[{kind:"add",item}]:[])];
-    }).sort((a,b)=>compareFrEntries(a,b,pipelineSort.direction)).map(entry=>entry.kind==="application"?trackingMainRow(entry.item,all):entry.kind==="interview"?interviewRow(entry.item,entry.interview,entry.index,true):interviewAddRow(entry.item,true)).join("")
+      return [{kind:"application",item},...interviews.map((interview,index)=>({kind:"interview",item,interview,index}))];
+    }).sort((a,b)=>compareFrEntries(a,b,pipelineSort.direction)).map(entry=>entry.kind==="application"?trackingMainRow(entry.item,all)+(entry.item.status==="ENTRETIEN"||entry.item.interviews?.length?interviewAddRow(entry.item):""):interviewRow(entry.item,entry.interview,entry.index,true)).join("")
     :list.map(item=>{
       const interviews=Array.isArray(item.interviews)?item.interviews:[];
       return trackingMainRow(item,all)+interviews.map((interview,index)=>interviewRow(item,interview,index)).join("")+(item.status==="ENTRETIEN"||interviews.length?interviewAddRow(item):"");
