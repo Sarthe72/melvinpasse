@@ -30,7 +30,7 @@ const frEntryDate=entry=>entry.kind==="interview"?entry.interview.date:entry.kin
 function compareFrEntries(a,b,direction="desc"){
   const first=validApplicationDate(frEntryDate(a))?frEntryDate(a):"";
   const second=validApplicationDate(frEntryDate(b))?frEntryDate(b):"";
-  if(!first||!second)return first&&!second?-1:second&&!first?1:addedOrder(a.item,b.item)||(a.kind==="application"?-1:1);
+  if(!first||!second)return !first&&second?-1:first&&!second?1:addedOrder(a.item,b.item)||(a.kind==="application"?-1:1);
   return (direction==="desc"?second.localeCompare(first):first.localeCompare(second))||addedOrder(a.item,b.item)||(a.kind==="application"?-1:1);
 }
 function comparePipelineItems(a,b,sort=pipelineSort){

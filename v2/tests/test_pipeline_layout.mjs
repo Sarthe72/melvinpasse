@@ -63,8 +63,8 @@ const frRows=[
   {kind:"interview",item:first,interview:{date:"2026-10-20"}},
   {kind:"application",item:newlyAdded},
 ];
-assert.deepEqual(frRows.toSorted((a,b)=>compareFrEntries(a,b,"desc")).map(row=>row.kind==="interview"?"interview":row.item===second?"second":row.item===first?row.kind:"undated"),["interview","second","application","undated"]);
-assert.deepEqual(frRows.toSorted((a,b)=>compareFrEntries(a,b,"asc")).slice(0,3).map(row=>row.kind==="interview"?"interview":row.item===second?"second":"first"),["first","second","interview"]);
+assert.deepEqual(frRows.toSorted((a,b)=>compareFrEntries(a,b,"desc")).map(row=>row.kind==="interview"?"interview":row.item===second?"second":row.item===first?row.kind:"undated"),["undated","interview","second","application"]);
+assert.deepEqual(frRows.toSorted((a,b)=>compareFrEntries(a,b,"asc")).map(row=>row.kind==="interview"?"interview":row.item===second?"second":row.item===first?"first":"undated"),["undated","first","second","interview"]);
 assert.match(markup,/const pipelineSort=\{key:"fr",direction:"desc"\}/);
 assert.match(markup,/\.sort\(\(a,b\)=>compareFrEntries\(a,b,pipelineSort.direction\)\)/);
 assert.doesNotMatch(markup,/\{kind:"add",item\}/);
