@@ -276,12 +276,18 @@
 
     /* ─── PHOTOS PROFESSIONNELLES ─────────────────────────────────── */
     #situation { padding: 4.5rem 2rem; background: var(--surface); }
-    .situation-grid { max-width: 820px; margin: 0 auto; }
+    .situation-grid { max-width: 1100px; margin: 0 auto; display: grid; grid-template-columns: 1.15fr .85fr; gap: 1.5rem; align-items: stretch; }
     .situation-card { position: relative; min-height: 360px; overflow: hidden; border-radius: var(--radius); background: var(--surface2); box-shadow: var(--shadow); border: 1px solid var(--border); }
     .situation-card img { width: 100%; height: 100%; min-height: 360px; display: block; object-fit: cover; transition: transform .5s ease; }
     .situation-card:first-child img { object-position: center 35%; }
     .situation-card:hover img { transform: scale(1.04); }
     .situation-caption { position: absolute; left: 0; right: 0; bottom: 0; padding: 2.4rem 1.2rem 1rem; color: #fff; font-size: .86rem; font-weight: 700; background: linear-gradient(transparent, rgba(27,25,23,.82)); }
+    .situation-approach { padding: 2rem; border-radius: var(--radius); background: var(--surface2); box-shadow: var(--shadow); border: 1px solid var(--border); text-align: center; display: flex; flex-direction: column; justify-content: center; }
+    .situation-approach > p { color: var(--muted); line-height: 1.7; font-size: .94rem; margin-bottom: 1.35rem; }
+    .situation-principles { display: grid; gap: .8rem; }
+    .situation-principle { padding: .9rem 1rem; border-radius: 12px; background: var(--surface); border: 1px solid var(--border); }
+    .situation-principle strong { display: block; color: var(--text); margin-bottom: .25rem; }
+    .situation-principle span { color: var(--muted); font-size: .84rem; line-height: 1.5; }
 
     /* ─── GLOBALS SECTIONS ────────────────────────────────────────── */
     .section-wrap { max-width: 1100px; margin: 0 auto; }
@@ -972,6 +978,7 @@
       .profil-inner { grid-template-columns: 1fr; }
       .formation-grid { grid-template-columns: 1fr; }
       .contact-inner { grid-template-columns: 1fr; }
+      .situation-grid { grid-template-columns: 1fr; }
       nav { padding: .75rem 1rem; }
       .nav-toggle { display: inline-grid; place-items: center; order: 2; }
       .nav-cta { order: 1; margin-left: auto; margin-right: .65rem; }
@@ -1135,7 +1142,7 @@
         <div class="hero-typewriter" id="tw-container">Je <span class="tw-word" id="tw-target">structure.</span></div>
         <p class="hero-desc">
           <strong>Dirigeant opérationnel, capable de structurer, transformer et manager humainement.</strong><br>
-          J'interviens sur la structuration et la transformation d'activités en environnement exigeant, avec une approche alliant performance opérationnelle et management humain.
+          Mon parcours associe pilotage global, amélioration des organisations et management d'équipes pluridisciplinaires, avec une attention constante portée à la performance, à la maîtrise des risques et aux conditions de travail.
         </p>
         <div class="hero-ctas">
           <a href="#contact" class="btn-primary">Me contacter</a>
@@ -1196,7 +1203,7 @@
         <div class="perso-card" style="grid-column: span 3;">
           <div class="perso-card-icon">🤝</div>
           <p class="perso-card-title">Engagement · <a href="https://www.linkedin.com/company/cjd-le-mans" target="_blank" rel="noopener" style="display:inline-flex; align-items:center; vertical-align:middle; text-decoration:none;"><img src="logo-CJD-Le-Mans- sans fond.png" alt="CJD Le Mans" class="cjd-logo"></a></p>
-          <p class="perso-card-text">Membre du Centre des Jeunes Dirigeants du Mans depuis <strong>2020</strong>.</p>
+          <p class="perso-card-text">Membre du Centre des Jeunes Dirigeants du Mans de <strong>2020 à 2026</strong>.</p>
           <p class="perso-card-text" style="margin-top:.4rem; font-style:italic;">Un réseau d'entrepreneurs engagés, partageant les mêmes valeurs humaines et de responsabilité.</p>
         </div>
 
@@ -1223,7 +1230,13 @@
           J'ai structuré et accompagné des équipes comptant <strong style="color:var(--accent2);">jusqu'à 40 collaborateurs</strong>, piloté des investissements Capex, négocié des contrats représentant jusqu'à <strong style="color:var(--accent2);">1,5 M€</strong> et conduit des transformations dans des environnements marqués par la croissance, la saisonnalité et des contraintes multiples.
         </p>
         <p>
-          Ce qui me motive, ce sont les environnements dynamiques où <strong style="color:var(--green);">la performance, l'humain et la vision d'ensemble</strong> doivent avancer ensemble. J'aime rendre les organisations plus simples et plus efficaces, gagner du temps, maîtriser les coûts, supprimer les tâches inutiles et améliorer concrètement les conditions de travail.
+          <strong style="color:var(--green);">Manager humainement</strong>, c'est pour moi rester proche du terrain, écouter les professionnels et donner du sens aux décisions. Je veille à créer un cadre clair, exigeant et équitable, dans lequel chacun comprend son rôle, dispose des moyens nécessaires et peut progresser. La performance est durable lorsqu'elle améliore à la fois le fonctionnement de l'organisation, la qualité du service et les conditions de travail.
+        </p>
+        <p>
+          J'intègre également <strong style="color:var(--accent2);">la prévention des risques</strong> au pilotage quotidien : sécurité des personnes, continuité d'activité, fiabilité des processus, maîtrise des engagements et anticipation des situations sensibles. Mon approche consiste à identifier les fragilités en amont, clarifier les responsabilités et construire avec les équipes des réponses simples, comprises et applicables.
+        </p>
+        <p>
+          Ce qui me motive, ce sont les environnements dynamiques où <strong style="color:var(--green);">l'opérationnel, la stratégie et l'humain</strong> doivent avancer ensemble. J'aime rendre les organisations plus simples et plus efficaces, gagner du temps, maîtriser les coûts et supprimer les tâches inutiles afin de concentrer l'énergie sur ce qui crée réellement de la valeur.
         </p>
         <p style="margin-top:1rem; padding:.9rem 1.2rem; background:var(--coral-bg); border-left:3px solid var(--accent); border-radius:0 10px 10px 0;">
           Je recherche aujourd'hui un rôle de <strong style="color:var(--accent);">directeur ou de bras droit</strong> dans lequel je pourrai mobiliser cette expérience pluridisciplinaire pour <strong style="color:var(--accent);">structurer, piloter, transformer et faire progresser</strong> une organisation.
@@ -1268,12 +1281,29 @@
   <section id="situation">
     <p class="section-label">Au-delà du titre</p>
     <h2 class="section-title fade-in">Une direction au contact du terrain</h2>
-    <p class="section-sub fade-in">Écouter, décider, faire avancer les équipes : une posture de dirigeant présente dans l'action.</p>
+    <p class="section-sub fade-in">Être présent sans se substituer aux équipes : comprendre les réalités, donner un cap et créer les conditions pour bien travailler.</p>
     <div class="situation-grid">
       <figure class="situation-card fade-in">
         <img src="photos/cv-management.webp" width="1600" height="1289" alt="Melvin PASSE en échange professionnel" loading="lazy" decoding="async">
         <figcaption class="situation-caption">Management de proximité & écoute</figcaption>
       </figure>
+      <div class="situation-approach fade-in">
+        <p>Je ne conçois pas la direction à distance du terrain. La proximité permet de comprendre les contraintes, de détecter les signaux faibles et de prendre des décisions réalistes, sans perdre la vision d'ensemble.</p>
+        <div class="situation-principles">
+          <div class="situation-principle">
+            <strong>Écouter pour comprendre</strong>
+            <span>Croiser les échanges, les données et les réalités du terrain avant d'agir.</span>
+          </div>
+          <div class="situation-principle">
+            <strong>Décider et expliquer</strong>
+            <span>Arbitrer, fixer les priorités et rendre les responsabilités compréhensibles.</span>
+          </div>
+          <div class="situation-principle">
+            <strong>Faire progresser collectivement</strong>
+            <span>Donner de l'autonomie, accompagner les équipes et améliorer durablement l'organisation.</span>
+          </div>
+        </div>
+      </div>
     </div>
   </section>
 
@@ -1838,6 +1868,13 @@
               <p class="value">passe.melvin@gmail.com</p>
             </div>
           </a>
+          <a href="https://wa.me/33682149159?text=Bonjour%20Melvin%2C%20je%20vous%20contacte%20apr%C3%A8s%20avoir%20consult%C3%A9%20votre%20CV%20digital." target="_blank" rel="noopener" class="contact-link" aria-label="Contacter Melvin PASSE sur WhatsApp">
+            <div class="icon" style="color:#1f8f55; background:rgba(37,211,102,.12);">WA</div>
+            <div class="info">
+              <p class="label">WhatsApp</p>
+              <p class="value">Échanger sur WhatsApp</p>
+            </div>
+          </a>
           <div class="contact-link" style="cursor:default; pointer-events:none; opacity:.85;">
             <div class="icon">📍</div>
             <div class="info">
@@ -1857,6 +1894,8 @@
 
       <div class="contact-form-wrap fade-in">
         <form class="contact-form" onsubmit="handleForm(event)" action="https://formspree.io/f/maqaawoa" method="POST">
+          <input type="hidden" name="_subject" value="Nouveau contact — CV digital Melvin PASSE" />
+          <input type="hidden" name="type" value="contact-cv-digital" />
           <input class="form-field" type="text" name="nom" placeholder="Votre nom" aria-label="Votre nom" autocomplete="name" required />
           <input class="form-field" type="email" name="email" placeholder="Votre email" aria-label="Votre adresse email" autocomplete="email" required />
           <input class="form-field" type="text" name="objet" placeholder="Objet" aria-label="Objet du message" />
@@ -1992,7 +2031,7 @@
       const data = new FormData(e.target);
       btn.textContent = 'Envoi en cours…';
       btn.disabled = true;
-      fetch('https://formspree.io/f/maqaawoa', {
+      fetch(e.target.action, {
         method: 'POST',
         body: data,
         headers: { 'Accept': 'application/json' }
